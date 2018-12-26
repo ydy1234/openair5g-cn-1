@@ -1,0 +1,178 @@
+#!/bin/bash
+
+
+THIS_SCRIPT_PATH=$(dirname $(readlink -f $0))
+source $THIS_SCRIPT_PATH/../build/tools/build_helper
+
+function help()
+{ 
+  echo_error " "
+  echo_error "Usage: build_amf [OPTION]..."
+  echo_error "Build the AMF executable."
+  echo_error " "
+  echo_error "Options:"
+  echo_error "Mandatory arguments to long options are mandatory for short options too."
+  echo_error "  -c, --clean                               Clean the build generated files: config, object, executable files (build from scratch)"
+  echo_error "  -D, --daemon                              Build amf as a daemon."
+  echo_error "  -f, --force                               No interactive script for installation of software packages."
+  echo_error "  -h, --help                                Print this help."
+  echo_error "  -i, --check-installed-software            Check installed software packages necessary to build and run AMF (support $SUPPORTED_DISTRO)."
+  echo_error "  -u, --unit-tests                          Trigger unit tests."
+  echo_error "  -v, --verbose                             Build process verbose."
+  echo_error " "
+}
+
+function main()
+{
+  local -i clean=0
+  local -i daemon=0
+  local -i force=0
+  local -i unit_tests=0
+  local -i verbose=0
+  local -i var_check_install_oai_software=0
+  local    cmake_args=" "
+  local    make_args="-j`nproc`"
+
+  until [ -z "$1" ]
+    do
+    case "$1" in
+      -c | --clean)
+        clean=1
+        echo "Clean the build generated files (build from scratch)"
+        shift;
+        ;;
+      -D | --daemon)
+        daemon=1
+        cmake_args="$cmake_args -DDAEMONIZE=1"
+        echo "Build AMF as a daemon"
+        shift;
+        ;;
+      -f | --force)
+        force=1
+        echo "Force set (no interactive)"
+        shift;
+        ;;
+      -h | --help)
+        help
+        shift;
+        exit 0
+        ;;
+      -i | --check-installed-software)
+        echo "Check installed software packages necessary to build and run AMF (support $SUPPORTED_DISTRO):"
+        set_openair_env
+        var_check_install_oai_software=1
+        shift;
+        ;;
+      -u | --unit-tests)
+        echo "Unit tests triggered"
+        unit_tests=1
+        shift;
+        ;;
+      -v | --verbose)
+        echo "Make build process verbose"
+        cmake_args="$cmake_args -DCMAKE_VERBOSE_MAKEFILE=ON"
+        make_args="VERBOSE=1 $make_args"
+        verbose=1
+        shift;
+        ;;
+      *)
+        echo "Unknown option $1"
+        help
+        exit 1
+        ;;
+    esac
+  done
+
+  if [ $var_check_install_oai_software -gt 0 ];then
+    update_package_db
+    check_install_amf_software  $force
+    echo "AMF not compiled, to compile it, re-run build_amf without -i option"
+    exit 0
+  fi
+
+  set_openair_env
+
+  ##############################################################################
+  # Clean
+  ##############################################################################
+  cd $OPENAIR5GCN_DIR/build/amf
+  if [ $clean -ne 0 ]; then
+    if [[ $verbose -eq 1 ]]; then
+      echo "Cleaning AMF: generated configuration files, obj files, amf executable"
+    fi
+    rm -Rf $OPENAIR5GCN_DIR/build/amf/build  2>&1
+    mkdir -m 777 -p -v build
+  fi
+
+
+  ##############################################################################
+  # Compile AMF
+  ##############################################################################
+  cd $OPENAIR5GCN_DIR/build/amf
+  if [ ! -d ./amf-comm ]; then
+    mkdir -m 777 -p -v amf-comm
+  fi
+  if [ ! -d ./amf-comm/build ]; then
+    mkdir -m 777 -p -v amf-comm/build
+  fi
+
+  if [ ! -d ./amf-loc ]; then
+    mkdir -m 777 -p -v amf-loc
+  fi
+  if [ ! -d ./amf-loc/build ]; then
+    mkdir -m 777 -p -v amf-loc/build
+  fi
+
+  if [ ! -d ./amf-evet ]; then
+    mkdir -m 777 -p -v amf-evet
+  fi
+  if [ ! -d ./amf-evet/build ]; then
+    mkdir -m 777 -p -v amf-evet/build
+  fi
+
+  if [ ! -d ./amf-mt ]; then
+    mkdir -m 777 -p -v amf-mt
+  fi
+  if [ ! -d ./amf-mt/build ]; then
+    mkdir -m 777 -p -v amf-mt/build
+  fi
+  #cmake_file=./CMakeLists.txt
+  #cp $OPENAIR5GCN_DIR/build/amf/CMakeLists.template $cmake_file
+  #echo 'include(${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists.txt)' >> $cmake_file
+
+  cd $OPENAIR5GCN_DIR/build/amf/amf-comm/build
+  $CMAKE $cmake_args .. > /dev/null
+  compilations amf-comm amf-comm amf-comm $verbose
+
+  cd $OPENAIR5GCN_DIR/build/amf/amf-loc/build
+  $CMAKE $cmake_args .. > /dev/null
+  compilations amf-loc amf-loc amf-loc $verbose
+
+  cd $OPENAIR5GCN_DIR/build/amf/amf-evet/build
+  $CMAKE $cmake_args .. > /dev/null
+  compilations amf-evet amf-evet amf-evet $verbose
+
+  cd $OPENAIR5GCN_DIR/build/amf/amf-mt/build
+  $CMAKE $cmake_args .. > /dev/null
+  compilations amf-mt amf-mt amf-mt $verbose 
+
+  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-comm/build/amf-comm /usr/local/bin && echo_success "amf-comm installed"
+  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-evet/build/amf-evet /usr/local/bin && echo_success "amf-evet installed"
+  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-mt/build/amf-mt /usr/local/bin && echo_success "amf-mt installed"
+  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-loc/build/amf-loc /usr/local/bin && echo_success "amf-loc installed"
+
+
+
+    #if [ $daemon -ne 0 ]; then
+    # TODO /usr/sbin ?
+    #do_stop_daemon
+    #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/build/amf /usr/sbin/amfd && echo_success "amfd installed"
+  #else
+    #$SUDO killall -q amf
+    #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/build/amf /usr/local/bin && echo_success "amf installed"
+  #fi
+}
+
+
+main "$@"
+

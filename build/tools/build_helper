@@ -1,0 +1,234 @@
+#!/bin/bash
+
+SUPPORTED_DISTRO="Ubuntu 16.04"
+if [ ! -f /etc/os-release ];then 
+  echo_fatal "No /etc/os-release file found. You're likely on an unsupported distro."
+fi
+
+OS_DISTRO=$(grep "^ID=" /etc/os-release | sed "s/ID=//" | sed "s/\"//g")
+OS_RELEASE=$(grep "^VERSION_ID=" /etc/os-release | sed "s/VERSION_ID=//" | sed "s/\"//g")
+case "$OS_DISTRO" in
+  ubuntu) OS_BASEDISTRO="debian"; INSTALLER="apt-get"; CMAKE="cmake";;
+esac
+
+SUDO='sudo -S -E'
+
+#######################################
+# echo and family
+######################################
+black='\E[30m'
+red='\E[31m'
+green='\E[32m'
+yellow='\E[33m'
+blue='\E[34m'
+maganta='\E[35m'
+cyan='\E[36m'
+white='\E[37m'
+reset_color='\E[00m'
+COLORSIZE=1
+
+cecho()
+{
+    local default_msg="No message."
+    message=${1:-$default_msg}
+    color=${2:-$green}
+    [ "$COLORSIZE" = "1" ] && message="$color$message$reset_color"
+    echo -e "$message"
+    return
+}
+
+echo_error()     { cecho "$*" $red           ;}
+echo_fatal()     { cecho "$*" $red; exit -1  ;}
+echo_warning()   { cecho "$*" $yellow        ;}
+echo_success()   { cecho "$*" $green         ;}
+echo_info()      { cecho "$*" $blue          ;}
+
+
+
+
+
+########################################
+# set_openair_env
+########################################
+
+set_openair_env()
+{
+    fullpath=`readlink -f $BASH_SOURCE`
+    [ -f "/.$fullpath" ] || fullpath=`readlink -f $PWD/$fullpath`
+    openair_path=${fullpath%/build/*}
+    openair_path=${openair_path%/scripts/*}
+    export OPENAIR5GCN_DIR=$openair_path
+}
+
+########################################
+# update_package_db
+#######################################
+
+update_package_db()
+{
+    if [ ! -f /tmp/no_more_update_package_db ];then
+      $SUDO $INSTALLER update
+      touch /tmp/no_more_update_package_db
+    else
+      let elapsed_time=$(expr `date +%s` - `stat -c %Y /tmp/no_more_update_package_db`)
+      if [ $elapsed_time -gt 3600 ]; then
+        $SUDO $INSTALLER update
+        touch /tmp/no_more_update_package_db
+      fi
+    fi
+}
+
+######################################
+# get_distribution_release
+#####################################
+
+get_distribution_release()
+{
+    if [[ ! -z "$OS_DISTRO$OS_RELEASE" ]]; then
+      echo "$OS_DISTRO$OS_RELEASE"
+    else
+      echo Unknown
+    fi
+}
+
+#######################################
+# check_supported_distribution
+######################################
+
+check_supported_distribution()
+{
+    local distribution=$(get_distribution_release)
+    case "$distribution" in
+      "ubuntu16.04") return 0;;
+    esac
+    return 1
+}
+
+######################################
+# install pistache
+#######################################
+
+install_pistache_from_source()
+{
+  if [ $1 -eq 0 ]; then
+    OPTION=""
+    read -p "Do you want to install pistache? <y/N> " prompt
+  else
+    prompt='y'
+    OPTION="-y"
+  fi
+  if [[ $prompt =~ [yY](es)* ]]
+  then
+    $SUDO rm -rf /tmp/pistache
+    mkdir -p /tmp/pistache
+    git clone https://github.com/oktal/pistache.git /tmp/pistache
+    cd /tmp/pistache
+    cmake CMakeLists.txt
+    make > /tmp/log_compile_pistache 2>&1
+    $SUDO make install
+  fi
+}
+
+#########################################
+# install json
+########################################
+install_json_from_source()
+{
+  if [ $1 -eq 0 ]; then
+    OPTION=""
+    read -p "Do you want to install json? <y/N> " prompt
+  else
+    prompt='y'
+    OPTION="-y"
+  fi
+  if [[ $prompt =~ [yY](es)* ]]
+  then
+    $SUDO rm -rf /tmp/json
+    mkdir -p /tmp/json
+    git clone https://github.com/nlohmann/json.git /tmp/json
+    cd /tmp/json
+    cmake CMakeLists.txt
+    make > /tmp/log_compile_json 2>&1
+    $SUDO make install
+  fi
+}
+
+########################################
+# install cmake from source
+########################################
+install_cmake_from_source()
+{
+  if [ $1 -eq 0 ]; then
+    OPTION=""
+    read -p "Do you want to install cmake? <y/N> " prompt
+  else
+    prompt='y'
+    OPTION="-y"
+  fi
+  if [[ $prompt =~ [yY](es)* ]]
+  then
+    $SUDO rm -rf /tmp/cmake
+    mkdir -p /tmp/cmake
+    wget -P /tmp/cmake https://cmake.org/files/v3.9/cmake-3.9.2.tar.gz
+    cd /tmp/cmake
+    tar -xzf cmake-3.9.2.tar.gz
+    cd cmake-3.9.2
+    ./configure
+    make > /tmp/log_compile_cmake 2>&1
+    $SUDO make install
+  fi
+}
+
+
+########################################
+# check_install_amf_software
+########################################
+
+check_install_amf_software()
+{
+    if ! check_supported_distribution; then
+      echo_error "Your distribution $(get_distribution_release) is not supported by openair5g-cn"
+      exit 1
+    fi
+    if [ $1 -gt 0 ];then
+      OPTION="-y"
+    else
+      OPTION=""
+    fi
+    install_cmake_from_source $1
+    install_pistache_from_source $1
+    install_json_from_source $1
+    
+}
+
+###################################
+# Compilers
+###################################
+# arg 1 Build directory OPENAIR_DIR/build/?/build
+# arg 2 Executable target name
+# arg 3 Executable name (no path)
+# arg 4 Verbose         (1 or 0)
+compilations() {
+  echo_info "Compilation log for $3 is here: $dlog/$2.txt"
+  #echo "$OPENAIR5GCN_DIR/build/amf/$1/build"
+  cd $OPENAIR5GCN_DIR/build/amf/$1/build
+  #mkdir test
+  if [ "a$4" == "a1" ]; then
+    {
+      rm -f $3
+      make $make_args $2
+    } | tee $dlog/$2.txt
+  else
+    {
+      rm -f $3
+      #make $make_args $2
+      make $make_args -j4
+    } | tee $OPENAIR5GCN_DIR/build/log/amf/$2.txt 
+#> $dlog/$2.txt 2>&1
+  fi
+  if [ -s $3 ] ; then
+     echo_success "$2 compiled"
+  else
+     echo_error "$2 compilation failed"
+  fi
+}
