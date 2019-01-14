@@ -136,30 +136,31 @@ function main()
   if [ ! -d ./amf-mt/build ]; then
     mkdir -m 777 -p -v amf-mt/build
   fi
-  #cmake_file=./CMakeLists.txt
-  #cp $OPENAIR5GCN_DIR/build/amf/CMakeLists.template $cmake_file
-  #echo 'include(${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists.txt)' >> $cmake_file
+
 
   cd $OPENAIR5GCN_DIR/build/amf/amf-comm/build
+  mkdir r15.2
+  $OPENAIR5GCN_DIR/build/tools/generate_asn1 ./r15.2 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/test/*.asn
+  python2.7 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/asn1tostruct.py -f $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/NGAP-PDU-Contents.asn -o ./r15.2
   $CMAKE $cmake_args .. > /dev/null
-  compilations amf-comm amf-comm amf-comm $verbose
+  #compilations amf-comm amf-comm amf-comm $verbose
 
-  cd $OPENAIR5GCN_DIR/build/amf/amf-loc/build
-  $CMAKE $cmake_args .. > /dev/null
-  compilations amf-loc amf-loc amf-loc $verbose
+  #cd $OPENAIR5GCN_DIR/build/amf/amf-loc/build
+  #$CMAKE $cmake_args .. > /dev/null
+  #compilations amf-loc amf-loc amf-loc $verbose
 
-  cd $OPENAIR5GCN_DIR/build/amf/amf-evet/build
-  $CMAKE $cmake_args .. > /dev/null
-  compilations amf-evet amf-evet amf-evet $verbose
+  #cd $OPENAIR5GCN_DIR/build/amf/amf-evet/build
+  #$CMAKE $cmake_args .. > /dev/null
+  #compilations amf-evet amf-evet amf-evet $verbose
 
-  cd $OPENAIR5GCN_DIR/build/amf/amf-mt/build
-  $CMAKE $cmake_args .. > /dev/null
-  compilations amf-mt amf-mt amf-mt $verbose 
+  #cd $OPENAIR5GCN_DIR/build/amf/amf-mt/build
+  #$CMAKE $cmake_args .. > /dev/null
+  #compilations amf-mt amf-mt amf-mt $verbose 
 
-  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-comm/build/amf-comm /usr/local/bin && echo_success "amf-comm installed"
-  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-evet/build/amf-evet /usr/local/bin && echo_success "amf-evet installed"
-  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-mt/build/amf-mt /usr/local/bin && echo_success "amf-mt installed"
-  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-loc/build/amf-loc /usr/local/bin && echo_success "amf-loc installed"
+  #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-comm/build/amf-comm /usr/local/bin && echo_success "amf-comm installed"
+  #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-evet/build/amf-evet /usr/local/bin && echo_success "amf-evet installed"
+  #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-mt/build/amf-mt /usr/local/bin && echo_success "amf-mt installed"
+  #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-loc/build/amf-loc /usr/local/bin && echo_success "amf-loc installed"
 
 
 
