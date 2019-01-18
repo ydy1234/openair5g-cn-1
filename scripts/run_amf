@@ -14,7 +14,7 @@ ps -ef | grep amf-loc | cut -c 9-15| xargs kill -s 9
 #ps -ef | grep amf-evet | cut -c 9-15| xargs kill -s 9
 }
 
-/usr/local/bin/amf-comm &
-/usr/local/bin/amf-mt &
-/usr/local/bin/amf-loc 
+/usr/local/bin/amf-comm 
+#/usr/local/bin/amf-mt &
+#/usr/local/bin/amf-loc 
 #/usr/local/bin/amf-evet

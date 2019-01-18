@@ -143,7 +143,7 @@ function main()
   $OPENAIR5GCN_DIR/build/tools/generate_asn1 ./r15.2 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/test/*.asn
   python2.7 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/asn1tostruct.py -f $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/NGAP-PDU-Contents.asn -o ./r15.2
   $CMAKE $cmake_args .. > /dev/null
-  #compilations amf-comm amf-comm amf-comm $verbose
+  compilations amf-comm amf-comm amf-comm $verbose
 
   #cd $OPENAIR5GCN_DIR/build/amf/amf-loc/build
   #$CMAKE $cmake_args .. > /dev/null
@@ -157,7 +157,7 @@ function main()
   #$CMAKE $cmake_args .. > /dev/null
   #compilations amf-mt amf-mt amf-mt $verbose 
 
-  #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-comm/build/amf-comm /usr/local/bin && echo_success "amf-comm installed"
+  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-comm/build/amf-comm /usr/local/bin && echo_success "amf-comm installed"
   #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-evet/build/amf-evet /usr/local/bin && echo_success "amf-evet installed"
   #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-mt/build/amf-mt /usr/local/bin && echo_success "amf-mt installed"
   #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-loc/build/amf-loc /usr/local/bin && echo_success "amf-loc installed"
