@@ -109,41 +109,47 @@ function main()
   # Compile AMF
   ##############################################################################
   cd $OPENAIR5GCN_DIR/build/amf
-  if [ ! -d ./amf-comm ]; then
-    mkdir -m 777 -p -v amf-comm
-  fi
-  if [ ! -d ./amf-comm/build ]; then
-    mkdir -m 777 -p -v amf-comm/build
-  fi
+  #if [ ! -d ./amf-comm ]; then
+  #  mkdir -m 777 -p -v amf-comm
+  #fi
+  #if [ ! -d ./amf-comm/build ]; then
+  #  mkdir -m 777 -p -v amf-comm/build
+  #fi
 
-  if [ ! -d ./amf-loc ]; then
-    mkdir -m 777 -p -v amf-loc
-  fi
-  if [ ! -d ./amf-loc/build ]; then
-    mkdir -m 777 -p -v amf-loc/build
-  fi
+  #if [ ! -d ./amf-loc ]; then
+  #  mkdir -m 777 -p -v amf-loc
+  #fi
+  #if [ ! -d ./amf-loc/build ]; then
+  #  mkdir -m 777 -p -v amf-loc/build
+  #fi
 
-  if [ ! -d ./amf-evet ]; then
-    mkdir -m 777 -p -v amf-evet
-  fi
-  if [ ! -d ./amf-evet/build ]; then
-    mkdir -m 777 -p -v amf-evet/build
-  fi
+  #if [ ! -d ./amf-evet ]; then
+  #  mkdir -m 777 -p -v amf-evet
+  #fi
+  #if [ ! -d ./amf-evet/build ]; then
+  #  mkdir -m 777 -p -v amf-evet/build
+  #fi
 
-  if [ ! -d ./amf-mt ]; then
-    mkdir -m 777 -p -v amf-mt
+  #if [ ! -d ./amf-mt ]; then
+  #  mkdir -m 777 -p -v amf-mt
+  #fi
+  #if [ ! -d ./amf-mt/build ]; then
+  #  mkdir -m 777 -p -v amf-mt/build
+  #fi
+  
+  if [ ! -d ./build ];then
+    mkdir -m 777 -p -v build
   fi
-  if [ ! -d ./amf-mt/build ]; then
-    mkdir -m 777 -p -v amf-mt/build
-  fi
-
-
-  cd $OPENAIR5GCN_DIR/build/amf/amf-comm/build
+  
+  cd ${OPENAIR5GCN_DIR}/build/amf/build  
+  #cd $OPENAIR5GCN_DIR/build/amf/amf-comm/build
   mkdir r15.2
   $OPENAIR5GCN_DIR/build/tools/generate_asn1 ./r15.2 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/test/*.asn
   python2.7 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/asn1tostruct.py -f $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/NGAP-PDU-Contents.asn -o ./r15.2
   $CMAKE $cmake_args .. > /dev/null
-  compilations amf-comm amf-comm amf-comm $verbose
+  #compilations amf-comm amf-comm amf-comm $verbose
+  compilations amf amf amf $verbose
+
 
   #cd $OPENAIR5GCN_DIR/build/amf/amf-loc/build
   #$CMAKE $cmake_args .. > /dev/null
@@ -157,7 +163,8 @@ function main()
   #$CMAKE $cmake_args .. > /dev/null
   #compilations amf-mt amf-mt amf-mt $verbose 
 
-  $SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-comm/build/amf-comm /usr/local/bin && echo_success "amf-comm installed"
+  $SUDO cp -upv ${OPENAIR5GCN_DIR}/build/amf/build/amf /usr/local/bin && echo_success "amf installed"
+  #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-comm/build/amf-comm /usr/local/bin && echo_success "amf-comm installed"
   #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-evet/build/amf-evet /usr/local/bin && echo_success "amf-evet installed"
   #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-mt/build/amf-mt /usr/local/bin && echo_success "amf-mt installed"
   #$SUDO cp -upv $OPENAIR5GCN_DIR/build/amf/amf-loc/build/amf-loc /usr/local/bin && echo_success "amf-loc installed"

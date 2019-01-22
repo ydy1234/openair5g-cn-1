@@ -249,7 +249,7 @@ check_install_amf_software()
 compilations() {
   echo_info "Compilation log for $3 is here: $dlog/$2.txt"
   #echo "$OPENAIR5GCN_DIR/build/amf/$1/build"
-  cd $OPENAIR5GCN_DIR/build/amf/$1/build
+  cd $OPENAIR5GCN_DIR/build/amf/build
   #mkdir test
   if [ "a$4" == "a1" ]; then
     {
