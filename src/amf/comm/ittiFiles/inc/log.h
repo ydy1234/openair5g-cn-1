@@ -152,7 +152,7 @@ typedef struct log_config_s {
   bool          color;              /*!< \brief use of ANSI styling codes or no */
 } log_config_t;
 
-# if LOG_OAI
+//# if LOG_OAI
 
 void log_connect_to_server(void);
 void log_set_config(const log_config_t * const config);
@@ -255,16 +255,25 @@ int log_get_start_time_sec (void);
                                                                    log_stream_hex(lOgLeVeL, pRoTo, __FILE__, __LINE__, mEsSaGe, sTrEaM, sIzE);\
                                                                    OAI_GCC_DIAG_ON(pointer-sign); \
                                                                  } while(0); /*!< \brief trace buffer content */
-#    if DEBUG_IS_ON
+
 #      define OAILOG_DEBUG(pRoTo, ...)                                  do { log_message(NULL, OAILOG_LEVEL_DEBUG,    pRoTo, __FILE__, __LINE__, ##__VA_ARGS__); } while(0) /*!< \brief debug informations */
-#      if TRACE_IS_ON
-#        define OAILOG_EXTERNAL(lOgLeVeL, pRoTo, ...)                   do { log_message(NULL, lOgLeVeL       ,    pRoTo, __FILE__, __LINE__, ##__VA_ARGS__); } while(0)
-#        define OAILOG_TRACE(pRoTo, ...)                                do { log_message(NULL, OAILOG_LEVEL_TRACE,    pRoTo, __FILE__, __LINE__, ##__VA_ARGS__); } while(0) /*!< \brief most detailled informations, struct dumps */
-#        define OAILOG_FUNC_IN(pRoTo)                                   do { log_func(true, pRoTo, __FILE__, __LINE__, __FUNCTION__); } while(0) /*!< \brief informational */
-#        define OAILOG_FUNC_OUT(pRoTo)                                  do { log_func(false, pRoTo, __FILE__, __LINE__, __FUNCTION__); return;} while(0) /*!< \brief informational */
-#        define OAILOG_FUNC_RETURN(pRoTo, rEtUrNcOdE)                   do { log_func_return(pRoTo, __FILE__, __LINE__, __FUNCTION__, (long)rEtUrNcOdE); return rEtUrNcOdE;} while(0) /*!< \brief informational */
-#        define OAILOG_STREAM_HEX_ARRAY(pRoTo, mEsSaGe, sTrEaM, sIzE)       do { log_stream_hex_array(OAILOG_LEVEL_TRACE, pRoTo, __FILE__, __LINE__, mEsSaGe, sTrEaM, sIzE); } while(0) /*!< \brief trace buffer content with indexes */
-#      endif
+#      define OAILOG_EXTERNAL(lOgLeVeL, pRoTo, ...)                   do { log_message(NULL, lOgLeVeL       ,    pRoTo, __FILE__, __LINE__, ##__VA_ARGS__); } while(0)
+#      define OAILOG_TRACE(pRoTo, ...)                                do { log_message(NULL, OAILOG_LEVEL_TRACE,    pRoTo, __FILE__, __LINE__, ##__VA_ARGS__); } while(0) /*!< \brief most detailled informations, struct dumps */
+#      define OAILOG_FUNC_IN(pRoTo)                                   do { log_func(true, pRoTo, __FILE__, __LINE__, __FUNCTION__); } while(0) /*!< \brief informational */
+#      define OAILOG_FUNC_OUT(pRoTo)                                  do { log_func(false, pRoTo, __FILE__, __LINE__, __FUNCTION__); return;} while(0) /*!< \brief informational */
+#      define OAILOG_FUNC_RETURN(pRoTo, rEtUrNcOdE)                   do { log_func_return(pRoTo, __FILE__, __LINE__, __FUNCTION__, (long)rEtUrNcOdE); return rEtUrNcOdE;} while(0) /*!< \brief informational */ 
+#      define OAILOG_STREAM_HEX_ARRAY(pRoTo, mEsSaGe, sTrEaM, sIzE)       do { log_stream_hex_array(OAILOG_LEVEL_TRACE, pRoTo, __FILE__, __LINE__, mEsSaGe, sTrEaM, sIzE); } while(0) /*!< \brief trace buffer content with indexes */
+
+#    if DEBUG_IS_ON
+//#      define OAILOG_DEBUG(pRoTo, ...)                                  do { log_message(NULL, OAILOG_LEVEL_DEBUG,    pRoTo, __FILE__, __LINE__, ##__VA_ARGS__); } while(0) /*!< \brief debug informations */
+//#      if TRACE_IS_ON
+//#        define OAILOG_EXTERNAL(lOgLeVeL, pRoTo, ...)                   do { log_message(NULL, lOgLeVeL       ,    pRoTo, __FILE__, __LINE__, ##__VA_ARGS__); } while(0)
+//#        define OAILOG_TRACE(pRoTo, ...)                                do { log_message(NULL, OAILOG_LEVEL_TRACE,    pRoTo, __FILE__, __LINE__, ##__VA_ARGS__); } while(0) /*!< \brief most detailled informations, struct dumps */
+//#        define OAILOG_FUNC_IN(pRoTo)                                   do { log_func(true, pRoTo, __FILE__, __LINE__, __FUNCTION__); } while(0) /*!< \brief informational */
+//#        define OAILOG_FUNC_OUT(pRoTo)                                  do { log_func(false, pRoTo, __FILE__, __LINE__, __FUNCTION__); return;} while(0) /*!< \brief informational */
+//#        define OAILOG_FUNC_RETURN(pRoTo, rEtUrNcOdE)                   do { log_func_return(pRoTo, __FILE__, __LINE__, __FUNCTION__, (long)rEtUrNcOdE); return rEtUrNcOdE;} while(0) /*!< \brief informational */
+//#        define OAILOG_STREAM_HEX_ARRAY(pRoTo, mEsSaGe, sTrEaM, sIzE)       do { log_stream_hex_array(OAILOG_LEVEL_TRACE, pRoTo, __FILE__, __LINE__, mEsSaGe, sTrEaM, sIzE); } while(0) /*!< \brief trace buffer content with indexes */
+//#      endif
 #    endif
 #  else
 #    define OAILOG_SPEC(...)
@@ -328,5 +337,5 @@ int log_get_start_time_sec (void);
 #    if EMIT_ASN_DEBUG_EXTERN
 #      define ASN_DEBUG(...)                                         do {vfprintf (stderr , ##__VA_ARGS__);} while(0)
 #    endif
-#  endif
+//#  endif
 #endif /* FILE_LOG_SEEN */

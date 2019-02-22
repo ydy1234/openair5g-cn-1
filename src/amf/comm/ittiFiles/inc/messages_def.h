@@ -36,3 +36,4 @@
 
 // Messages by zgw
 #include "demo_messages_def.h"
+#include "sctp_messages_def.h"

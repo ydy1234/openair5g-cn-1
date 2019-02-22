@@ -18,6 +18,14 @@
 #include <vector>
 #include <signal.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <syslog.h>
+#include <string.h>
 #endif
 
 #include "AMFStatusChangeSubscribeApiImpl.h"
@@ -33,11 +41,18 @@
 #include "NonUEN2MessageTransferApiImpl.h"
 #include "ReleaseUEContxtApiImpl.h"
 #include "UEContextTransferApiImpl.h"
+
+#include "EnableUEReachabilityApiImpl.h"
+#include "ProvideDomainSelectionInfoApiImpl.h"
+
 ////////////////////////////////////////////////// itti header /////////////////////////////////
 extern "C"{
 #include "intertask_interface.h"
 #include "assertions.h"
 #include "intertask_interface_init.h"
+#include "sctp_primitives_server.h"
+#include "ngap_amf.h"
+#include "log.h"
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -76,7 +91,7 @@ static void setUpUnixSignals(std::vector<int> quitSignals) {
 
 using namespace org::openapitools::server::api;
 using namespace std;
-
+/*
 void * demo_receiver_thread(__attribute__((unused)) void *args)
 {
         itti_mark_task_ready (TASK_DEMO_RECEIVER);
@@ -98,21 +113,42 @@ void * demo_receiver_thread(__attribute__((unused)) void *args)
                 received_message_p = NULL;
         }
 }
+*/
+int main(
+    int argc,
+    char * argv[]) 
+{
+/*
+    char * pid_dir;
+    char * pid_file_name;
+    pid_file_name = get_exe_absolute_path("/var/run");
+*/
+    CHECK_INIT_RETURN (OAILOG_INIT (LOG_SPGW_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
+    CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,NULL,NULL));
+    //CHECK_INIT_RETURN (nas_mm_init());
+    CHECK_INIT_RETURN (sctp_init());
+    CHECK_INIT_RETURN (ngap_amf_init());    
+/*
+    MessageDef                             *message_p = NULL;
 
-int main() {
+  message_p = itti_alloc_new_message (TASK_NGAP, SCTP_INIT_MSG);
+  message_p->ittiMsg.sctpInit.port = 36412;
+  message_p->ittiMsg.sctpInit.ppid = 60;
+  message_p->ittiMsg.sctpInit.ipv4 = 1;
+  message_p->ittiMsg.sctpInit.ipv6 = 0;
+  message_p->ittiMsg.sctpInit.nb_ipv4_addr = 1;
+  message_p->ittiMsg.sctpInit.ipv4_address[0] =117506058;
+  message_p->ittiMsg.sctpInit.nb_ipv6_addr = 0;
+  message_p->ittiMsg.sctpInit.ipv6_address[0] = "0:0:0:0:0:0:0:1";
+  int ret = itti_send_msg_to_task (TASK_SCTP, INSTANCE_DEFAULT, message_p);
+*/
+  //itti_wait_tasks_end();
 
-         CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,
-#if ENABLE_ITTI_ANALYZER
-                                           messages_definition_xml,
-#else
-                                                     NULL,
-#endif
-                                                               NULL));
-
-        // int itti_create_task(task_id_t task_id, void *(*function)(void *), void *args_p);
+/*
+       // int itti_create_task(task_id_t task_id, void *(*function)(void *), void *args_p);
         if (itti_create_task (TASK_DEMO_RECEIVER, &demo_receiver_thread, NULL) < 0) {
-        cout<<"Error while creating TASK_DEMO_RECEIVER task\n"<<endl;
-        return -1;
+          cout<<"Error while creating TASK_DEMO_RECEIVER task\n"<<endl;
+          return -1;
         }
 
         // MessageDef *itti_alloc_new_message(task_id_t origin_tid, MessagesIds msg_id);
@@ -126,6 +162,8 @@ int main() {
         }
         sleep(3);
     cout<<"init itti success"<<endl;
+*/
+
 
 #ifdef __linux__
     std::vector<int> sigs{SIGQUIT, SIGINT, SIGTERM, SIGHUP};
@@ -168,10 +206,17 @@ int main() {
     UEContextTransferApiImpl UEContextTransferApiserver(router);
     UEContextTransferApiserver.init();
 
+    EnableUEReachabilityApiImpl EnableUEReachabilityApiserver(router);
+    EnableUEReachabilityApiserver.init();
+    ProvideDomainSelectionInfoApiImpl ProvideDomainSelectionInfoApiserver(router);
+    ProvideDomainSelectionInfoApiserver.init();
+
     httpEndpoint->setHandler(router->handler());
     httpEndpoint->serve();
 
     httpEndpoint->shutdown();
 
+    itti_wait_tasks_end();
+    return 0;
 }
 

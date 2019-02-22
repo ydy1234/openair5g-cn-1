@@ -1548,7 +1548,7 @@ OverloadStartIEs NGAP-PROTOCOL-IES ::= {
 
 --OverloadStopIEs NGAP-PROTOCOL-IES ::= {	
 --	...
-}
+--}
 
 -- **************************************************************
 --

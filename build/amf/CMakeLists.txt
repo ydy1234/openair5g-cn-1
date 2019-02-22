@@ -7,6 +7,7 @@ message(${OPENAIR5GCN_BIN_DIR})
 project(amf)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pg -g3 -fpermissive" )
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fstack-protector-all -g -DMALLOC_CHECK_=3 -DDEBUG_IS_ON=1 -DTRACE_IS_ON=1 -O0")
 ########################################################
 ## ASN.1 grammer C code
 #######################################################
@@ -21,8 +22,17 @@ set (NGAP_ASN_FILES
     ${NGAP_ASN_DIR}/NGAP-Constants.asn
     ${NGAP_ASN_DIR}/NGAP-IEs.asn
     ${NGAP_ASN_DIR}/NGAP-Containers.asn
+
     )
 set (NGAP_C_DIR ${OPENAIR5GCNDIR}/build/amf/build/ASN1RELDIR)
+
+#add_custom_command (
+#  OUTPUT ${NGAP_C_DIR}
+#  COMMAND ${asn1c_call} ${NGAP_C_DIR} ${NGAP_ASN_FILES}
+#  COMMAND python ${S1AP_DIR}/messages/asn1/asn1tostruct.py -f${S1AP_ASN_DIR}/NGAP-PDU-Contents.asn -o${NGAP_C_DIR}
+#  DEPENDS ${NGAP_ASN_FILES}
+#  )
+
 ############################################################
 
 ###########################################################
@@ -47,37 +57,49 @@ include_directories(/usr/local/include/nlohmann)
 include_directories(/usr/local/include/pistache)
 link_directories(/usr/local/lib)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/model)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/api)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/impl)
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/model)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/api)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/impl)
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/model)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/api)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/impl)
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/model)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/api)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/impl)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/amf-models)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/common)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/sctp-5g)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/utils)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/NG-AP)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2)
+#include_directories("${NGAP_C_DIR}")
+
+
+
+
+
 
 
 file(GLOB SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/api/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/impl/*.cpp
-    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/model/*.cpp
     #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/api/*.cpp
     #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/impl/*.cpp
-    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/model/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/api/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/impl/*.cpp
-    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/model/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/api/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/impl/*.cpp
-    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/model/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/amf-models/*.cpp
     ${OPENAIR5GCN_DIR}/src/amf/amf-server.cpp
+    ${OPENAIR5GCN_DIR}/src/amf/comm/sctp-5g/sctp_itti_messaging.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/sctp-5g/sctp_primitives_server.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/utils/conversions.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/sctp-5g/sctp_common.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_handlers.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/utils/log.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/utils/hashtable.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/utils/obj_hashtable.c
 )
 
 add_executable(${PROJECT_NAME} ${SRCS} ${ITTICFiles})
-target_link_libraries(${PROJECT_NAME} pistache pthread rt ${LFDS})
+target_link_libraries(${PROJECT_NAME} pistache pthread rt ${LFDS} sctp)
