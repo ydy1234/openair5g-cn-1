@@ -396,8 +396,9 @@ for key in iesDefs:
         f.write("    assert(%s != NULL);\n\n" % (lowerFirstCamelWord(re.sub('-', '_', key))))
         f.write("    memset(%s, 0, sizeof(%s_t));\n" % (lowerFirstCamelWord(re.sub('-', '_', key)), prefix + re.sub('-', '_', key)))
 
-    f.write("   OAILOG_DEBUG (LOG_%s, \"Decoding message %s (%%s:%%d)\\n\", __FILE__, __LINE__);\n\n" % (fileprefix.upper(), re.sub('-', '_', keyName)))
-    f.write("    ANY_to_type_aper(any_p, &asn_DEF_%s, (void**)&%s_p);\n\n" % (asn1cStruct, asn1cStructfirstlower))
+    #f.write("   OAILOG_DEBUG (LOG_%s, \"Decoding message %s (%%s:%%d)\\n\", __FILE__, __LINE__);\n\n" % (fileprefix.upper(), re.sub('-', '_', keyName)))
+    f.write("   OAILOG_DEBUG (LOG_%s, \"Decoding message %s (%%s:%%d)\\n\", __FILE__, __LINE__);\n\n" % ("S1AP", re.sub('-', '_', keyName)))
+    f.write("    ANY_to_type(any_p, &asn_DEF_%s, (void**)&%s_p);\n\n" % (asn1cStruct, asn1cStructfirstlower))
     f.write("    for (i = 0; i < %s_p->%slist.count; i++) {\n" % (asn1cStructfirstlower, iesaccess))
     f.write("        %s_IE_t *ie_p;\n" % (fileprefix[0].upper() + fileprefix[1:]))
     f.write("        ie_p = %s_p->%slist.array[i];\n" % (asn1cStructfirstlower, iesaccess))
@@ -419,7 +420,7 @@ for key in iesDefs:
         f.write("                %s_t *%s_p = NULL;\n" % (ietypeunderscore, lowerFirstCamelWord(ietypesubst)))
         if ie[3] != "mandatory":
             f.write("                %s->presenceMask |= %s_%s_PRESENT;\n" % (lowerFirstCamelWord(re.sub('-', '_', key)), keyupperunderscore, ieupperunderscore))
-        f.write("                tempDecoded = ANY_to_type_aper(&ie_p->value, &asn_DEF_%s, (void**)&%s_p);\n" % (ietypeunderscore, lowerFirstCamelWord(ietypesubst)))
+        f.write("                tempDecoded = ANY_to_type(&ie_p->value, &asn_DEF_%s, (void**)&%s_p);\n" % (ietypeunderscore, lowerFirstCamelWord(ietypesubst)))
         f.write("                if (tempDecoded < 0 || %s_p == NULL) {\n" % (lowerFirstCamelWord(ietypesubst)))
         f.write("                   OAILOG_ERROR (LOG_%s, \"Decoding of IE %s failed\\n\");\n" % (fileprefix.upper(), ienameunderscore))
         f.write("                    if (%s_p)\n" % (lowerFirstCamelWord(ietypesubst)))
@@ -532,7 +533,7 @@ for key in iesDefs:
         f.write("            case %s_ProtocolIE_ID_%s:\n" % (fileprefix_first_upper, re.sub('-', '_', ie[0])))
         f.write("            {\n")
         f.write("                %s_t *%s_p = NULL;\n" % (re.sub('-', '_', ie[2]), lowerFirstCamelWord(re.sub('-', '', ie[2]))))
-        f.write("                tempDecoded = ANY_to_type_aper(&ie_p->value, &asn_DEF_%s, (void**)&%s_p);\n" % (re.sub('-', '_', ie[2]), lowerFirstCamelWord(re.sub('-', '', ie[2]))))
+        f.write("                tempDecoded = ANY_to_type(&ie_p->value, &asn_DEF_%s, (void**)&%s_p);\n" % (re.sub('-', '_', ie[2]), lowerFirstCamelWord(re.sub('-', '', ie[2]))))
         f.write("                if (tempDecoded < 0 || %s_p == NULL) {\n" % (lowerFirstCamelWord(re.sub('-', '', ie[2]))))
         f.write("                   OAILOG_ERROR (LOG_%s, \"Decoding of IE %s for message %s failed\\n\");\n" % (fileprefix.upper(), ienameunderscore, re.sub('-', '_', keyname)))
         f.write("                    if (%s_p)\n" % (lowerFirstCamelWord(re.sub('-', '', ie[2]))))
@@ -717,19 +718,19 @@ xer_encode_local(asn_TYPE_descriptor_t *td, void *sptr,
     mname = td->xml_tag;
     mlen = strlen(mname);
 
-    _i_ASN_TEXT_INDENT(0, indent);
-    _ASN_CALLBACK3("<", 1, mname, mlen, ">", 1);
+    ASN__TEXT_INDENT(0, indent);
+    ASN__CALLBACK3("<", 1, mname, mlen, ">", 1);
 
-    tmper = td->xer_encoder(td, sptr, indent + 1, XER_F_BASIC, cb, app_key);
+    tmper = td->op->xer_encoder(td, sptr, indent + 1, XER_F_BASIC, cb, app_key);
     if(tmper.encoded == -1) return tmper;
 
-    _ASN_CALLBACK3("</", 2, mname, mlen, ">\\n", xcan);
+    ASN__CALLBACK3("</", 2, mname, mlen, ">\\n", xcan);
 
     er.encoded = 4 + xcan + (2 * mlen) + tmper.encoded;
 
-    _ASN_ENCODED_OK(er);
+    ASN__ENCODED_OK(er);
 cb_failed:
-    _ASN_ENCODE_FAILED;
+    ASN__ENCODE_FAILED;
 }
 """)
 
@@ -797,7 +798,7 @@ for (key, value) in iesDefs.items():
         f.write("    cb(\"    </%s>\\n\", %d, app_key);\n" % (key, len("    </%s>\n" % (key))))
         f.write("    cb(\"</%s-PDU>\\n\", %d, app_key);\n" % (key, len("</%s-PDU>\n" % (key))))
 
-    f.write("    _ASN_ENCODED_OK(er);\n")
+    f.write("    ASN__ENCODED_OK(er);\n")
     #if key not in ieofielist.values():
         #f.write("cb_failed:\n")
         #f.write("    return er;\n")

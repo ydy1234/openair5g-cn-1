@@ -9,7 +9,7 @@
 #include "intertask_interface_types.h"
 #include "common_defs.h"
 #include "log.h"
-//#include "ngap_ies_defs.h"
+#include "ngap_ies_defs.h"
 
 
 static int ngap_send_init_sctp(void)
@@ -21,7 +21,7 @@ static int ngap_send_init_sctp(void)
   message_p->ittiMsg.sctpInit.ipv4 = 1;
   message_p->ittiMsg.sctpInit.ipv6 = 0;
   message_p->ittiMsg.sctpInit.nb_ipv4_addr = 1;
-  message_p->ittiMsg.sctpInit.ipv4_address[0] =117506058;
+  message_p->ittiMsg.sctpInit.ipv4_address[0] =1546416138;//117506058;
   message_p->ittiMsg.sctpInit.nb_ipv6_addr = 0;
   message_p->ittiMsg.sctpInit.ipv6_address[0] = "0:0:0:0:0:0:0:1";
   return itti_send_msg_to_task (TASK_SCTP, INSTANCE_DEFAULT, message_p);
@@ -50,10 +50,10 @@ ngap_amf_thread (
           break;
         case SCTP_DATA_IND:{
             OAILOG_DEBUG(LOG_S1AP,"SCTP_DATA_IND(recv N2 Messages from AN)\n");
-            //ngap_message  message = {0};
-/*
+            ngap_message  message = {0};
+
             if (ngap_amf_decode_pdu (&message, SCTP_DATA_IND (received_message_p).payload, &message_id) < 0) {
-              OAILOG_ERROR (LOG_NGAP, "Failed to decode new buffer\n");
+              OAILOG_ERROR (LOG_S1AP, "Failed to decode new buffer\n");
             } else {
               ngap_amf_handle_message (SCTP_DATA_IND (received_message_p).assoc_id,
                                    SCTP_DATA_IND (received_message_p).stream, &message);
@@ -62,7 +62,7 @@ ngap_amf_thread (
               ngap_free_amf_decode_pdu(&message, message_id);
             }
             bdestroy (SCTP_DATA_IND (received_message_p).payload);
-*/
+
           }
           break;
       }

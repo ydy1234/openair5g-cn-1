@@ -22,16 +22,29 @@ set (NGAP_ASN_FILES
     ${NGAP_ASN_DIR}/NGAP-Constants.asn
     ${NGAP_ASN_DIR}/NGAP-IEs.asn
     ${NGAP_ASN_DIR}/NGAP-Containers.asn
+    ${NGAP_ASN_DIR}/NGAP-PDU.asn
 
     )
-set (NGAP_C_DIR ${OPENAIR5GCNDIR}/build/amf/build/ASN1RELDIR)
-
+set (NGAP_C_DIR ${OPENAIR5GCNDIR}/build/amf/build/${ASN1RELDIR})
+#set (NGAP_C_DIR ${asn1_generated_dir}/${ASN1RELDIR})
+#execute_process(COMMAND ${asn1c_call} ${NGAP_C_DIR} ${NGAP_ASN_FILES})
+#file(GLOB NGAP_source ${NGAP_C_DIR}/*.c)
+message(${NGAP_C_DIR})
+set(NGAP_OAI_generated
+  ${NGAP_C_DIR}/ngap_decoder.c
+  ${NGAP_C_DIR}/ngap_encoder.c
+  ${NGAP_C_DIR}/ngap_xer_print.c
+  ${NGAP_C_DIR}/ngap_ies_defs.h
+  )
+#file(GLOB ngap_h ${NGAP_C_DIR}/*.h)
 #add_custom_command (
-#  OUTPUT ${NGAP_C_DIR}
+#  OUTPUT ${NGAP_OAI_generated}
 #  COMMAND ${asn1c_call} ${NGAP_C_DIR} ${NGAP_ASN_FILES}
-#  COMMAND python ${S1AP_DIR}/messages/asn1/asn1tostruct.py -f${S1AP_ASN_DIR}/NGAP-PDU-Contents.asn -o${NGAP_C_DIR}
+#  COMMAND python ${NGAP_DIR}/messages/asn1/asn1tostruct.py -f${NGAP_ASN_DIR}/NGAP-PDU-Contents.asn -o${NGAP_C_DIR}
 #  DEPENDS ${NGAP_ASN_FILES}
 #  )
+
+include_directories ("${NGAP_C_DIR}")
 
 ############################################################
 
@@ -77,7 +90,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2)
 
 
 
-
+#file(GLOB ASN1_C_FILES ${NGAP_C_DIR}/*.c)
+file(GLOB ASN1_C_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/*.c)
 
 file(GLOB SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/api/*.cpp
@@ -95,11 +109,18 @@ file(GLOB SRCS
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/conversions.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/sctp-5g/sctp_common.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_common.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_handlers.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_decoder.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/log.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/hashtable.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/obj_hashtable.c
+    #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_decoder.c
+    #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_encoder.c
+    #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_xer_print.c
+    #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/*.c
+    ${OPENAIR5GCN_DIR}/build/amf/build/r15.2/*.c
 )
 
-add_executable(${PROJECT_NAME} ${SRCS} ${ITTICFiles})
+add_executable(${PROJECT_NAME} ${SRCS} ${ITTICFiles} ${ASN1_C_FILES})
 target_link_libraries(${PROJECT_NAME} pistache pthread rt ${LFDS} sctp)
