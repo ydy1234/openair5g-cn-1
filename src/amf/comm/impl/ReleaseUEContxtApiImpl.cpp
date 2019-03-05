@@ -11,6 +11,17 @@
 */
 
 #include "ReleaseUEContxtApiImpl.h"
+#include "CreateUEContxtApiImpl.h"
+#include <unordered_map>
+#include <iostream>
+
+
+
+/// <summary>
+///
+/// </summary>
+
+extern std::unordered_map<std::string, org::openapitools::server::model::UeContext> RecordUEContext;
 
 namespace org {
 namespace openapitools {
@@ -24,8 +35,24 @@ ReleaseUEContxtApiImpl::ReleaseUEContxtApiImpl(std::shared_ptr<Pistache::Rest::R
     { }
 
 void ReleaseUEContxtApiImpl::release_ue_context(const std::string &ueContextId, const UEContextRelease &uEContextRelease, Pistache::Http::ResponseWriter &response) {
-    std::cout<<"ueContextId:"<<ueContextId<<"\nUEContextRelease:"<<uEContextRelease.toJson()<<std::endl;
-    response.send(Pistache::Http::Code::Ok, "ReleaseUeContext\n");
+    std::cout<<"Received:\nueContextId:"<<ueContextId<<"\nUEContextRelease:"<<uEContextRelease.toJson()<<std::endl;
+
+    if(RecordUEContext.find(ueContextId)!=RecordUEContext.end())
+    {
+        RecordUEContext.erase(ueContextId);
+        std::cout<<"Release:\nueContextId:"<<ueContextId<<"\nUEContextRelease"<<std::endl;
+        response.send(Pistache::Http::Code::No_Content, "ReleaseUeContext\n");
+    }else
+    {
+        using std::string;
+        string ResponseContent = "{\"cause\":\"CONTEXT_NOT_FOUND\"}";
+        response.send(
+                Pistache::Http::Code::Not_Found,
+                ResponseContent,
+                Pistache::Http::Mime::MediaType(Pistache::Http::Mime::Type::Application,Pistache::Http::Mime::Subtype::Json)
+                );
+    }
+
 }
 
 }

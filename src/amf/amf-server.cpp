@@ -56,6 +56,9 @@ static Pistache::Http::Endpoint *httpEndpoint;
 static void sigHandler(int sig){
     switch(sig){
         case SIGINT:
+            std::cout<<"Received signal SIGINT\n";
+            httpEndpoint->shutdown();
+            exit(1);
         case SIGQUIT:
         case SIGTERM:
         case SIGHUP:
@@ -107,6 +110,8 @@ void * demo_receiver_thread(__attribute__((unused)) void *args)
         }
 }
 
+std::unordered_map<std::string,org::openapitools::server::model::UeContext> RecordUEContext;
+//RecordUEContext.clear();
 //
 int main() {
 

@@ -33,7 +33,6 @@
 #include "UeContextCreateError.h"
 #include "UeContextCreatedData.h"
 #include <string>
-#include <unordered_map>
 
 namespace org {
 namespace openapitools {
