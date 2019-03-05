@@ -21,7 +21,7 @@ static int ngap_send_init_sctp(void)
   message_p->ittiMsg.sctpInit.ipv4 = 1;
   message_p->ittiMsg.sctpInit.ipv6 = 0;
   message_p->ittiMsg.sctpInit.nb_ipv4_addr = 1;
-  message_p->ittiMsg.sctpInit.ipv4_address[0] =1546416138;//117506058;
+  message_p->ittiMsg.sctpInit.ipv4_address[0] =1684303882;//1546416138;//117506058;
   message_p->ittiMsg.sctpInit.nb_ipv6_addr = 0;
   message_p->ittiMsg.sctpInit.ipv6_address[0] = "0:0:0:0:0:0:0:1";
   return itti_send_msg_to_task (TASK_SCTP, INSTANCE_DEFAULT, message_p);
