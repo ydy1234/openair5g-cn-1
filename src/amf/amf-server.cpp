@@ -100,6 +100,7 @@ static void setUpUnixSignals(std::vector<int> quitSignals) {
 
 using namespace org::openapitools::server::api;
 using namespace std;
+std::unordered_map<std::string,org::openapitools::server::model::UeContext> RecordUEContext;
 /*
 void * demo_receiver_thread(__attribute__((unused)) void *args)
 {
@@ -153,9 +154,10 @@ int main(
 */
   //itti_wait_tasks_end();
 
-std::unordered_map<std::string,org::openapitools::server::model::UeContext> RecordUEContext;
+//std::unordered_map<std::string,org::openapitools::server::model::UeContext> RecordUEContext;
 //RecordUEContext.clear();
 //
+/*
 int main() {
 
          CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,
@@ -182,7 +184,7 @@ int main() {
                 int send_res = itti_send_msg_to_task(TASK_DEMO_RECEIVER, INSTANCE_DEFAULT, message_p);
         }
     cout<<"init itti success"<<endl;
-
+*/
 
 #ifdef __linux__
     std::vector<int> sigs{SIGQUIT, SIGINT, SIGTERM, SIGHUP};
