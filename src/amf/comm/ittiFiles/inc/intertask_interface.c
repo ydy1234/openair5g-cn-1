@@ -878,7 +878,7 @@ itti_init (
   {
     char                                   *statistics = memory_pools_statistics (itti_desc.memory_pools_handle);
 
-    ITTI_DEBUG (ITTI_DEBUG_MP_STATISTICS, " Memory pools statistics:\n%s", statistics);
+//    ITTI_DEBUG (ITTI_DEBUG_MP_STATISTICS, " Memory pools statistics:\n%s", statistics);
     free_wrapper ((void **) &statistics);
   }
   itti_desc.vcd_poll_msg = 0;

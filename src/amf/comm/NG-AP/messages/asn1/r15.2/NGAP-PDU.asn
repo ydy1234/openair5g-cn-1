@@ -1,0 +1,431 @@
+NGAP-PDU {
+itu-t (0) identified-organization (4) etsi (0) mobileDomain (0)
+ngran-Access (22) modules (3) ngap (1) version1 (1) }
+
+DEFINITIONS AUTOMATIC TAGS ::=
+
+BEGIN
+
+IMPORTS
+    Criticality,
+    ProcedureCode,
+    ProtocolIE-ID
+
+FROM NGAP-CommonDataTypes
+
+    maxProtocolIEs
+
+FROM NGAP-Constants;
+
+NGAP-PDU ::= CHOICE {
+    initiatingMessage       InitiatingMessage,
+    successfulOutcome       SuccessfulOutcome,
+    unsuccessfulOutcome     UnsuccessfulOutcome,
+    ...
+}
+
+InitiatingMessage ::= SEQUENCE {
+    procedureCode   ProcedureCode,
+    criticality     Criticality,
+    value           ANY
+}
+
+SuccessfulOutcome ::= SEQUENCE {
+    procedureCode   ProcedureCode,
+    criticality     Criticality,
+    value           ANY
+}
+
+UnsuccessfulOutcome ::= SEQUENCE {
+    procedureCode   ProcedureCode,
+    criticality     Criticality,
+    value           ANY
+}
+
+PDUSessionResourceSetupRequest ::= SEQUENCE {
+    ngap-PDUSessionResourceSetupRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PDUSessionResourceSetupResponse ::= SEQUENCE {
+    ngap-PDUSessionResourceSetupResponse-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PDUSessionResourceReleaseCommand ::= SEQUENCE {
+    ngap-PDUSessionResourceReleaseCommand-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PDUSessionResourceReleaseResponse ::= SEQUENCE {
+    ngap-PDUSessionResourceReleaseResponse-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PDUSessionResourceModifyRequest ::= SEQUENCE {
+    ngap-PDUSessionResourceModifyRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PDUSessionResourceModifyResponse ::= SEQUENCE {
+    ngap-PDUSessionResourceModifyResponse-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PDUSessionResourceNotify ::= SEQUENCE {
+    ngap-PDUSessionResourceNotify-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PDUSessionResourceModifyIndication ::= SEQUENCE {
+    ngap-PDUSessionResourceModifyIndication-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PDUSessionResourceModifyConfirm ::= SEQUENCE {
+    ngap-PDUSessionResourceModifyConfirm-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+InitialContextSetupRequest ::= SEQUENCE {
+    ngap-InitialContextSetupRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+InitialContextSetupResponse ::= SEQUENCE {
+    ngap-InitialContextSetupResponse-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+InitialContextSetupFailure ::= SEQUENCE {
+    ngap-InitialContextSetupFailure-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UEContextReleaseRequest ::= SEQUENCE {
+    ngap-UEContextReleaseRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UEContextReleaseCommand ::= SEQUENCE {
+    ngap-UEContextReleaseCommand-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UEContextReleaseComplete ::= SEQUENCE {
+    ngap-UEContextReleaseComplete-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UEContextModificationRequest ::= SEQUENCE {
+    ngap-UEContextModificationRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UEContextModificationResponse ::= SEQUENCE {
+    ngap-UEContextModificationResponse-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UEContextModificationFailure ::= SEQUENCE {
+    ngap-UEContextModificationFailure-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+RRCInactiveTransitionReport ::= SEQUENCE {
+    ngap-RRCInactiveTransitionReport-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+HandoverRequired ::= SEQUENCE {
+    ngap-HandoverRequired-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+HandoverCommand ::= SEQUENCE {
+    ngap-HandoverCommand-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+HandoverPreparationFailure ::= SEQUENCE {
+    ngap-HandoverPreparationFailure-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+HandoverRequest ::= SEQUENCE {
+    ngap-HandoverRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+HandoverRequestAcknowledge ::= SEQUENCE {
+   ngap-HandoverRequestAcknowledge-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+HandoverFailure ::= SEQUENCE {
+    ngap-HandoverFailure-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+HandoverNotify ::= SEQUENCE {
+    ngap-HandoverNotify-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PathSwitchRequest ::= SEQUENCE {
+    ngap-PathSwitchRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PathSwitchRequestAcknowledge ::= SEQUENCE {
+    ngap-PathSwitchRequestAcknowledge-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PathSwitchRequestFailure ::= SEQUENCE {
+    ngap-PathSwitchRequestFailure-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+HandoverCancel ::= SEQUENCE {
+    ngap-HandoverCancel-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+HandoverCancelAcknowledge ::= SEQUENCE {
+    ngap-HandoverCancelAcknowledge-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UplinkRANStatusTransfer ::= SEQUENCE {
+    ngap-UplinkRANStatusTransfer-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+DownlinkRANStatusTransfer ::= SEQUENCE {
+    ngap-DownlinkRANStatusTransfer-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+Paging ::= SEQUENCE {
+    ngap-Paging-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+InitialUEMessage ::= SEQUENCE {
+    ngap-InitialUEMessage-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+DownlinkNASTransport ::= SEQUENCE {
+    ngap-DownlinkNASTransport-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UplinkNASTransport ::= SEQUENCE {
+    ngap-UplinkNASTransport-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+NASNonDeliveryIndication ::= SEQUENCE {
+    ngap-NASNonDeliveryIndication-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+RerouteNASRequest ::= SEQUENCE {
+    ngap-RerouteNASRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+NGSetupRequest ::= SEQUENCE {
+    ngap-NGSetupRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+NGSetupResponse ::= SEQUENCE {
+    ngap-NGSetupResponse-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+NGSetupFailure ::= SEQUENCE {
+    ngap-NGSetupFailure-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+RANConfigurationUpdate ::= SEQUENCE {
+    ngap-RANConfigurationUpdate-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+RANConfigurationUpdateAcknowledge ::= SEQUENCE {
+    ngap-RANConfigurationUpdateAcknowledge-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+RANConfigurationUpdateFailure ::= SEQUENCE {
+    ngap-RANConfigurationUpdateFailure-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+AMFConfigurationUpdate ::= SEQUENCE {
+    ngap-AMFConfigurationUpdate-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+AMFConfigurationUpdateAcknowledge ::= SEQUENCE {
+    ngap-AMFConfigurationUpdateAcknowledge-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+AMFConfigurationUpdateFailure ::= SEQUENCE {
+    ngap-AMFConfigurationUpdateFailure-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+AMFStatusIndication ::= SEQUENCE {
+    ngap-AMFStatusIndication-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+NGReset ::= SEQUENCE {
+    ngap-NGReset-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+NGResetAcknowledge ::= SEQUENCE {
+    ngap-NGResetAcknowledge-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+ErrorIndication ::= SEQUENCE {
+    ngap-ErrorIndication-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+OverloadStart ::= SEQUENCE {
+    ngap-OverloadStart-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UplinkRANConfigurationTransfer ::= SEQUENCE {
+    ngap-UplinkRANConfigurationTransfer-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+DownlinkRANConfigurationTransfer ::= SEQUENCE {
+    ngap-DownlinkRANConfigurationTransfer-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+WriteReplaceWarningRequest ::= SEQUENCE {
+    ngap-WriteReplaceWarningRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+WriteReplaceWarningResponse ::= SEQUENCE {
+    ngap-WriteReplaceWarningResponse-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PWSCancelRequest ::= SEQUENCE {
+    ngap-PWSCancelRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PWSCancelResponse ::= SEQUENCE {
+    ngap-PWSCancelResponse-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PWSRestartIndication ::= SEQUENCE {
+    ngap-PWSRestartIndication-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+PWSFailureIndication ::= SEQUENCE {
+    ngap-PWSFailureIndication-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+DownlinkUEAssociatedNRPPaTransport ::= SEQUENCE {
+    ngap-DownlinkUEAssociatedNRPPaTransport-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UplinkUEAssociatedNRPPaTransport ::= SEQUENCE {
+    ngap-UplinkUEAssociatedNRPPaTransport-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+DownlinkNonUEAssociatedNRPPaTransport ::= SEQUENCE {
+    ngap-DownlinkNonUEAssociatedNRPPaTransport-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UplinkNonUEAssociatedNRPPaTransport ::= SEQUENCE {
+    ngap-UplinkNonUEAssociatedNRPPaTransport-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+TraceStart ::= SEQUENCE {
+    ngap-TraceStart-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+TraceFailureIndication ::= SEQUENCE {
+    ngap-TraceFailureIndication-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+DeactivateTrace ::= SEQUENCE {
+    ngap-DeactivateTrace-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+CellTrafficTrace ::= SEQUENCE {
+    ngap-CellTrafficTrace-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+LocationReportingControl ::= SEQUENCE {
+    ngap-LocationReportingControl-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+LocationReportingFailureIndication ::= SEQUENCE {
+    ngap-LocationReportingFailureIndication-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+LocationReport ::= SEQUENCE {
+    ngap-LocationReport-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UETNLABindingReleaseRequest ::= SEQUENCE {
+    ngap-UETNLABindingReleaseRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UERadioCapabilityInfoIndication ::= SEQUENCE {
+    ngap-UERadioCapabilityInfoIndication-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UERadioCapabilityCheckRequest ::= SEQUENCE {
+    ngap-UERadioCapabilityCheckRequest-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+UERadioCapabilityCheckResponse ::= SEQUENCE {
+    ngap-UERadioCapabilityCheckResponse-ies SEQUENCE (SIZE (0..maxProtocolIEs)) OF Ngap-IE,
+    ...
+}
+
+Ngap-IE ::= SEQUENCE {
+    id          ProtocolIE-ID,
+    criticality Criticality,
+    value       ANY
+}
+
+END

@@ -144,8 +144,13 @@ function main()
   cd ${OPENAIR5GCN_DIR}/build/amf/build  
   #cd $OPENAIR5GCN_DIR/build/amf/amf-comm/build
   mkdir r15.2
-  $OPENAIR5GCN_DIR/build/tools/generate_asn1 ./r15.2 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/test/*.asn
+  #$OPENAIR5GCN_DIR/build/tools/generate_asn1 ./r15.2 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/test/*.asn
+  asn1c -pdu=all -fcompound-names -fno-include-deps -gen-PER -gen-OER -no-gen-example -D r15.2 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/test/*.asn
+  #asn1c -D r15.2 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/test/*.asn
   python2.7 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/asn1tostruct.py -f $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/NGAP-PDU-Contents.asn -o ./r15.2
+  #python2.7 $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/asn1tostruct.py -f $OPENAIR5GCN_DIR/src/amf/comm/NG-AP/messages/asn1/r15.2/NGAP-PDU-Descriptions.asn -o ./r15.2
+
+
   $CMAKE $cmake_args .. > /dev/null
   #compilations amf-comm amf-comm amf-comm $verbose
   compilations amf amf amf $verbose

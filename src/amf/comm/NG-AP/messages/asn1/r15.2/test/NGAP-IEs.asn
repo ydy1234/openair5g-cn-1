@@ -29,52 +29,52 @@ IMPORTS
 	id-SecurityIndication,
 	id-UL-NGU-UP-TNLInformation,
 	id-UL-NGU-UP-TNLModifyList,
-	maxnoofAllowedAreas,
-	maxnoofAllowedS-NSSAIs,
-	maxnoofBPLMNs,
-	maxnoofCellIDforWarning,
-	maxnoofCellinAoI,
-	maxnoofCellinEAI,
-	maxnoofCellsingNB,
-	maxnoofCellsinngeNB,
-	maxnoofCellinTAI,
-	maxnoofCellsinUEHistoryInfo,
-	maxnoofCellsUEMovingTrajectory,
-	maxnoofDRBs,
-	maxnoofEmergencyAreaID,
-	maxnoofEAIforRestart,
-	maxnoofEPLMNs,
-	maxnoofEPLMNsPlusOne,
-	maxnoofE-RABs,
-	maxnoofErrors,
-	maxnoofForbTACs,
-	maxnoofMultiConnectivities,
-	maxnoofNGConnectionsToReset,
-	maxnoofPDUSessions,
-	maxnoofPLMNs,
-	maxnoofQosFlows,
-	maxnoofRANNodeinAoI,
-	maxnoofRecommendedCells,
-	maxnoofRecommendedRANNodes,
-	maxnoofAoI,
-	maxnoofServedGUAMIs,
-	maxnoofSliceItems,
-	maxnoofTACs,
-	maxnoofTAIforInactive,
-	maxnoofTAIforPaging,
-	maxnoofTAIforRestart,
-	maxnoofTAIforWarning,
-	maxnoofTAIinAoI,
-	maxnoofTNLAssociations,
-	maxnoofXnExtTLAs,
-	maxnoofXnGTP-TLAs,
-	maxnoofXnTLAs
+	ngap-maxnoofAllowedAreas,
+	ngap-maxnoofAllowedS-NSSAIs,
+	ngap-maxnoofBPLMNs,
+	ngap-maxnoofCellIDforWarning,
+	ngap-maxnoofCellinAoI,
+	ngap-maxnoofCellinEAI,
+	ngap-maxnoofCellsingNB,
+	ngap-maxnoofCellsinngeNB,
+	ngap-maxnoofCellinTAI,
+	ngap-maxnoofCellsinUEHistoryInfo,
+	ngap-maxnoofCellsUEMovingTrajectory,
+	ngap-maxnoofDRBs,
+	ngap-maxnoofEmergencyAreaID,
+	ngap-maxnoofEAIforRestart,
+	ngap-maxnoofEPLMNs,
+	ngap-maxnoofEPLMNsPlusOne,
+	ngap-maxnoofE-RABs,
+	ngap-maxnoofErrors,
+	ngap-maxnoofForbTACs,
+	ngap-maxnoofMultiConnectivities,
+	ngap-maxnoofNGConnectionsToReset,
+	ngap-maxnoofPDUSessions,
+	ngap-maxnoofPLMNs,
+	ngap-maxnoofQosFlows,
+	ngap-maxnoofRANNodeinAoI,
+	ngap-maxnoofRecommendedCells,
+	ngap-maxnoofRecommendedRANNodes,
+	ngap-maxnoofAoI,
+	ngap-maxnoofServedGUAMIs,
+	ngap-maxnoofSliceItems,
+	ngap-maxnoofTACs,
+	ngap-maxnoofTAIforInactive,
+	ngap-maxnoofTAIforPaging,
+	ngap-maxnoofTAIforRestart,
+	ngap-maxnoofTAIforWarning,
+	ngap-maxnoofTAIinAoI,
+	ngap-maxnoofTNLAssociations,
+	ngap-maxnoofXnExtTLAs,
+	ngap-maxnoofXnGTP-TLAs,
+	ngap-maxnoofXnTLAs
 FROM NGAP-Constants
 
-	Criticality,
-	ProcedureCode,
-	ProtocolIE-ID,
-	TriggeringMessage
+	 Ngap-Criticality,
+	 Ngap-ProcedureCode,
+	 Ngap-ProtocolIE-ID,
+	 Ngap-TriggeringMessage
 FROM NGAP-CommonDataTypes
 
 	ProtocolExtensionContainer{},
@@ -103,7 +103,7 @@ AllocationAndRetentionPriority-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AllowedNSSAI ::= SEQUENCE (SIZE(1..maxnoofAllowedS-NSSAIs)) OF AllowedNSSAI-Item
+AllowedNSSAI ::= SEQUENCE (SIZE(1..ngap-maxnoofAllowedS-NSSAIs)) OF AllowedNSSAI-Item
 
 AllowedNSSAI-Item ::= SEQUENCE {
 	s-NSSAI				S-NSSAI,
@@ -115,7 +115,7 @@ AllowedNSSAI-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AllowedTACs ::= SEQUENCE (SIZE(1..maxnoofAllowedAreas)) OF TAC
+AllowedTACs ::= SEQUENCE (SIZE(1..ngap-maxnoofAllowedAreas)) OF TAC
 
 AMFName ::= PrintableString (SIZE(1..150, ...))
 
@@ -133,23 +133,23 @@ AMFPointer ::= BIT STRING (SIZE(6))
 
 AMFRegionID ::= BIT STRING (SIZE(8))
 
-AMFSetID ::= BIT STRING (SIZE(10))
+ AMFSetID ::= BIT STRING (SIZE(10))
 
-AMF-TNLAssociationSetupList ::= SEQUENCE (SIZE(1..maxnoofTNLAssociations)) OF AMF-TNLAssociationSetupItem
+ AMF-TNLAssociationSetupList ::= SEQUENCE (SIZE(1..ngap-maxnoofTNLAssociations)) OF AMF-TNLAssociationSetupItem
 
-AMF-TNLAssociationSetupItem ::= SEQUENCE {
+ AMF-TNLAssociationSetupItem ::= SEQUENCE {
 	aMF-TNLAssociationAddress		CPTransportLayerInformation,
 	iE-Extensions		ProtocolExtensionContainer { {AMF-TNLAssociationSetupItem-ExtIEs} }	OPTIONAL,
 	...
 }
 
-AMF-TNLAssociationSetupItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AMF-TNLAssociationSetupItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AMF-TNLAssociationToAddList ::= SEQUENCE (SIZE(1..maxnoofTNLAssociations)) OF AMF-TNLAssociationToAddItem
+ AMF-TNLAssociationToAddList ::= SEQUENCE (SIZE(1..ngap-maxnoofTNLAssociations)) OF AMF-TNLAssociationToAddItem
 
-AMF-TNLAssociationToAddItem ::= SEQUENCE {
+ AMF-TNLAssociationToAddItem ::= SEQUENCE {
 	aMF-TNLAssociationAddress		CPTransportLayerInformation,
 	tNLAssociationUsage				TNLAssociationUsage										OPTIONAL,
 	tNLAddressWeightFactor			TNLAddressWeightFactor,
@@ -157,25 +157,25 @@ AMF-TNLAssociationToAddItem ::= SEQUENCE {
 	...
 }
 
-AMF-TNLAssociationToAddItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AMF-TNLAssociationToAddItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AMF-TNLAssociationToRemoveList ::= SEQUENCE (SIZE(1..maxnoofTNLAssociations)) OF AMF-TNLAssociationToRemoveItem
+ AMF-TNLAssociationToRemoveList ::= SEQUENCE (SIZE(1..ngap-maxnoofTNLAssociations)) OF AMF-TNLAssociationToRemoveItem
 
-AMF-TNLAssociationToRemoveItem ::= SEQUENCE {
+ AMF-TNLAssociationToRemoveItem ::= SEQUENCE {
 	aMF-TNLAssociationAddress		CPTransportLayerInformation,
 	iE-Extensions		ProtocolExtensionContainer { {AMF-TNLAssociationToRemoveItem-ExtIEs} }	OPTIONAL,
 	...
 }
 
-AMF-TNLAssociationToRemoveItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AMF-TNLAssociationToRemoveItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AMF-TNLAssociationToUpdateList ::= SEQUENCE (SIZE(1..maxnoofTNLAssociations)) OF AMF-TNLAssociationToUpdateItem
+ AMF-TNLAssociationToUpdateList ::= SEQUENCE (SIZE(1..ngap-maxnoofTNLAssociations)) OF AMF-TNLAssociationToUpdateItem
 
-AMF-TNLAssociationToUpdateItem ::= SEQUENCE {
+ AMF-TNLAssociationToUpdateItem ::= SEQUENCE {
 	aMF-TNLAssociationAddress		CPTransportLayerInformation,
 	tNLAssociationUsage				TNLAssociationUsage											OPTIONAL,
 	tNLAddressWeightFactor			TNLAddressWeightFactor										OPTIONAL,
@@ -183,13 +183,13 @@ AMF-TNLAssociationToUpdateItem ::= SEQUENCE {
 	...
 }
 
-AMF-TNLAssociationToUpdateItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AMF-TNLAssociationToUpdateItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AMF-UE-NGAP-ID ::= INTEGER (0..1099511627775)
+ AMF-UE-NGAP-ID ::= INTEGER (0..1099511627775)
 
-AreaOfInterest ::= SEQUENCE {
+ AreaOfInterest ::= SEQUENCE {
 	areaOfInterestTAIList			AreaOfInterestTAIList						OPTIONAL,
 	areaOfInterestCellList			AreaOfInterestCellList						OPTIONAL,
  	areaOfInterestRANNodeList		AreaOfInterestRANNodeList					OPTIONAL,
@@ -197,100 +197,100 @@ AreaOfInterest ::= SEQUENCE {
 	...
 }
 
-AreaOfInterest-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AreaOfInterest-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AreaOfInterestCellList ::= SEQUENCE (SIZE(1..maxnoofCellinAoI)) OF AreaOfInterestCellItem
+ AreaOfInterestCellList ::= SEQUENCE (SIZE(1..ngap-maxnoofCellinAoI)) OF AreaOfInterestCellItem
 
-AreaOfInterestCellItem ::= SEQUENCE {
+ AreaOfInterestCellItem ::= SEQUENCE {
 	nGRAN-CGI			NGRAN-CGI,
 	iE-Extensions		ProtocolExtensionContainer { {AreaOfInterestCellItem-ExtIEs} }	OPTIONAL,
 	...
 }
 
-AreaOfInterestCellItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AreaOfInterestCellItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AreaOfInterestList ::= SEQUENCE (SIZE(1..maxnoofAoI)) OF AreaOfInterestItem
+ AreaOfInterestList ::= SEQUENCE (SIZE(1..ngap-maxnoofAoI)) OF AreaOfInterestItem
 
-AreaOfInterestItem ::= SEQUENCE {
+ AreaOfInterestItem ::= SEQUENCE {
 	areaOfInterest						AreaOfInterest,
 	locationReportingReferenceID		LocationReportingReferenceID,
 	iE-Extensions		ProtocolExtensionContainer { {AreaOfInterestItem-ExtIEs} }	OPTIONAL,
 	...
 }
 
-AreaOfInterestItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AreaOfInterestItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AreaOfInterestRANNodeList ::= SEQUENCE (SIZE(1..maxnoofRANNodeinAoI)) OF AreaOfInterestRANNodeItem
+ AreaOfInterestRANNodeList ::= SEQUENCE (SIZE(1..ngap-maxnoofRANNodeinAoI)) OF AreaOfInterestRANNodeItem
 
-AreaOfInterestRANNodeItem ::= SEQUENCE {
+ AreaOfInterestRANNodeItem ::= SEQUENCE {
 	globalRANNodeID		GlobalRANNodeID,
 	iE-Extensions		ProtocolExtensionContainer { {AreaOfInterestRANNodeItem-ExtIEs} }	OPTIONAL,
 	...
 }
 
-AreaOfInterestRANNodeItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AreaOfInterestRANNodeItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AreaOfInterestTAIList ::= SEQUENCE (SIZE(1..maxnoofTAIinAoI)) OF AreaOfInterestTAIItem
+ AreaOfInterestTAIList ::= SEQUENCE (SIZE(1..ngap-maxnoofTAIinAoI)) OF AreaOfInterestTAIItem
 
-AreaOfInterestTAIItem ::= SEQUENCE {
+ AreaOfInterestTAIItem ::= SEQUENCE {
 	tAI					TAI,
 	iE-Extensions		ProtocolExtensionContainer { {AreaOfInterestTAIItem-ExtIEs} }	OPTIONAL,
 	...
 }
 
-AreaOfInterestTAIItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AreaOfInterestTAIItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AssistanceDataForPaging ::= SEQUENCE {
+ AssistanceDataForPaging ::= SEQUENCE {
 	assistanceDataForRecommendedCells		AssistanceDataForRecommendedCells			OPTIONAL,
 	pagingAttemptInformation				PagingAttemptInformation					OPTIONAL,
 	iE-Extensions		ProtocolExtensionContainer { {AssistanceDataForPaging-ExtIEs} } OPTIONAL,
 	...
 }
 
-AssistanceDataForPaging-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AssistanceDataForPaging-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AssistanceDataForRecommendedCells ::= SEQUENCE {
+ AssistanceDataForRecommendedCells ::= SEQUENCE {
 	recommendedCellsForPaging		RecommendedCellsForPaging, 
 	iE-Extensions		ProtocolExtensionContainer { {AssistanceDataForRecommendedCells-ExtIEs} }	OPTIONAL,
 	...
 }
 
-AssistanceDataForRecommendedCells-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AssistanceDataForRecommendedCells-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AssociatedQosFlowList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF AssociatedQosFlowItem
+ AssociatedQosFlowList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF AssociatedQosFlowItem
 
-AssociatedQosFlowItem ::= SEQUENCE {
+ AssociatedQosFlowItem ::= SEQUENCE {
 	qosFlowIdentifier				QosFlowIdentifier,
 	qosFlowMappingIndication		ENUMERATED {ul, dl, ...}							OPTIONAL,
 	iE-Extensions		ProtocolExtensionContainer { {AssociatedQosFlowItem-ExtIEs} }	OPTIONAL,
 	...
 }
 
-AssociatedQosFlowItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ AssociatedQosFlowItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-AveragingWindow ::= INTEGER (0..4095, ...)
+ AveragingWindow ::= INTEGER (0..4095, ...)
 
 -- B
 
-BitRate	::= INTEGER (0..4000000000000, ...) 
+ BitRate	::= INTEGER (0..4000000000000, ...) 
 
-BroadcastCancelledAreaList ::= CHOICE {
+ BroadcastCancelledAreaList ::= CHOICE {
 	cellIDCancelledEUTRA				CellIDCancelledEUTRA,
 	tAICancelledEUTRA					TAICancelledEUTRA,
 	emergencyAreaIDCancelledEUTRA		EmergencyAreaIDCancelledEUTRA,
@@ -300,11 +300,11 @@ BroadcastCancelledAreaList ::= CHOICE {
 	choice-Extensions		ProtocolIE-SingleContainer { {BroadcastCancelledAreaList-ExtIEs} }
 }
 
-BroadcastCancelledAreaList-ExtIEs NGAP-PROTOCOL-IES ::= {
+ BroadcastCancelledAreaList-ExtIEs NGAP-PROTOCOL-IES ::= {
 	...
 }
 
-BroadcastCompletedAreaList ::= CHOICE {
+ BroadcastCompletedAreaList ::= CHOICE {
 	cellIDBroadcastEUTRA				CellIDBroadcastEUTRA,
 	tAIBroadcastEUTRA					TAIBroadcastEUTRA,
 	emergencyAreaIDBroadcastEUTRA		EmergencyAreaIDBroadcastEUTRA,
@@ -314,83 +314,83 @@ BroadcastCompletedAreaList ::= CHOICE {
 	choice-Extensions		ProtocolIE-SingleContainer { {BroadcastCompletedAreaList-ExtIEs} }
 }
 
-BroadcastCompletedAreaList-ExtIEs NGAP-PROTOCOL-IES ::= {
+ BroadcastCompletedAreaList-ExtIEs NGAP-PROTOCOL-IES ::= {
 	...
 }
 
-BroadcastPLMNList ::= SEQUENCE (SIZE(1..maxnoofBPLMNs)) OF BroadcastPLMNItem
+ BroadcastPLMNList ::= SEQUENCE (SIZE(1..ngap-maxnoofBPLMNs)) OF BroadcastPLMNItem
 
-BroadcastPLMNItem ::= SEQUENCE {
+ BroadcastPLMNItem ::= SEQUENCE {
 	pLMNIdentity			PLMNIdentity,
 	tAISliceSupportList		SliceSupportList,
 	iE-Extensions		ProtocolExtensionContainer { {BroadcastPLMNItem-ExtIEs} } OPTIONAL,
 	...
 }
 
-BroadcastPLMNItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ BroadcastPLMNItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
 -- C
 
-CancelAllWarningMessages ::= ENUMERATED {
+ CancelAllWarningMessages ::= ENUMERATED {
 	true,
 	...
 }
 
-CancelledCellsInEAI-EUTRA ::= SEQUENCE (SIZE(1..maxnoofCellinEAI)) OF CancelledCellsInEAI-EUTRA-Item
+ CancelledCellsInEAI-EUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofCellinEAI)) OF CancelledCellsInEAI-EUTRA-Item
 
-CancelledCellsInEAI-EUTRA-Item ::= SEQUENCE {
+ CancelledCellsInEAI-EUTRA-Item ::= SEQUENCE {
 	eUTRA-CGI				EUTRA-CGI,
 	numberOfBroadcasts		NumberOfBroadcasts,
 	iE-Extensions		ProtocolExtensionContainer { {CancelledCellsInEAI-EUTRA-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CancelledCellsInEAI-EUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CancelledCellsInEAI-EUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CancelledCellsInEAI-NR ::= SEQUENCE (SIZE(1..maxnoofCellinEAI)) OF CancelledCellsInEAI-NR-Item
+ CancelledCellsInEAI-NR ::= SEQUENCE (SIZE(1..ngap-maxnoofCellinEAI)) OF CancelledCellsInEAI-NR-Item
 
-CancelledCellsInEAI-NR-Item ::= SEQUENCE {
+ CancelledCellsInEAI-NR-Item ::= SEQUENCE {
 	nR-CGI					NR-CGI,
 	numberOfBroadcasts		NumberOfBroadcasts,
 	iE-Extensions		ProtocolExtensionContainer { {CancelledCellsInEAI-NR-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CancelledCellsInEAI-NR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CancelledCellsInEAI-NR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CancelledCellsInTAI-EUTRA ::= SEQUENCE (SIZE(1..maxnoofCellinTAI)) OF CancelledCellsInTAI-EUTRA-Item
+ CancelledCellsInTAI-EUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofCellinTAI)) OF CancelledCellsInTAI-EUTRA-Item
 
-CancelledCellsInTAI-EUTRA-Item ::= SEQUENCE {
+ CancelledCellsInTAI-EUTRA-Item ::= SEQUENCE {
 	eUTRA-CGI				EUTRA-CGI,
 	numberOfBroadcasts		NumberOfBroadcasts,
 	iE-Extensions		ProtocolExtensionContainer { {CancelledCellsInTAI-EUTRA-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CancelledCellsInTAI-EUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CancelledCellsInTAI-EUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CancelledCellsInTAI-NR ::= SEQUENCE (SIZE(1..maxnoofCellinTAI)) OF CancelledCellsInTAI-NR-Item
+ CancelledCellsInTAI-NR ::= SEQUENCE (SIZE(1..ngap-maxnoofCellinTAI)) OF CancelledCellsInTAI-NR-Item
 
-CancelledCellsInTAI-NR-Item ::= SEQUENCE{
+ CancelledCellsInTAI-NR-Item ::= SEQUENCE{
 	nR-CGI					NR-CGI,
 	numberOfBroadcasts		NumberOfBroadcasts,
 	iE-Extensions		ProtocolExtensionContainer { {CancelledCellsInTAI-NR-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CancelledCellsInTAI-NR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CancelledCellsInTAI-NR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-Cause ::= CHOICE {
+ Cause ::= CHOICE {
 	radioNetwork		CauseRadioNetwork,
 	transport			CauseTransport,
 	nas					CauseNas,
@@ -399,11 +399,11 @@ Cause ::= CHOICE {
 	choice-Extensions		ProtocolIE-SingleContainer { {Cause-ExtIEs} }
 }
 
-Cause-ExtIEs NGAP-PROTOCOL-IES ::= {
+ Cause-ExtIEs NGAP-PROTOCOL-IES ::= {
 	...
 }
 
-CauseMisc ::= ENUMERATED {
+ CauseMisc ::= ENUMERATED {
 	control-processing-overload,
 	not-enough-user-plane-processing-resources,
 	hardware-failure,
@@ -413,7 +413,7 @@ CauseMisc ::= ENUMERATED {
 	...
 }
 
-CauseNas ::= ENUMERATED {
+ CauseNas ::= ENUMERATED {
 	normal-release,
 	authentication-failure,
 	deregister,
@@ -421,7 +421,7 @@ CauseNas ::= ENUMERATED {
 	...
 }
 
-CauseProtocol ::= ENUMERATED {
+ CauseProtocol ::= ENUMERATED {
 	transfer-syntax-error,
 	abstract-syntax-error-reject,
 	abstract-syntax-error-ignore-and-notify,
@@ -432,7 +432,7 @@ CauseProtocol ::= ENUMERATED {
 	...
 }
 
-CauseRadioNetwork ::= ENUMERATED {
+ CauseRadioNetwork ::= ENUMERATED {
 	unspecified,
 	txnrelocoverall-expiry,
 	successful-handover,
@@ -481,152 +481,152 @@ CauseRadioNetwork ::= ENUMERATED {
 	...
 }
 
-CauseTransport ::= ENUMERATED {
+ CauseTransport ::= ENUMERATED {
 	transport-resource-unavailable,
 	unspecified,
 	...
 }
 
-CellIDBroadcastEUTRA ::= SEQUENCE (SIZE(1..maxnoofCellIDforWarning)) OF CellIDBroadcastEUTRA-Item
+ CellIDBroadcastEUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofCellIDforWarning)) OF CellIDBroadcastEUTRA-Item
 
-CellIDBroadcastEUTRA-Item ::= SEQUENCE {
+ CellIDBroadcastEUTRA-Item ::= SEQUENCE {
 	eUTRA-CGI			EUTRA-CGI,
 	iE-Extensions		ProtocolExtensionContainer { {CellIDBroadcastEUTRA-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CellIDBroadcastEUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CellIDBroadcastEUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CellIDBroadcastNR ::= SEQUENCE (SIZE(1..maxnoofCellIDforWarning)) OF CellIDBroadcastNR-Item
+ CellIDBroadcastNR ::= SEQUENCE (SIZE(1..ngap-maxnoofCellIDforWarning)) OF CellIDBroadcastNR-Item
 
-CellIDBroadcastNR-Item ::= SEQUENCE {
+ CellIDBroadcastNR-Item ::= SEQUENCE {
 	nR-CGI				NR-CGI,
 	iE-Extensions		ProtocolExtensionContainer { {CellIDBroadcastNR-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CellIDBroadcastNR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CellIDBroadcastNR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CellIDCancelledEUTRA ::= SEQUENCE (SIZE(1..maxnoofCellIDforWarning)) OF CellIDCancelledEUTRA-Item
+ CellIDCancelledEUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofCellIDforWarning)) OF CellIDCancelledEUTRA-Item
 
-CellIDCancelledEUTRA-Item ::= SEQUENCE {
+ CellIDCancelledEUTRA-Item ::= SEQUENCE {
 	eUTRA-CGI				EUTRA-CGI,
 	numberOfBroadcasts		NumberOfBroadcasts,
 	iE-Extensions		ProtocolExtensionContainer { {CellIDCancelledEUTRA-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CellIDCancelledEUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CellIDCancelledEUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CellIDCancelledNR ::= SEQUENCE (SIZE(1..maxnoofCellIDforWarning)) OF CellIDCancelledNR-Item
+ CellIDCancelledNR ::= SEQUENCE (SIZE(1..ngap-maxnoofCellIDforWarning)) OF CellIDCancelledNR-Item
 
-CellIDCancelledNR-Item ::= SEQUENCE {
+ CellIDCancelledNR-Item ::= SEQUENCE {
 	nR-CGI					NR-CGI,
 	numberOfBroadcasts		NumberOfBroadcasts,
 	iE-Extensions		ProtocolExtensionContainer { {CellIDCancelledNR-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CellIDCancelledNR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CellIDCancelledNR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CellIDListForRestart ::= CHOICE {
+ CellIDListForRestart ::= CHOICE {
 	eUTRA-CGIListforRestart		EUTRA-CGIList,
 	nR-CGIListforRestart		NR-CGIList,
 	choice-Extensions		ProtocolIE-SingleContainer { {CellIDListForRestart-ExtIEs} }
 }
 
-CellIDListForRestart-ExtIEs NGAP-PROTOCOL-IES ::= {
+ CellIDListForRestart-ExtIEs NGAP-PROTOCOL-IES ::= {
 	...
 }
 
-CellSize ::= ENUMERATED {verysmall, small, medium, large, ...}
+ CellSize ::= ENUMERATED {verysmall, small, medium, large, ...}
 
 
-CellType ::= SEQUENCE {
+ CellType ::= SEQUENCE {
 	cellSize		CellSize,
 	iE-Extensions		ProtocolExtensionContainer { {CellType-ExtIEs} }	OPTIONAL,
 	...
 }
 
-CellType-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CellType-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CompletedCellsInEAI-EUTRA ::= SEQUENCE (SIZE(1..maxnoofCellinEAI)) OF CompletedCellsInEAI-EUTRA-Item
+ CompletedCellsInEAI-EUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofCellinEAI)) OF CompletedCellsInEAI-EUTRA-Item
 
-CompletedCellsInEAI-EUTRA-Item ::= SEQUENCE {
+ CompletedCellsInEAI-EUTRA-Item ::= SEQUENCE {
 	eUTRA-CGI			EUTRA-CGI,
 	iE-Extensions		ProtocolExtensionContainer { {CompletedCellsInEAI-EUTRA-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CompletedCellsInEAI-EUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CompletedCellsInEAI-EUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CompletedCellsInEAI-NR ::= SEQUENCE (SIZE(1..maxnoofCellinEAI)) OF CompletedCellsInEAI-NR-Item
+ CompletedCellsInEAI-NR ::= SEQUENCE (SIZE(1..ngap-maxnoofCellinEAI)) OF CompletedCellsInEAI-NR-Item
 
-CompletedCellsInEAI-NR-Item ::= SEQUENCE {
+ CompletedCellsInEAI-NR-Item ::= SEQUENCE {
 	nR-CGI				NR-CGI,
 	iE-Extensions		ProtocolExtensionContainer { {CompletedCellsInEAI-NR-Item-ExtIEs} }	OPTIONAL,
 	...
 }
 
-CompletedCellsInEAI-NR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CompletedCellsInEAI-NR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CompletedCellsInTAI-EUTRA ::= SEQUENCE (SIZE(1..maxnoofCellinTAI)) OF CompletedCellsInTAI-EUTRA-Item
+ CompletedCellsInTAI-EUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofCellinTAI)) OF CompletedCellsInTAI-EUTRA-Item
 
-CompletedCellsInTAI-EUTRA-Item ::= SEQUENCE{
+ CompletedCellsInTAI-EUTRA-Item ::= SEQUENCE{
 	eUTRA-CGI			EUTRA-CGI,
 	iE-Extensions		ProtocolExtensionContainer { {CompletedCellsInTAI-EUTRA-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CompletedCellsInTAI-EUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CompletedCellsInTAI-EUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CompletedCellsInTAI-NR ::= SEQUENCE (SIZE(1..maxnoofCellinTAI)) OF CompletedCellsInTAI-NR-Item
+ CompletedCellsInTAI-NR ::= SEQUENCE (SIZE(1..ngap-maxnoofCellinTAI)) OF CompletedCellsInTAI-NR-Item
 
-CompletedCellsInTAI-NR-Item ::= SEQUENCE{
+ CompletedCellsInTAI-NR-Item ::= SEQUENCE{
 	nR-CGI				NR-CGI,
 	iE-Extensions		ProtocolExtensionContainer { {CompletedCellsInTAI-NR-Item-ExtIEs} } OPTIONAL,
 	...
 }
 
-CompletedCellsInTAI-NR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CompletedCellsInTAI-NR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-ConcurrentWarningMessageInd ::= ENUMERATED {
+ ConcurrentWarningMessageInd ::= ENUMERATED {
 	true,
 	...
 }
 
-ConfidentialityProtectionIndication ::= ENUMERATED {
+ ConfidentialityProtectionIndication ::= ENUMERATED {
 	required,
 	preferred,
 	not-needed,
 	...
 }
 
-ConfidentialityProtectionResult ::= ENUMERATED {
+ ConfidentialityProtectionResult ::= ENUMERATED {
 	performed,
 	not-performed,
 	...
 }
 
-CoreNetworkAssistanceInformation ::= SEQUENCE {
+ CoreNetworkAssistanceInformation ::= SEQUENCE {
 	uEIdentityIndexValue				UEIdentityIndexValue,
 	uESpecificDRX						PagingDRX													OPTIONAL,
 	periodicRegistrationUpdateTimer		PeriodicRegistrationUpdateTimer,
@@ -637,45 +637,45 @@ CoreNetworkAssistanceInformation ::= SEQUENCE {
 	...
 }
 
-CoreNetworkAssistanceInformation-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ CoreNetworkAssistanceInformation-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-COUNTValueForPDCP-SN12 ::= SEQUENCE {
+ COUNTValueForPDCP-SN12 ::= SEQUENCE {
 	pDCP-SN12			INTEGER (0..4095),
 	hFN-PDCP-SN12		INTEGER (0..1048575),
 	iE-Extensions		ProtocolExtensionContainer { {COUNTValueForPDCP-SN12-ExtIEs} }	OPTIONAL,
 	...
 }
 
-COUNTValueForPDCP-SN12-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ COUNTValueForPDCP-SN12-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-COUNTValueForPDCP-SN18 ::= SEQUENCE {
+ COUNTValueForPDCP-SN18 ::= SEQUENCE {
 	pDCP-SN18			INTEGER (0..262143),
 	hFN-PDCP-SN18		INTEGER (0..16383),
 	iE-Extensions		ProtocolExtensionContainer { {COUNTValueForPDCP-SN18-ExtIEs} }	OPTIONAL,
 	...
 }
 
-COUNTValueForPDCP-SN18-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+ COUNTValueForPDCP-SN18-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CPTransportLayerInformation ::= CHOICE {
+ CPTransportLayerInformation ::= CHOICE {
 	endpointIPAddress		TransportLayerAddress,
 	choice-Extensions		ProtocolIE-SingleContainer { {CPTransportLayerInformation-ExtIEs} }
 }
 
-CPTransportLayerInformation-ExtIEs NGAP-PROTOCOL-IES ::= {
+ CPTransportLayerInformation-ExtIEs NGAP-PROTOCOL-IES ::= {
 	...
 }
 
-CriticalityDiagnostics ::= SEQUENCE {
-	procedureCode					ProcedureCode											OPTIONAL,
-	triggeringMessage				TriggeringMessage										OPTIONAL,
-	procedureCriticality			Criticality												OPTIONAL,
+ CriticalityDiagnostics ::= SEQUENCE {
+	procedureCode					 Ngap-ProcedureCode											OPTIONAL,
+	triggeringMessage				 Ngap-TriggeringMessage										OPTIONAL,
+	procedureCriticality			 Ngap-Criticality												OPTIONAL,
 	iEsCriticalityDiagnostics		CriticalityDiagnostics-IE-List							OPTIONAL,
 	iE-Extensions		ProtocolExtensionContainer {{CriticalityDiagnostics-ExtIEs}}		OPTIONAL,
 	...
@@ -685,11 +685,11 @@ CriticalityDiagnostics-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-CriticalityDiagnostics-IE-List ::= SEQUENCE (SIZE(1..maxnoofErrors)) OF CriticalityDiagnostics-IE-Item
+CriticalityDiagnostics-IE-List ::= SEQUENCE (SIZE(1..ngap-maxnoofErrors)) OF CriticalityDiagnostics-IE-Item
 
 CriticalityDiagnostics-IE-Item ::= SEQUENCE {
-	iECriticality		Criticality,
-	iE-ID				ProtocolIE-ID,
+	iECriticality		 Ngap-Criticality,
+	iE-ID				 Ngap-ProtocolIE-ID,
 	typeOfError		TypeOfError,
 	iE-Extensions		ProtocolExtensionContainer {{CriticalityDiagnostics-IE-Item-ExtIEs}} OPTIONAL,
 	...
@@ -713,7 +713,7 @@ DataForwardingNotPossible ::= ENUMERATED {
 	...
 }
 
-DataForwardingResponseDRBList ::= SEQUENCE (SIZE(1..maxnoofDRBs)) OF DataForwardingResponseDRBItem
+DataForwardingResponseDRBList ::= SEQUENCE (SIZE(1..ngap-maxnoofDRBs)) OF DataForwardingResponseDRBItem
 
 DataForwardingResponseDRBItem ::= SEQUENCE {
 	dRB-ID								DRB-ID,
@@ -750,7 +750,7 @@ DirectForwardingPathAvailability ::= ENUMERATED {
 
 DRB-ID ::= INTEGER (1..32, ...)
 
-DRBsSubjectToStatusTransferList ::= SEQUENCE (SIZE(1..maxnoofDRBs)) OF DRBsSubjectToStatusTransferItem
+DRBsSubjectToStatusTransferList ::= SEQUENCE (SIZE(1..ngap-maxnoofDRBs)) OF DRBsSubjectToStatusTransferItem
 
 DRBsSubjectToStatusTransferItem ::= SEQUENCE {
 	dRB-ID				DRB-ID,
@@ -826,7 +826,7 @@ DRBStatusUL18-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-DRBsToQosFlowsMappingList ::= SEQUENCE (SIZE(1..maxnoofDRBs)) OF DRBsToQosFlowsMappingItem
+DRBsToQosFlowsMappingList ::= SEQUENCE (SIZE(1..ngap-maxnoofDRBs)) OF DRBsToQosFlowsMappingItem
 
 DRBsToQosFlowsMappingItem ::= SEQUENCE {
 	dRB-ID								DRB-ID,
@@ -859,7 +859,7 @@ Dynamic5QIDescriptor-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 
 EmergencyAreaID ::= OCTET STRING (SIZE(3))
 
-EmergencyAreaIDBroadcastEUTRA ::= SEQUENCE (SIZE(1..maxnoofEmergencyAreaID)) OF EmergencyAreaIDBroadcastEUTRA-Item
+EmergencyAreaIDBroadcastEUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofEmergencyAreaID)) OF EmergencyAreaIDBroadcastEUTRA-Item
 
 EmergencyAreaIDBroadcastEUTRA-Item ::= SEQUENCE {
 	emergencyAreaID					EmergencyAreaID,
@@ -872,7 +872,7 @@ EmergencyAreaIDBroadcastEUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-EmergencyAreaIDBroadcastNR ::= SEQUENCE (SIZE(1..maxnoofEmergencyAreaID)) OF EmergencyAreaIDBroadcastNR-Item
+EmergencyAreaIDBroadcastNR ::= SEQUENCE (SIZE(1..ngap-maxnoofEmergencyAreaID)) OF EmergencyAreaIDBroadcastNR-Item
 
 EmergencyAreaIDBroadcastNR-Item ::= SEQUENCE {
 	emergencyAreaID				EmergencyAreaID,
@@ -885,7 +885,7 @@ EmergencyAreaIDBroadcastNR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-EmergencyAreaIDCancelledEUTRA ::= SEQUENCE (SIZE(1..maxnoofEmergencyAreaID)) OF EmergencyAreaIDCancelledEUTRA-Item
+EmergencyAreaIDCancelledEUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofEmergencyAreaID)) OF EmergencyAreaIDCancelledEUTRA-Item
 
 EmergencyAreaIDCancelledEUTRA-Item ::= SEQUENCE {
 	emergencyAreaID					EmergencyAreaID,
@@ -898,7 +898,7 @@ EmergencyAreaIDCancelledEUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-EmergencyAreaIDCancelledNR ::= SEQUENCE (SIZE(1..maxnoofEmergencyAreaID)) OF EmergencyAreaIDCancelledNR-Item
+EmergencyAreaIDCancelledNR ::= SEQUENCE (SIZE(1..ngap-maxnoofEmergencyAreaID)) OF EmergencyAreaIDCancelledNR-Item
 
 EmergencyAreaIDCancelledNR-Item ::= SEQUENCE {
 	emergencyAreaID				EmergencyAreaID,
@@ -911,9 +911,9 @@ EmergencyAreaIDCancelledNR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-EmergencyAreaIDList ::= SEQUENCE (SIZE(1..maxnoofEmergencyAreaID)) OF EmergencyAreaID
+EmergencyAreaIDList ::= SEQUENCE (SIZE(1..ngap-maxnoofEmergencyAreaID)) OF EmergencyAreaID
 
-EmergencyAreaIDListForRestart ::= SEQUENCE (SIZE(1..maxnoofEAIforRestart)) OF EmergencyAreaID
+EmergencyAreaIDListForRestart ::= SEQUENCE (SIZE(1..ngap-maxnoofEAIforRestart)) OF EmergencyAreaID
 
 EmergencyFallbackIndicator ::= SEQUENCE {
 	emergencyFallbackRequestIndicator		EmergencyFallbackRequestIndicator,
@@ -937,7 +937,7 @@ EmergencyServiceTargetCN ::= ENUMERATED {
 	...
 }
 
-EquivalentPLMNs ::= SEQUENCE (SIZE(1..maxnoofEPLMNs)) OF PLMNIdentity
+EquivalentPLMNs ::= SEQUENCE (SIZE(1..ngap-maxnoofEPLMNs)) OF PLMNIdentity
 
 EPS-TAC ::= OCTET STRING (SIZE(2))
 
@@ -954,7 +954,7 @@ EPS-TAI-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 
 E-RAB-ID ::= INTEGER (0..15, ...)
 
-E-RABInformationList ::= SEQUENCE (SIZE(1..maxnoofE-RABs)) OF E-RABInformationItem
+E-RABInformationList ::= SEQUENCE (SIZE(1..ngap-maxnoofE-RABs)) OF E-RABInformationItem
 
 E-RABInformationItem ::= SEQUENCE {
 	e-RAB-ID			E-RAB-ID,
@@ -980,9 +980,9 @@ EUTRA-CGI-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-EUTRA-CGIList ::= SEQUENCE (SIZE(1..maxnoofCellsinngeNB)) OF EUTRA-CGI
+EUTRA-CGIList ::= SEQUENCE (SIZE(1..ngap-maxnoofCellsinngeNB)) OF EUTRA-CGI
 
-EUTRA-CGIListForWarning ::= SEQUENCE (SIZE(1..maxnoofCellIDforWarning)) OF EUTRA-CGI
+EUTRA-CGIListForWarning ::= SEQUENCE (SIZE(1..ngap-maxnoofCellIDforWarning)) OF EUTRA-CGI
 
 EUTRAencryptionAlgorithms ::= BIT STRING (SIZE(16, ...))
 
@@ -1038,7 +1038,7 @@ ExpectedUEMobility ::= ENUMERATED {
 	...
 }
 
-ExpectedUEMovingTrajectory ::= SEQUENCE (SIZE(1..maxnoofCellsUEMovingTrajectory)) OF ExpectedUEMovingTrajectoryItem
+ExpectedUEMovingTrajectory ::= SEQUENCE (SIZE(1..ngap-maxnoofCellsUEMovingTrajectory)) OF ExpectedUEMovingTrajectoryItem
 
 ExpectedUEMovingTrajectoryItem ::= SEQUENCE {
 	nGRAN-CGI				NGRAN-CGI,
@@ -1069,7 +1069,7 @@ FiveG-TMSI ::= OCTET STRING (SIZE(4))
 
 FiveQI ::= INTEGER (0..255, ...)
 
-ForbiddenAreaInformation ::= SEQUENCE (SIZE(1.. maxnoofEPLMNsPlusOne)) OF ForbiddenAreaInformation-Item
+ForbiddenAreaInformation ::= SEQUENCE (SIZE(1.. ngap-maxnoofEPLMNsPlusOne)) OF ForbiddenAreaInformation-Item
 
 ForbiddenAreaInformation-Item ::= SEQUENCE {
 	pLMNIdentity		PLMNIdentity,
@@ -1082,7 +1082,7 @@ ForbiddenAreaInformation-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-ForbiddenTACs ::= SEQUENCE (SIZE(1..maxnoofForbTACs)) OF TAC
+ForbiddenTACs ::= SEQUENCE (SIZE(1..ngap-maxnoofForbTACs)) OF TAC
 
 -- G
 
@@ -1457,7 +1457,7 @@ NonDynamic5QIDescriptor-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-NotAllowedTACs ::= SEQUENCE (SIZE(1..maxnoofAllowedAreas)) OF TAC
+NotAllowedTACs ::= SEQUENCE (SIZE(1..ngap-maxnoofAllowedAreas)) OF TAC
 
 NotificationCause ::= ENUMERATED {
 	fulfilled,
@@ -1483,9 +1483,9 @@ NR-CGI-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-NR-CGIList ::= SEQUENCE (SIZE(1..maxnoofCellsingNB)) OF NR-CGI
+NR-CGIList ::= SEQUENCE (SIZE(1..ngap-maxnoofCellsingNB)) OF NR-CGI
 
-NR-CGIListForWarning ::= SEQUENCE (SIZE(1..maxnoofCellIDforWarning)) OF NR-CGI
+NR-CGIListForWarning ::= SEQUENCE (SIZE(1..ngap-maxnoofCellIDforWarning)) OF NR-CGI
 
 NRencryptionAlgorithms ::= BIT STRING (SIZE(16, ...))
 
@@ -1516,7 +1516,7 @@ OverloadResponse-ExtIEs NGAP-PROTOCOL-IES ::= {
 	...
 }
 
-OverloadStartNSSAIList ::= SEQUENCE (SIZE (1..maxnoofSliceItems)) OF OverloadStartNSSAIItem
+OverloadStartNSSAIList ::= SEQUENCE (SIZE (1..ngap-maxnoofSliceItems)) OF OverloadStartNSSAIItem
 
 OverloadStartNSSAIItem ::= SEQUENCE {
 	sliceOverloadList						SliceOverloadList,
@@ -1643,7 +1643,7 @@ PDUSessionAggregateMaximumBitRate-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 
 PDUSessionID ::= INTEGER (0..255)
 
-PDUSessionResourceAdmittedList ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceAdmittedItem
+PDUSessionResourceAdmittedList ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceAdmittedItem
 
 PDUSessionResourceAdmittedItem ::= SEQUENCE {
 	pDUSessionID							PDUSessionID,
@@ -1656,7 +1656,7 @@ PDUSessionResourceAdmittedItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceFailedToModifyListModCfm ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceFailedToModifyItemModCfm
+PDUSessionResourceFailedToModifyListModCfm ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceFailedToModifyItemModCfm
 
 PDUSessionResourceFailedToModifyItemModCfm ::= SEQUENCE {
 	pDUSessionID												PDUSessionID,
@@ -1669,7 +1669,7 @@ PDUSessionResourceFailedToModifyItemModCfm-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceFailedToModifyListModRes ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceFailedToModifyItemModRes
+PDUSessionResourceFailedToModifyListModRes ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceFailedToModifyItemModRes
 
 PDUSessionResourceFailedToModifyItemModRes ::= SEQUENCE {
 	pDUSessionID										PDUSessionID,
@@ -1682,7 +1682,7 @@ PDUSessionResourceFailedToModifyItemModRes-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceFailedToSetupListCxtFail ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemCxtFail
+PDUSessionResourceFailedToSetupListCxtFail ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemCxtFail
 
 PDUSessionResourceFailedToSetupItemCxtFail ::= SEQUENCE {
 	pDUSessionID									PDUSessionID,
@@ -1695,7 +1695,7 @@ PDUSessionResourceFailedToSetupItemCxtFail-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceFailedToSetupListCxtRes ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemCxtRes
+PDUSessionResourceFailedToSetupListCxtRes ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemCxtRes
 
 PDUSessionResourceFailedToSetupItemCxtRes ::= SEQUENCE {
 	pDUSessionID									PDUSessionID,
@@ -1708,7 +1708,7 @@ PDUSessionResourceFailedToSetupItemCxtRes-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceFailedToSetupListHOAck ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemHOAck
+PDUSessionResourceFailedToSetupListHOAck ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemHOAck
 
 PDUSessionResourceFailedToSetupItemHOAck ::= SEQUENCE {
 	pDUSessionID										PDUSessionID,
@@ -1721,7 +1721,7 @@ PDUSessionResourceFailedToSetupItemHOAck-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceFailedToSetupListPSReq ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemPSReq
+PDUSessionResourceFailedToSetupListPSReq ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemPSReq
 
 PDUSessionResourceFailedToSetupItemPSReq ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -1734,7 +1734,7 @@ PDUSessionResourceFailedToSetupItemPSReq-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceFailedToSetupListSURes ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemSURes
+PDUSessionResourceFailedToSetupListSURes ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceFailedToSetupItemSURes
 
 PDUSessionResourceFailedToSetupItemSURes ::= SEQUENCE {
 	pDUSessionID									PDUSessionID,
@@ -1747,7 +1747,7 @@ PDUSessionResourceFailedToSetupItemSURes-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceHandoverList ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceHandoverItem
+PDUSessionResourceHandoverList ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceHandoverItem
 
 PDUSessionResourceHandoverItem ::= SEQUENCE {
 	pDUSessionID						PDUSessionID,
@@ -1760,7 +1760,7 @@ PDUSessionResourceHandoverItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceInformationList ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceInformationItem
+PDUSessionResourceInformationList ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceInformationItem
 
 PDUSessionResourceInformationItem ::= SEQUENCE {
 	pDUSessionID					PDUSessionID,
@@ -1774,7 +1774,7 @@ PDUSessionResourceInformationItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceListCxtRelCpl ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceItemCxtRelCpl
+PDUSessionResourceListCxtRelCpl ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceItemCxtRelCpl
 
 PDUSessionResourceItemCxtRelCpl ::= SEQUENCE {
 	pDUSessionID		PDUSessionID,
@@ -1786,7 +1786,7 @@ PDUSessionResourceItemCxtRelCpl-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceListCxtRelReq ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceItemCxtRelReq
+PDUSessionResourceListCxtRelReq ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceItemCxtRelReq
 
 PDUSessionResourceItemCxtRelReq ::= SEQUENCE {
 	pDUSessionID		PDUSessionID,
@@ -1798,7 +1798,7 @@ PDUSessionResourceItemCxtRelReq-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceListHORqd ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceItemHORqd
+PDUSessionResourceListHORqd ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceItemHORqd
 
 PDUSessionResourceItemHORqd ::= SEQUENCE {
 	pDUSessionID							PDUSessionID,
@@ -1873,7 +1873,7 @@ PDUSessionResourceModifyIndicationTransfer-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceModifyListModCfm ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceModifyItemModCfm
+PDUSessionResourceModifyListModCfm ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceModifyItemModCfm
 
 PDUSessionResourceModifyItemModCfm ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -1886,7 +1886,7 @@ PDUSessionResourceModifyItemModCfm-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceModifyListModInd ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceModifyItemModInd
+PDUSessionResourceModifyListModInd ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceModifyItemModInd
 
 PDUSessionResourceModifyItemModInd ::= SEQUENCE {
 	pDUSessionID									PDUSessionID,
@@ -1899,7 +1899,7 @@ PDUSessionResourceModifyItemModInd-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceModifyListModReq ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceModifyItemModReq
+PDUSessionResourceModifyListModReq ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceModifyItemModReq
 
 PDUSessionResourceModifyItemModReq ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -1913,7 +1913,7 @@ PDUSessionResourceModifyItemModReq-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceModifyListModRes ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceModifyItemModRes
+PDUSessionResourceModifyListModRes ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceModifyItemModRes
 
 PDUSessionResourceModifyItemModRes ::= SEQUENCE {
 	pDUSessionID									PDUSessionID,
@@ -1937,7 +1937,7 @@ PDUSessionResourceModifyUnsuccessfulTransfer-ExtIEs NGAP-PROTOCOL-EXTENSION ::= 
 	...
 }
 
-PDUSessionResourceNotifyList ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceNotifyItem
+PDUSessionResourceNotifyList ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceNotifyItem
 
 PDUSessionResourceNotifyItem ::= SEQUENCE {
 	pDUSessionID						PDUSessionID,
@@ -1981,7 +1981,7 @@ PDUSessionResourceReleaseCommandTransfer-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceReleasedListNot ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceReleasedItemNot
+PDUSessionResourceReleasedListNot ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceReleasedItemNot
 
 PDUSessionResourceReleasedItemNot ::= SEQUENCE {
 	pDUSessionID									PDUSessionID,
@@ -1994,7 +1994,7 @@ PDUSessionResourceReleasedItemNot-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceReleasedListPSAck ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceReleasedItemPSAck
+PDUSessionResourceReleasedListPSAck ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceReleasedItemPSAck
 
 PDUSessionResourceReleasedItemPSAck ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -2007,7 +2007,7 @@ PDUSessionResourceReleasedItemPSAck-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceReleasedListPSFail ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceReleasedItemPSFail
+PDUSessionResourceReleasedListPSFail ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceReleasedItemPSFail
 
 PDUSessionResourceReleasedItemPSFail ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -2020,7 +2020,7 @@ PDUSessionResourceReleasedItemPSFail-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceReleasedListRelRes ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceReleasedItemRelRes
+PDUSessionResourceReleasedListRelRes ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceReleasedItemRelRes
 
 PDUSessionResourceReleasedItemRelRes ::= SEQUENCE {
 	pDUSessionID									PDUSessionID,
@@ -2042,7 +2042,7 @@ PDUSessionResourceReleaseResponseTransfer-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceSetupListCxtReq ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceSetupItemCxtReq
+PDUSessionResourceSetupListCxtReq ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceSetupItemCxtReq
 
 PDUSessionResourceSetupItemCxtReq ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -2057,7 +2057,7 @@ PDUSessionResourceSetupItemCxtReq-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceSetupListCxtRes ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceSetupItemCxtRes
+PDUSessionResourceSetupListCxtRes ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceSetupItemCxtRes
 
 PDUSessionResourceSetupItemCxtRes ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -2070,7 +2070,7 @@ PDUSessionResourceSetupItemCxtRes-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceSetupListHOReq ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceSetupItemHOReq
+PDUSessionResourceSetupListHOReq ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceSetupItemHOReq
 
 PDUSessionResourceSetupItemHOReq ::= SEQUENCE {
 	pDUSessionID				PDUSessionID,
@@ -2084,7 +2084,7 @@ PDUSessionResourceSetupItemHOReq-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceSetupListSUReq ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceSetupItemSUReq
+PDUSessionResourceSetupListSUReq ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceSetupItemSUReq
 
 PDUSessionResourceSetupItemSUReq ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -2099,7 +2099,7 @@ PDUSessionResourceSetupItemSUReq-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceSetupListSURes ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceSetupItemSURes
+PDUSessionResourceSetupListSURes ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceSetupItemSURes
 
 PDUSessionResourceSetupItemSURes ::= SEQUENCE {
 	pDUSessionID											PDUSessionID,
@@ -2153,7 +2153,7 @@ PDUSessionResourceSetupUnsuccessfulTransfer-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceSwitchedList ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceSwitchedItem
+PDUSessionResourceSwitchedList ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceSwitchedItem
 
 PDUSessionResourceSwitchedItem ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -2166,7 +2166,7 @@ PDUSessionResourceSwitchedItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceToBeSwitchedDLList ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceToBeSwitchedDLItem
+PDUSessionResourceToBeSwitchedDLList ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceToBeSwitchedDLItem
 
 PDUSessionResourceToBeSwitchedDLItem ::= SEQUENCE {
 	pDUSessionID					PDUSessionID,
@@ -2179,7 +2179,7 @@ PDUSessionResourceToBeSwitchedDLItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceToReleaseListHOCmd ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceToReleaseItemHOCmd
+PDUSessionResourceToReleaseListHOCmd ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceToReleaseItemHOCmd
 
 PDUSessionResourceToReleaseItemHOCmd ::= SEQUENCE {
 	pDUSessionID								PDUSessionID,
@@ -2192,7 +2192,7 @@ PDUSessionResourceToReleaseItemHOCmd-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-PDUSessionResourceToReleaseListRelCmd ::= SEQUENCE (SIZE(1..maxnoofPDUSessions)) OF PDUSessionResourceToReleaseItemRelCmd
+PDUSessionResourceToReleaseListRelCmd ::= SEQUENCE (SIZE(1..ngap-maxnoofPDUSessions)) OF PDUSessionResourceToReleaseItemRelCmd
 
 PDUSessionResourceToReleaseItemRelCmd ::= SEQUENCE {
 	pDUSessionID									PDUSessionID,
@@ -2217,7 +2217,7 @@ PeriodicRegistrationUpdateTimer ::= BIT STRING (SIZE(8))
 
 PLMNIdentity ::= OCTET STRING (SIZE(3)) 
 
-PLMNSupportList ::= SEQUENCE (SIZE(1..maxnoofPLMNs)) OF PLMNSupportItem
+PLMNSupportList ::= SEQUENCE (SIZE(1..ngap-maxnoofPLMNs)) OF PLMNSupportItem
 
 PLMNSupportItem ::= SEQUENCE {
 	pLMNIdentity			PLMNIdentity,
@@ -2270,7 +2270,7 @@ QosCharacteristics-ExtIEs NGAP-PROTOCOL-IES ::= {
 	...
 }
 
-QosFlowAcceptedList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowAcceptedItem
+QosFlowAcceptedList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowAcceptedItem
 
 QosFlowAcceptedItem ::= SEQUENCE {
 	qosFlowIdentifier		QosFlowIdentifier,
@@ -2282,7 +2282,7 @@ QosFlowAcceptedItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-QosFlowAddOrModifyRequestList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowAddOrModifyRequestItem
+QosFlowAddOrModifyRequestList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowAddOrModifyRequestItem
 
 QosFlowAddOrModifyRequestItem ::= SEQUENCE {
 	qosFlowIdentifier				QosFlowIdentifier,
@@ -2296,7 +2296,7 @@ QosFlowAddOrModifyRequestItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-QosFlowAddOrModifyResponseList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowAddOrModifyResponseItem
+QosFlowAddOrModifyResponseList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowAddOrModifyResponseItem
 
 QosFlowAddOrModifyResponseItem ::= SEQUENCE {
 	qosFlowIdentifier		QosFlowIdentifier,
@@ -2310,7 +2310,7 @@ QosFlowAddOrModifyResponseItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 
 QosFlowIdentifier ::= INTEGER (0..63, ...)
 
-QosFlowInformationList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowInformationItem
+QosFlowInformationList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowInformationItem
 
 QosFlowInformationItem ::= SEQUENCE {
 	qosFlowIdentifier	QosFlowIdentifier,
@@ -2337,7 +2337,7 @@ QosFlowLevelQosParameters-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-QosFlowList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowItem
+QosFlowList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowItem
 
 QosFlowItem ::= SEQUENCE {
 	qosFlowIdentifier		QosFlowIdentifier,
@@ -2350,7 +2350,7 @@ QosFlowItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-QosFlowModifyConfirmList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowModifyConfirmItem
+QosFlowModifyConfirmList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowModifyConfirmItem
 
 QosFlowModifyConfirmItem ::= SEQUENCE {
 	qosFlowIdentifier		QosFlowIdentifier,
@@ -2362,7 +2362,7 @@ QosFlowModifyConfirmItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-QosFlowNotifyList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowNotifyItem
+QosFlowNotifyList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowNotifyItem
 
 QosFlowNotifyItem ::= SEQUENCE {
 	qosFlowIdentifier			QosFlowIdentifier,
@@ -2386,7 +2386,7 @@ QosFlowPerTNLInformation-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-QosFlowSetupRequestList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowSetupRequestItem
+QosFlowSetupRequestList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowSetupRequestItem
 
 QosFlowSetupRequestItem ::= SEQUENCE {
 	qosFlowIdentifier				QosFlowIdentifier,
@@ -2400,7 +2400,7 @@ QosFlowSetupRequestItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-QosFlowSetupResponseListHOReqAck ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowSetupResponseItemHOReqAck
+QosFlowSetupResponseListHOReqAck ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowSetupResponseItemHOReqAck
 
 QosFlowSetupResponseItemHOReqAck ::= SEQUENCE {
 	qosFlowIdentifier			QosFlowIdentifier,
@@ -2413,7 +2413,7 @@ QosFlowSetupResponseItemHOReqAck-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-QosFlowSetupResponseListSURes ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowSetupResponseItemSURes
+QosFlowSetupResponseListSURes ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowSetupResponseItemSURes
 
 QosFlowSetupResponseItemSURes ::= SEQUENCE {
 	qosFlowIdentifier		QosFlowIdentifier,
@@ -2425,7 +2425,7 @@ QosFlowSetupResponseItemSURes-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-QosFlowToBeForwardedList ::= SEQUENCE (SIZE(1..maxnoofQosFlows)) OF QosFlowToBeForwardedItem
+QosFlowToBeForwardedList ::= SEQUENCE (SIZE(1..ngap-maxnoofQosFlows)) OF QosFlowToBeForwardedItem
 
 QosFlowToBeForwardedItem ::= SEQUENCE {
 	qosFlowIdentifier		QosFlowIdentifier,
@@ -2455,7 +2455,7 @@ RANStatusTransfer-TransparentContainer-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 
 RAN-UE-NGAP-ID ::= INTEGER (0..4294967295)
 
-RATRestrictions ::= SEQUENCE (SIZE(0..maxnoofEPLMNsPlusOne)) OF RATRestrictions-Item
+RATRestrictions ::= SEQUENCE (SIZE(0..ngap-maxnoofEPLMNsPlusOne)) OF RATRestrictions-Item
 
 RATRestrictions-Item ::= SEQUENCE {
 	pLMNIdentity					PLMNIdentity,
@@ -2480,7 +2480,7 @@ RecommendedCellsForPaging-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-RecommendedCellList ::= SEQUENCE (SIZE(1..maxnoofRecommendedCells)) OF RecommendedCellItem
+RecommendedCellList ::= SEQUENCE (SIZE(1..ngap-maxnoofRecommendedCells)) OF RecommendedCellItem
 
 RecommendedCellItem ::= SEQUENCE {
 	nGRAN-CGI				NGRAN-CGI,
@@ -2503,7 +2503,7 @@ RecommendedRANNodesForPaging-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-RecommendedRANNodeList::= SEQUENCE (SIZE(1..maxnoofRecommendedRANNodes)) OF RecommendedRANNodeItem
+RecommendedRANNodeList::= SEQUENCE (SIZE(1..ngap-maxnoofRecommendedRANNodes)) OF RecommendedRANNodeItem
 
 RecommendedRANNodeItem ::= SEQUENCE {
 	aMFPagingTarget		AMFPagingTarget,
@@ -2619,7 +2619,7 @@ SecurityResult-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 
 SerialNumber ::= BIT STRING (SIZE(16))
 
-ServedGUAMIList ::= SEQUENCE (SIZE(1..maxnoofServedGUAMIs)) OF ServedGUAMIItem
+ServedGUAMIList ::= SEQUENCE (SIZE(1..ngap-maxnoofServedGUAMIs)) OF ServedGUAMIItem
 
 ServedGUAMIItem ::= SEQUENCE {
 	gUAMI				GUAMI,
@@ -2632,7 +2632,7 @@ ServedGUAMIItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-ServiceAreaInformation ::= SEQUENCE (SIZE(1.. maxnoofEPLMNsPlusOne)) OF ServiceAreaInformation-Item
+ServiceAreaInformation ::= SEQUENCE (SIZE(1.. ngap-maxnoofEPLMNsPlusOne)) OF ServiceAreaInformation-Item
 
 ServiceAreaInformation-Item ::= SEQUENCE {
 	pLMNIdentity		PLMNIdentity,
@@ -2656,7 +2656,7 @@ SingleTNLInformation-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-SliceOverloadList ::= SEQUENCE (SIZE(1..maxnoofSliceItems)) OF SliceOverloadItem
+SliceOverloadList ::= SEQUENCE (SIZE(1..ngap-maxnoofSliceItems)) OF SliceOverloadItem
 
 SliceOverloadItem ::= SEQUENCE {
 	s-NSSAI				S-NSSAI,
@@ -2668,7 +2668,7 @@ SliceOverloadItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-SliceSupportList ::= SEQUENCE (SIZE(1..maxnoofSliceItems)) OF SliceSupportItem
+SliceSupportList ::= SEQUENCE (SIZE(1..ngap-maxnoofSliceItems)) OF SliceSupportItem
 
 SliceSupportItem ::= SEQUENCE {
 	s-NSSAI				S-NSSAI,
@@ -2767,7 +2767,7 @@ SourceToTarget-TransparentContainer ::= OCTET STRING
 
 SST ::= OCTET STRING (SIZE(1))
 
-SupportedTAList ::= SEQUENCE (SIZE(1..maxnoofTACs)) OF SupportedTAItem
+SupportedTAList ::= SEQUENCE (SIZE(1..ngap-maxnoofTACs)) OF SupportedTAItem
 
 SupportedTAItem ::= SEQUENCE {
 	tAC									TAC,
@@ -2795,7 +2795,7 @@ TAI-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-TAIBroadcastEUTRA ::= SEQUENCE (SIZE(1..maxnoofTAIforWarning)) OF TAIBroadcastEUTRA-Item
+TAIBroadcastEUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofTAIforWarning)) OF TAIBroadcastEUTRA-Item
 
 TAIBroadcastEUTRA-Item ::= SEQUENCE {
 	tAI								TAI,
@@ -2808,7 +2808,7 @@ TAIBroadcastEUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-TAIBroadcastNR ::= SEQUENCE (SIZE(1..maxnoofTAIforWarning)) OF TAIBroadcastNR-Item
+TAIBroadcastNR ::= SEQUENCE (SIZE(1..ngap-maxnoofTAIforWarning)) OF TAIBroadcastNR-Item
 
 TAIBroadcastNR-Item ::= SEQUENCE {
 	tAI							TAI,
@@ -2821,7 +2821,7 @@ TAIBroadcastNR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-TAICancelledEUTRA ::= SEQUENCE (SIZE(1..maxnoofTAIforWarning)) OF TAICancelledEUTRA-Item
+TAICancelledEUTRA ::= SEQUENCE (SIZE(1..ngap-maxnoofTAIforWarning)) OF TAICancelledEUTRA-Item
 
 TAICancelledEUTRA-Item ::= SEQUENCE {
 	tAI								TAI,
@@ -2834,7 +2834,7 @@ TAICancelledEUTRA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-TAICancelledNR ::= SEQUENCE (SIZE(1..maxnoofTAIforWarning)) OF TAICancelledNR-Item
+TAICancelledNR ::= SEQUENCE (SIZE(1..ngap-maxnoofTAIforWarning)) OF TAICancelledNR-Item
 
 TAICancelledNR-Item ::= SEQUENCE {
 	tAI							TAI,
@@ -2847,7 +2847,7 @@ TAICancelledNR-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-TAIListForInactive ::= SEQUENCE (SIZE(1..maxnoofTAIforInactive)) OF TAIListForInactiveItem
+TAIListForInactive ::= SEQUENCE (SIZE(1..ngap-maxnoofTAIforInactive)) OF TAIListForInactiveItem
 
 TAIListForInactiveItem ::= SEQUENCE {
 	tAI					TAI,
@@ -2859,7 +2859,7 @@ TAIListForInactiveItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-TAIListForPaging ::= SEQUENCE (SIZE(1..maxnoofTAIforPaging)) OF TAIListForPagingItem
+TAIListForPaging ::= SEQUENCE (SIZE(1..ngap-maxnoofTAIforPaging)) OF TAIListForPagingItem
 
 TAIListForPagingItem ::= SEQUENCE {
 	tAI					TAI,
@@ -2871,9 +2871,9 @@ TAIListForPagingItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-TAIListForRestart ::= SEQUENCE (SIZE(1..maxnoofTAIforRestart)) OF TAI
+TAIListForRestart ::= SEQUENCE (SIZE(1..ngap-maxnoofTAIforRestart)) OF TAI
 
-TAIListForWarning ::= SEQUENCE (SIZE(1..maxnoofTAIforWarning)) OF TAI
+TAIListForWarning ::= SEQUENCE (SIZE(1..ngap-maxnoofTAIforWarning)) OF TAI
 
 TargeteNB-ID ::= SEQUENCE {
 	globalENB-ID		GlobalNgENB-ID,
@@ -2936,7 +2936,7 @@ TimeUEStayedInCellEnhancedGranularity ::= INTEGER (0..40950)
 
 TNLAddressWeightFactor ::= INTEGER (0..255)
 
-TNLAssociationList ::= SEQUENCE (SIZE(1..maxnoofTNLAssociations)) OF TNLAssociationItem
+TNLAssociationList ::= SEQUENCE (SIZE(1..ngap-maxnoofTNLAssociations)) OF TNLAssociationItem
 
 TNLAssociationItem ::= SEQUENCE {
 	tNLAssociationAddress		CPTransportLayerInformation,
@@ -2956,7 +2956,7 @@ TNLAssociationUsage ::= ENUMERATED {
 	...
 }
 
-TNLInformationList ::= SEQUENCE (SIZE(1..maxnoofMultiConnectivities)) OF TNLInformationItem
+TNLInformationList ::= SEQUENCE (SIZE(1..ngap-maxnoofMultiConnectivities)) OF TNLInformationItem
 
 TNLInformationItem ::= SEQUENCE {
 	qosFlowPerTNLInformation		QosFlowPerTNLInformation,
@@ -2968,7 +2968,7 @@ TNLInformationItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-TNLMappingList ::= SEQUENCE (SIZE(1..maxnoofMultiConnectivities)) OF TNLMappingItem
+TNLMappingList ::= SEQUENCE (SIZE(1..ngap-maxnoofMultiConnectivities)) OF TNLMappingItem
 
 TNLMappingItem ::= SEQUENCE {
 	dL-NGU-UP-TNLInformation		UPTransportLayerInformation,
@@ -3027,7 +3027,7 @@ UEAggregateMaximumBitRate-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-UE-associatedLogicalNG-connectionList ::= SEQUENCE (SIZE(1..maxnoofNGConnectionsToReset)) OF UE-associatedLogicalNG-connectionItem
+UE-associatedLogicalNG-connectionList ::= SEQUENCE (SIZE(1..ngap-maxnoofNGConnectionsToReset)) OF UE-associatedLogicalNG-connectionItem
 
 UE-associatedLogicalNG-connectionItem ::= SEQUENCE {
 	aMF-UE-NGAP-ID		AMF-UE-NGAP-ID																		OPTIONAL,
@@ -3041,7 +3041,7 @@ UE-associatedLogicalNG-connectionItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 
 UEContextRequest ::= ENUMERATED {requested, ...}
 
-UEHistoryInformation ::= SEQUENCE (SIZE(1..maxnoofCellsinUEHistoryInfo)) OF LastVisitedCellItem
+UEHistoryInformation ::= SEQUENCE (SIZE(1..ngap-maxnoofCellsinUEHistoryInfo)) OF LastVisitedCellItem
 
 UEIdentityIndexValue ::= CHOICE {
 	indexLength10			BIT STRING (SIZE(10)),
@@ -3084,7 +3084,7 @@ UEPagingIdentity-ExtIEs NGAP-PROTOCOL-IES ::= {
 
 UEPresence ::= ENUMERATED {in, out, unknown, ...}
 
-UEPresenceInAreaOfInterestList ::= SEQUENCE (SIZE(1..maxnoofAoI)) OF UEPresenceInAreaOfInterestItem
+UEPresenceInAreaOfInterestList ::= SEQUENCE (SIZE(1..ngap-maxnoofAoI)) OF UEPresenceInAreaOfInterestItem
 
 UEPresenceInAreaOfInterestItem ::= SEQUENCE {
 	locationReportingReferenceID		LocationReportingReferenceID,
@@ -3128,7 +3128,7 @@ UESecurityCapabilities-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-UL-NGU-UP-TNLModifyList ::= SEQUENCE (SIZE(0..maxnoofMultiConnectivities)) OF UL-NGU-UP-TNLModifyItem
+UL-NGU-UP-TNLModifyList ::= SEQUENCE (SIZE(0..ngap-maxnoofMultiConnectivities)) OF UL-NGU-UP-TNLModifyItem
 
 UL-NGU-UP-TNLModifyItem ::= SEQUENCE {
 	uL-NGU-UP-TNLInformation		UPTransportLayerInformation,
@@ -3141,7 +3141,7 @@ UL-NGU-UP-TNLModifyItem-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-UnavailableGUAMIList ::= SEQUENCE (SIZE(1..maxnoofServedGUAMIs)) OF UnavailableGUAMIItem
+UnavailableGUAMIList ::= SEQUENCE (SIZE(1..ngap-maxnoofServedGUAMIs)) OF UnavailableGUAMIItem
 
 UnavailableGUAMIItem ::= SEQUENCE {
 	gUAMI								GUAMI,
@@ -3256,7 +3256,7 @@ WarningType ::= OCTET STRING (SIZE(2))
 
 -- X
 
-XnExtTLAs ::= SEQUENCE (SIZE(1..maxnoofXnExtTLAs)) OF XnExtTLA-Item
+XnExtTLAs ::= SEQUENCE (SIZE(1..ngap-maxnoofXnExtTLAs)) OF XnExtTLA-Item
 
 XnExtTLA-Item ::= SEQUENCE {
 	iPsecTLA					TransportLayerAddress		OPTIONAL,
@@ -3269,9 +3269,9 @@ XnExtTLA-Item-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
 	...
 }
 
-XnGTP-TLAs ::= SEQUENCE (SIZE(1..maxnoofXnGTP-TLAs)) OF TransportLayerAddress
+XnGTP-TLAs ::= SEQUENCE (SIZE(1..ngap-maxnoofXnGTP-TLAs)) OF TransportLayerAddress
 
-XnTLAs ::= SEQUENCE (SIZE(1..maxnoofXnTLAs)) OF TransportLayerAddress
+XnTLAs ::= SEQUENCE (SIZE(1..ngap-maxnoofXnTLAs)) OF TransportLayerAddress
 
 XnTNLConfigurationInfo ::= SEQUENCE {
 	xnTransportLayerAddresses			XnTLAs,
