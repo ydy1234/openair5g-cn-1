@@ -112,6 +112,10 @@ file(GLOB SRCS
     ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_common.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_handlers.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_decoder.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_encoder.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_itti_messaging.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_ta.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_nas_procedures.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/log.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/hashtable.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/obj_hashtable.c
