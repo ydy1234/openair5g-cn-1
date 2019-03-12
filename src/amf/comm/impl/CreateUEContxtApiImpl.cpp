@@ -27,8 +27,8 @@ CreateUEContxtApiImpl::CreateUEContxtApiImpl(std::shared_ptr<Pistache::Rest::Rou
     { }
 
 void CreateUEContxtApiImpl::create_ue_context(const std::string &ueContextId, const UeContextCreateData &ueContextCreateData, Pistache::Http::ResponseWriter &response) {
-    std::cout<<"Recieved::\nueContextId:"<<ueContextId<<"\t\nUeContextCreateData:"<<ueContextCreateData.toJson()<<"\n"\
-        <<"ueContext:"<<ueContextCreateData.getUeContext().toJson()<<"\n";
+    std::cout<<"\n\n\nRecieved::\nueContextId:"<<ueContextId<<"\t\nUeContextCreateData:"<<ueContextCreateData.toJson()<<"\n\n"\
+        <<"ueContext:"<<ueContextCreateData.getUeContext().toJson()<<"\n\n";
     if(RecordUEContext.find(ueContextId)==RecordUEContext.end())
     {
         RecordUEContext[ueContextId]=ueContextCreateData.getUeContext();

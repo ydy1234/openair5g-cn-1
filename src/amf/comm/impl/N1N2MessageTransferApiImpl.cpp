@@ -31,7 +31,6 @@ void N1N2MessageTransferApiImpl::n1_n2_message_transfer(const std::string &ueCon
     std::cout<<"ueContextId:"<<ueContextId<<"\nN1N2MessageData:"<<n1N2MessageData.toJson()<<std::endl;
     if(RecordUEContext.find(ueContextId)!=RecordUEContext.end())
     {
-        response.send(Pistache::Http::Code::Accepted, "N1_N2_TRANSFER_INITIATED\n");
 
         //do the transferation
         //This represents the case where the AMF is able to
@@ -39,7 +38,9 @@ void N1N2MessageTransferApiImpl::n1_n2_message_transfer(const std::string &ueCon
         //or the AN. The cause included in the response body
         //shall be "N1_N2_TRANSFER_INITIATED" in this case.
 
+        //get the N1N2Message to Out of the n1N2MessageData
 
+        response.send(Pistache::Http::Code::Accepted, "N1_N2_TRANSFER_INITIATED\n");
     }else
     {
         using std::string;
