@@ -40,9 +40,9 @@
 #include "intertask_messages_types.h"
 #include "timer_messages_types.h"
 
-// Messages by zgw
 #include "demo_messages_types.h"
 #include "sctp_messages_types.h"
-// Dummy file for the generic intertask interface definition. Actual definition should be in top level build directory.
+#include "amf_app_messages_types.h"
+
 
 #endif /* MESSAGES_TYPES_H_ */

@@ -21,7 +21,7 @@
 typedef struct sctp_data_cnf_s {
   sctp_assoc_id_t  assoc_id;
   sctp_stream_id_t stream;
-  uint32_t         mme_ue_s1ap_id;
+  uint32_t         amf_ue_ngap_id;
   bool             is_success;
 } sctp_data_cnf_t;
 
@@ -29,7 +29,7 @@ typedef struct sctp_data_req_s {
   bstring          payload;
   sctp_assoc_id_t  assoc_id;
   sctp_stream_id_t stream;
-  uint32_t         mme_ue_s1ap_id; // for helping data_rej
+  uint32_t         amf_ue_ngap_id; // for helping data_rej
 } sctp_data_req_t;
 
 typedef struct sctp_data_ind_s {

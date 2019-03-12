@@ -38,7 +38,7 @@ sctp_itti_send_lower_layer_conf (
     const task_id_t       origin_task_id,
     const sctp_assoc_id_t assoc_id,
     const sctp_stream_id_t stream,
-    const uint32_t         mme_ue_s1ap_id,
+    const uint32_t         amf_ue_ngap_id,
     const bool             is_success)
 {
   MessageDef                             *message_p = NULL;
@@ -48,7 +48,7 @@ sctp_itti_send_lower_layer_conf (
   sctp_p = &message_p->ittiMsg.sctp_data_cnf;
   sctp_p->assoc_id = assoc_id;
   sctp_p->stream = stream;
-  sctp_p->mme_ue_s1ap_id = mme_ue_s1ap_id;
+  sctp_p->amf_ue_ngap_id = amf_ue_ngap_id;
   sctp_p->is_success = is_success;
   return itti_send_msg_to_task (origin_task_id, INSTANCE_DEFAULT, message_p);
 }

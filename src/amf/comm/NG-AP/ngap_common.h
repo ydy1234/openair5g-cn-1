@@ -118,6 +118,8 @@
 #include "PDUSessionResourceSetupListCxtReq.h"
 #include "RANNodeName.h"
 #include "SupportedTAList.h"
+#include "SupportedTAItem.h"
+#include "BroadcastPLMNItem.h"
 #include "MaskedIMEISV.h"
 #include "RRCState.h"
 #include "PDUSessionResourceReleasedListRelRes.h"
@@ -235,8 +237,10 @@
 #include "NGRAN-CGI.h"
 #include "GUAMI.h"
 #include "Ngap-IE.h"
-
-
+#include "PLMNIdentity.h"
+#include "BroadcastPLMNList.h"
+#include "TAC.h"
+#include "ServedGUAMIItem.h"
 
 #include "NGAP-PDU.h"
 #include "log.h"

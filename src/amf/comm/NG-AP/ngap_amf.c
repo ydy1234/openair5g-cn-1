@@ -10,6 +10,16 @@
 #include "common_defs.h"
 #include "log.h"
 #include "ngap_ies_defs.h"
+#include "asn_internal.h"
+#include "hashtable.h"
+#include "ngap_amf.h"
+
+
+uint32_t                                nb_gnb_associated = 0;
+hash_table_ts_t g_ngap_gnb_coll = {.mutex = PTHREAD_MUTEX_INITIALIZER, 0};// contains gNB_description_s, key is gNB_description_s.gnb_id (uint32_t);
+hash_table_ts_t g_ngap_amf_id2assoc_id_coll = {.mutex = PTHREAD_MUTEX_INITIALIZER, 0};// contains sctp association id, key is amf_ue_ngap_id;
+
+
 
 
 static int ngap_send_init_sctp(void)
@@ -75,7 +85,7 @@ ngap_amf_thread (
 int 
 ngap_amf_init(void)
 {  
-//    printf("Initializing NGAP interface\n");
+    OAILOG_DEBUG (LOG_S1AP, "Initializing NGAP interface\n");
     //if (get_asn1c_environment_version () < ASN1_MINIMUM_VERSION) {
       //OAILOG_ERROR (LOG_S1AP, "ASN1C version %d fount, expecting at least %d\n", get_asn1c_environment_version (), ASN1_MINIMUM_VERSION);
     //  return RETURNerror;
@@ -84,6 +94,16 @@ ngap_amf_init(void)
     //}
   
     //OAILOG_DEBUG (LOG_S1AP, "S1AP Release v10.5\n");
+
+    bstring bs1 = bfromcstr("ngap_gNB_coll");
+    hash_table_ts_t * h = hashtable_ts_init(&g_ngap_gnb_coll,16,NULL,free_wrapper,bs1);
+    bdestroy(bs1);
+    if(!h) return RETURNerror;
+
+    bstring bs2 = bfromcstr("ngap_amf_id2assoc_id_coll");
+    h = hashtable_ts_init(&g_ngap_amf_id2assoc_id_coll,16,NULL,hash_free_int_func,bs2);
+    bdestroy(bs2);
+    if(!h) return RETURNerror;
 
     if (itti_create_task (TASK_NGAP, &ngap_amf_thread, NULL) < 0) {
       OAILOG_ERROR (LOG_S1AP, "Error while creating NGAP task\n");
@@ -99,3 +119,74 @@ ngap_amf_init(void)
     return RETURNok;
 }
 
+
+gnb_description_t                      *
+ngap_is_gnb_assoc_id_in_list (
+  const sctp_assoc_id_t sctp_assoc_id)
+{   
+  gnb_description_t                      *gnb_ref = NULL;
+  hashtable_ts_get(&g_ngap_gnb_coll, (const hash_key_t)sctp_assoc_id, (void**)&gnb_ref);
+  return gnb_ref;
+}
+
+gnb_description_t                      *
+ngap_new_gnb (
+  void)
+{   
+  gnb_description_t                      *gnb_ref = NULL;
+    
+  gnb_ref = calloc (1, sizeof (gnb_description_t));
+  /*
+   * Something bad happened during malloc...
+   * * * * May be we are running out of memory.
+   * * * * TODO: Notify eNB with a cause like Hardware Failure.
+   */
+  DevAssert (gnb_ref != NULL);
+  // Update number of eNB associated
+  nb_gnb_associated++;
+  bstring bs = bfromcstr("ngap_ue_coll");
+  hashtable_ts_init(&gnb_ref->ue_coll,16, NULL, free_wrapper, bs);
+  bdestroy(bs);
+  gnb_ref->nb_ue_associated = 0;
+  return gnb_ref;
+}
+
+ue_description_t                       *
+ngap_is_ue_gnb_id_in_list (
+  gnb_description_t * gnb_ref,              
+  const ran_ue_ngap_id_t ran_ue_ngap_id)    
+{   
+  ue_description_t                       *ue_ref = NULL;
+  hashtable_ts_get ((hash_table_ts_t * const)&gnb_ref->ue_coll, (const hash_key_t)ran_ue_ngap_id, (void **)&ue_ref);
+  return ue_ref;
+}
+
+ue_description_t                       *
+ngap_new_ue (
+  const sctp_assoc_id_t sctp_assoc_id, ran_ue_ngap_id_t ran_ue_ngap_id)
+{     
+  gnb_description_t                      *gnb_ref = NULL;
+  ue_description_t                       *ue_ref = NULL;
+
+  gnb_ref = ngap_is_gnb_assoc_id_in_list (sctp_assoc_id);
+  DevAssert (gnb_ref != NULL);
+  ue_ref = calloc (1, sizeof (ue_description_t));
+  /*
+   * Something bad happened during malloc...
+   * * * * May be we are running out of memory.
+   * * * * TODO: Notify eNB with a cause like Hardware Failure.
+   */
+  DevAssert (ue_ref != NULL);
+  ue_ref->gnb = gnb_ref;
+  ue_ref->ran_ue_ngap_id = ran_ue_ngap_id;
+    
+  hashtable_rc_t  hashrc = hashtable_ts_insert (&gnb_ref->ue_coll, (const hash_key_t) ran_ue_ngap_id, (void *)ue_ref);
+  if (HASH_TABLE_OK != hashrc) {
+    OAILOG_ERROR(LOG_S1AP, "Could not insert UE descr in ue_coll: %s\n", hashtable_rc_code2string(hashrc));
+    free_wrapper((void**) &ue_ref);
+    return NULL;
+  }
+  // Increment number of UE
+  gnb_ref->nb_ue_associated++;
+  return ue_ref;
+}   

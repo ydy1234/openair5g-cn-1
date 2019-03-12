@@ -655,7 +655,7 @@ static void * sctp_intertask_interface (
           sctp_itti_send_lower_layer_conf(received_message_p->ittiMsgHeader.originTaskId,
               SCTP_DATA_REQ (received_message_p).assoc_id,
               SCTP_DATA_REQ (received_message_p).stream,
-              SCTP_DATA_REQ (received_message_p).mme_ue_s1ap_id,
+              SCTP_DATA_REQ (received_message_p).amf_ue_ngap_id,
               false);
         } /* NO NEED FOR CONFIRM success yet else {
           if (INVALID_MME_UE_S1AP_ID != SCTP_DATA_REQ (received_message_p).mme_ue_s1ap_id) {
