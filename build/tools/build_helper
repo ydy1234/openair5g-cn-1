@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SUPPORTED_DISTRO="Ubuntu 16.04"
-if [ ! -f /etc/os-release ];then 
+if [ ! -f /etc/os-release ];then
   echo_fatal "No /etc/os-release file found. You're likely on an unsupported distro."
 fi
 
@@ -153,32 +153,6 @@ install_json_from_source()
   fi
 }
 
-########################################
-# install cmake from source
-########################################
-install_cmake_from_source()
-{
-  if [ $1 -eq 0 ]; then
-    OPTION=""
-    read -p "Do you want to install cmake? <y/N> " prompt
-  else
-    prompt='y'
-    OPTION="-y"
-  fi
-  if [[ $prompt =~ [yY](es)* ]]
-  then
-    $SUDO rm -rf /tmp/cmake
-    mkdir -p /tmp/cmake
-    wget -P /tmp/cmake https://cmake.org/files/v3.9/cmake-3.9.2.tar.gz
-    cd /tmp/cmake
-    tar -xzf cmake-3.9.2.tar.gz
-    cd cmake-3.9.2
-    ./configure
-    make > /tmp/log_compile_cmake 2>&1
-    $SUDO make install
-  fi
-}
-
 #######################################
 # install asn1c from source
 ######################################
@@ -229,14 +203,24 @@ check_install_amf_software()
     fi
 
     PACKAGE_LIST="\
+      ca-cacert
+      cmake \
+      g++ \
+      gcc \
+      git \
+      libsctp-dev \
       libsctp1 \
-      libsctp-dev"
+      make \
+      sudo \
+      wget \
+      "
+
+    OPTION="$OPTION --no-install-recommends -q"
     $SUDO apt-get install $OPTION $PACKAGE_LIST
 
-    install_cmake_from_source $1
     install_pistache_from_source $1
     install_json_from_source $1
-    install_asn1c_from_source $1    
+    install_asn1c_from_source $1
 }
 
 ###################################
