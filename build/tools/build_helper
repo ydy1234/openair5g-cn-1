@@ -132,6 +132,8 @@ install_pistache_from_source()
 #########################################
 # install json
 ########################################
+LIBJSON_VERSION="3.1.2"
+
 install_json_from_source()
 {
   if [ $1 -eq 0 ]; then
@@ -143,12 +145,18 @@ install_json_from_source()
   fi
   if [[ $prompt =~ [yY](es)* ]]
   then
-    $SUDO rm -rf /tmp/json
+    rm -rf /tmp/json
     mkdir -p /tmp/json
-    git clone https://github.com/nlohmann/json.git /tmp/json
     cd /tmp/json
+    wget "https://github.com/nlohmann/json/archive/v${LIBJSON_VERSION}.tar.gz"
+    tar xzf *.tar.gz
+    cd /tmp/json/json-${LIBJSON_VERSION}
     cmake CMakeLists.txt
-    make > /tmp/log_compile_json 2>&1
+    if ! make > /tmp/json/log_compile_json 2>&1 ; then
+        echo_error "json build failed !"
+        echo_error "see /tmp/json/log_compile_json for details"
+        exit 1
+    fi
     $SUDO make install
   fi
 }
