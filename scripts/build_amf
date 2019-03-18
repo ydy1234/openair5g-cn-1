@@ -1,11 +1,12 @@
 #!/bin/bash
 
+set -e
 
 THIS_SCRIPT_PATH=$(dirname $(readlink -f $0))
 source $THIS_SCRIPT_PATH/../build/tools/build_helper
 
 function help()
-{ 
+{
   echo_error " "
   echo_error "Usage: build_amf [OPTION]..."
   echo_error "Build the AMF executable."
