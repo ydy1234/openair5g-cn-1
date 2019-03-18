@@ -183,7 +183,7 @@ install_cmake_from_source()
 # install asn1c from source
 ######################################
 install_asn1c_from_source(){
-    if [$1 -eq 0]; then
+    if [ $1 -eq 0 ] ; then
       OPTION=""
       read -p "Do you want to install asn1c rev 1516 patched? <y/N>" prompt
     else
