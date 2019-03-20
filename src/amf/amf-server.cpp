@@ -58,6 +58,7 @@ extern "C"{
 #include "intertask_interface_init.h"
 #include "sctp_primitives_server.h"
 #include "ngap_amf.h"
+#include "amf_app.h"
 #include "log.h"
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +139,7 @@ int main(
     //CHECK_INIT_RETURN (nas_mm_init());
     CHECK_INIT_RETURN (sctp_init());
     CHECK_INIT_RETURN (ngap_amf_init());
+    CHECK_INIT_RETURN (amf_app_init());
 /*
     MessageDef                             *message_p = NULL;
 

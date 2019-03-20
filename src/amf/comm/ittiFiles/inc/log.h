@@ -39,7 +39,7 @@ extern int asn_debug;
 extern int asn1_xer_print;
 extern int fd_g_debug_lvl;
 
-
+#include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>

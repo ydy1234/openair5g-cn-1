@@ -109,12 +109,12 @@ ngap_amf_init(void)
       OAILOG_ERROR (LOG_S1AP, "Error while creating NGAP task\n");
       return RETURNerror;
     }
-
+/*
     if (ngap_send_init_sctp () < 0) {
       OAILOG_ERROR (LOG_S1AP, "Error while sendind SCTP_INIT_MSG to SCTP \n");
       return RETURNerror;
     }
-
+*/
     OAILOG_DEBUG (LOG_S1AP, "Initializing NGAP interface: DONE\n");
     return RETURNok;
 }
