@@ -164,6 +164,10 @@ install_json_from_source()
 #######################################
 # install asn1c from source
 ######################################
+
+# XXX Set version to 0.9.29 when released
+ASN1C_VERSION=88ed3b5cf012918bc1084b606b0624c45e0d2191
+
 install_asn1c_from_source(){
     if [ $1 -eq 0 ] ; then
       OPTION=""
@@ -180,14 +184,17 @@ install_asn1c_from_source(){
       build-essential \
       flex \
       gcc \
-      libtool 
+      libtool \
+      python2.7
 
     if [[ $prompt =~ [yY](es)* ]]
     then
-      $SUDO rm -rf /tmp/asn1c
+      rm -rf /tmp/asn1c
       mkdir -p /tmp/asn1c
-      git clone https://gitlab.eurecom.fr/oai/asn1c.git /tmp/asn1c
+      git clone https://github.com/vlm/asn1c.git /tmp/asn1c
       cd /tmp/asn1c
+      git checkout ${ASN1C_VERSION}
+      [ -x configure ] || autoreconf -vif
       ./configure
       make > /tmp/log_compile_asn1c 2>&1
       $SUDO make install
