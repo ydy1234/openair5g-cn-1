@@ -1,4 +1,10 @@
 #include "mmMsgDef.h"
+#include "AuthenticationRequest.h"
+#include "AuthenticationResponse.h"
+#include "AuthenticationFailure.h"
+#include "AuthenticationReject.h"
+
+
 
 /*
  * Structure of EMM plain NAS message
@@ -11,6 +17,7 @@ typedef union {
   //authentication_result_msg authentication_result;
   authentication_failure_msg authentication_failure;//Done  19/03/2019
   authentication_reject_msg authentication_reject;//Done 19/03/2019
+/*  
   registration_request_msg registration_request;
   registration_accept_msg registration_accept;
   registration_complete_msg registration_complete;
@@ -31,4 +38,5 @@ typedef union {
   security_mode_complete_msg security_mode_complete;
   security_mode_reject_msg security_mode_reject;
   fiveg_mm_status_msg fiveg_mm_status;
+*/
 }MM_msg;
