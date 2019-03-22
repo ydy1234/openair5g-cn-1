@@ -60,18 +60,20 @@ nlohmann::json UeContextCreateData::toJson() const
 
 void UeContextCreateData::fromJson(const nlohmann::json& val)
 {
-    //if(val.find("ueContext") != val.end())
-    //{
-        //std::cout<<"Found UeContext\n";
-    ////m_UeContext = val.at("ueContext");
-    ////UeContext value=val.at("ueContext");
-    ////setUeContext(value);
-    ////setUeContext(val.at("ueContext"));
-    //}else
-    //{
-        //std::cout<<"Not Found UeContext\n";
+    if(val.find("ueContext") != val.end())
+    {
+        std::cout<<"Found UeContext\n";
+        std::cout<<val.at("ueContext");
+        UeContext Ue_Context;
+        Ue_Context.fromJson(val.at("ueContext"));
+        std::cout<<"We create UeContext:"<<Ue_Context.toJson()<<std::endl;
+        setUeContext(Ue_Context);
 
-    //}
+        //UeContext value=val.at("ueContext");
+        //setUeContext(value);
+        //setUeContext(val.at("ueContext"));
+
+    }
     //if(val.find("pduSessions") != val.end())
     //{
         //setPduSessions(val.at("pduSessions"));

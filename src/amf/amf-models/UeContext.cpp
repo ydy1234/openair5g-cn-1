@@ -156,11 +156,11 @@ nlohmann::json UeContext::toJson() const
             jsonArray.push_back(ModelBase::toJson(item));
         }
 
-        if(jsonArray.size() > 0)
-        {
-            val["sessionContexts"] = jsonArray;
-        }
-    }
+         if(jsonArray.size() > 0)
+         {
+              val["sessionContexts"] = jsonArray;
+         }
+     }
 
 
     return val;
