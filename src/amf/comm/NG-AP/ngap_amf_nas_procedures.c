@@ -42,14 +42,17 @@ ngap_amf_handle_initial_ue_message (
 
   ue_ref = ngap_is_ue_gnb_id_in_list (gnb_ref, ran_ue_ngap_id);
   if(ue_ref == NULL){
-   //IDs ???
+   //IDs ???i
+    tai_t                                   tai = {.plmn = {0}, .tac = INVALID_TAC_0000};
+    cgi_t                                  cgi = {.plmn = {0}, .cell_identity = {0}};
+
     if((ue_ref = ngap_new_ue(assoc_id,ran_ue_ngap_id)) == NULL){
       OAILOG_ERROR (LOG_S1AP, "NGAP:Initial UE Message- Failed to allocate NGAP UE Context, ran_ue_ngap_id:" RAN_UE_NGAP_ID_FMT "\n", ran_ue_ngap_id);
       OAILOG_FUNC_RETURN (LOG_S1AP, RETURNerror);
     }
     ue_ref->ng_ue_state = NGAP_UE_WAITING_CSR;
     ue_ref->ran_ue_ngap_id = ran_ue_ngap_id;
-    ue_ref->amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+    ue_ref->amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;  //be ready allocated by AMF
     ue_ref->ngap_ue_context_rel_timer.id = NGAP_TIMER_INACTIVE_ID;
     ue_ref->ngap_ue_context_rel_timer.sec = NGAP_UE_CONTEXT_REL_COMP_TIMER;
     ue_ref->sctp_stream_recv = stream;
@@ -59,6 +62,19 @@ ngap_amf_handle_initial_ue_message (
       ue_ref->gnb->next_sctp_stream = 1;
     }
     //ngap_dump_gnb(ue_ref->gnb);
+
+    //TAI
+    if(&initialUEMessage_p->userLocationInformation.present == UserLocationInformation_PR_userLocationInformationNR){
+      OCTET_STRING_TO_TAC (&initialUEMessage_p->userLocationInformation.choice.userLocationInformationNR.tAI.tAC, tai.tac);
+      DevAssert (initialUEMessage_p->userLocationInformation.choice.userLocationInformationNR.tAI.pLMNIdentity.size == 3);
+      TBCD_TO_PLMN_T(&initialUEMessage_p->userLocationInformation.choice.userLocationInformationNR.tAI.pLMNIdentity, &tai.plmn);
+    }
+
+    //CGI
+    DevAssert (initialUEMessage_p->userLocationInformation.choice.userLocationInformationNR.nR_CGI.pLMNIdentity.size == 3);
+    TBCD_TO_PLMN_T(&initialUEMessage_p->userLocationInformation.choice.userLocationInformationNR.nR_CGI.pLMNIdentity, &cgi.plmn);
+    BIT_STRING_TO_CELL_IDENTITY (&initialUEMessage_p->userLocationInformation.choice.userLocationInformationNR.nR_CGI.nRCellIdentity, cgi.cell_identity);
+   
     if(initialUEMessage_p->presenceMask & INITIALUEMESSAGE_IES_FIVEG_S_TMSI_PRESENT){} 
     if(initialUEMessage_p->presenceMask & INITIALUEMESSAGE_IES_AMFSETID_PRESENT){} 
     if(initialUEMessage_p->presenceMask & INITIALUEMESSAGE_IES_UECONTEXTREQUEST_PRESENT){} 
@@ -70,6 +86,8 @@ ngap_amf_handle_initial_ue_message (
       ue_ref->amf_ue_ngap_id,
       initialUEMessage_p->nas_pdu.buf,
       initialUEMessage_p->nas_pdu.size,
+      &tai,
+      &cgi,
       initialUEMessage_p->rrcEstablishmentCause,
       NULL,
       NULL,

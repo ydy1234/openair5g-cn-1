@@ -167,7 +167,7 @@ do {                                    \
 #define BIT_STRING_TO_CELL_IDENTITY(aSN, vALUE)                     \
 do {                                                                \
     DevCheck((aSN)->bits_unused == 4, (aSN)->bits_unused, 4, 0);    \
-    vALUE.enb_id = ((aSN)->buf[0] << 12) | ((aSN)->buf[1] << 4) |   \
+    vALUE.gnb_id = ((aSN)->buf[0] << 12) | ((aSN)->buf[1] << 4) |   \
         ((aSN)->buf[2] >> 4);                                       \
     vALUE.cell_id = ((aSN)->buf[2] << 4) | ((aSN)->buf[3] >> 4);    \
 } while(0)

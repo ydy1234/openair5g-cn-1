@@ -83,10 +83,20 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/common)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/sctp-5g)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/utils)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/NG-AP)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/amf_app)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/ies)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/mm/msg)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/sm/msg)
 #include_directories("${NGAP_C_DIR}")
 
-
+file(GLOB NAS_C_CODE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/ies/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/mm/msg/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/sm/msg/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/utils/TLVDecoder.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/utils/TLVEncoder.c)
 
 
 
@@ -119,6 +129,7 @@ file(GLOB SRCS
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/log.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/hashtable.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/obj_hashtable.c
+    ${OPENAIR5GCN_DIR}/src/amf/amf_app/amf_app.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_decoder.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_encoder.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_xer_print.c
@@ -126,5 +137,5 @@ file(GLOB SRCS
     ${OPENAIR5GCN_DIR}/build/amf/build/r15.2/*.c
 )
 
-add_executable(${PROJECT_NAME} ${SRCS} ${ITTICFiles} ${ASN1_C_FILES})
+add_executable(${PROJECT_NAME} ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE})
 target_link_libraries(${PROJECT_NAME} pistache pthread rt ${LFDS} sctp)
