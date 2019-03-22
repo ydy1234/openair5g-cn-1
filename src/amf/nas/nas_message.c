@@ -10,7 +10,7 @@
 #include <string.h>             
 
 //#include "nas_itti_messaging.h"
-//#include "secu_defs.h"
+#include "secu_defs.h"
 #include "mmData.h"
 #include "dynamic_memory_check.h"
 
@@ -350,7 +350,7 @@ static int _nas_message_plain_encode (
     /*
      * Discard L3 messages with not supported protocol discriminator
      */
-    OAILOG_WARNING(LOG_NAS, "NET-API   - Protocol discriminator 0x%x is " "not supported\n", header->protocol_discriminator);
+    OAILOG_WARNING(LOG_NAS, "NET-API   - Extended Protocol discriminator 0x%x is " "not supported\n", header->extended_protocol_discriminator);
   }
 
   OAILOG_FUNC_RETURN (LOG_NAS, bytes);
@@ -393,12 +393,86 @@ static int _nas_message_encrypt (
 
   OAILOG_FUNC_IN (LOG_NAS);
 
-  if (!emm_security_context) {
+  if (!fivegmm_security_context) {
     OAILOG_ERROR(LOG_NAS, "No security context set for encryption protection algorithm\n");
     OAILOG_FUNC_RETURN (LOG_NAS, 0);
   }
   switch (security_header_type) {
-    
+    case SECURITY_HEADER_TYPE_NOT_PROTECTED:
+    case SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED:
+    case SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_NEW:
+      OAILOG_DEBUG (LOG_NAS, "No encryption of message according to security header type 0x%02x\n", security_header_type);
+      memcpy (dest, src, length);
+      OAILOG_FUNC_RETURN (LOG_NAS, length);
+      break;
+    case SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED:
+    case SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED_NEW:
+      switch (fivegmm_security_context->selected_algorithms.encryption) {
+        case NAS_SECURITY_ALGORITHMS_NEA1:{
+        if (direction == SECU_DIRECTION_UPLINK) {
+          count = 0x00000000 || ((fivegmm_security_context->ul_count.overflow && 0x0000FFFF) << 8) || (fivegmm_security_context->ul_count.seq_num & 0x000000FF);
+        } else {
+          count = 0x00000000 || ((fivegmm_security_context->dl_count.overflow && 0x0000FFFF) << 8) || (fivegmm_security_context->dl_count.seq_num & 0x000000FF);
+        }
+
+        OAILOG_DEBUG (LOG_NAS,
+                   "NAS_SECURITY_ALGORITHMS_EEA1 dir %s count.seq_num %u count %u\n",
+                   (direction == SECU_DIRECTION_UPLINK) ? "UPLINK" : "DOWNLINK", (direction == SECU_DIRECTION_UPLINK) ? fivegmm_security_context->ul_count.seq_num : fivegmm_security_context->dl_count.seq_num, count);
+        stream_cipher.key = fivegmm_security_context->knas_enc;
+        stream_cipher.key_length = AUTH_KNAS_ENC_SIZE;
+        stream_cipher.count = count;
+        stream_cipher.bearer = 0x00;    //33.401 section 8.1.1
+        stream_cipher.direction = direction;
+        stream_cipher.message = (uint8_t*)src;
+        /*
+         * length in bits
+         */
+        stream_cipher.blength = length << 3;
+        nas_stream_encrypt_nea1 (&stream_cipher, (uint8_t*)dest);
+        OAILOG_FUNC_RETURN (LOG_NAS, length);
+          }
+          break;
+        case NAS_SECURITY_ALGORITHMS_NEA2:{
+        if (direction == SECU_DIRECTION_UPLINK) {
+          count = 0x00000000 || ((fivegmm_security_context->ul_count.overflow && 0x0000FFFF) << 8) || (fivegmm_security_context->ul_count.seq_num & 0x000000FF);
+        } else {
+          count = 0x00000000 || ((fivegmm_security_context->dl_count.overflow && 0x0000FFFF) << 8) || (fivegmm_security_context->dl_count.seq_num & 0x000000FF);
+        }
+
+        OAILOG_DEBUG (LOG_NAS,
+                   "NAS_SECURITY_ALGORITHMS_EEA2 dir %s count.seq_num %u count %u\n",
+                   (direction == SECU_DIRECTION_UPLINK) ? "UPLINK" : "DOWNLINK", (direction == SECU_DIRECTION_UPLINK) ? fivegmm_security_context->ul_count.seq_num : fivegmm_security_context->dl_count.seq_num, count);
+        stream_cipher.key = fivegmm_security_context->knas_enc;
+        stream_cipher.key_length = AUTH_KNAS_ENC_SIZE;
+        stream_cipher.count = count;
+        stream_cipher.bearer = 0x00;    
+        stream_cipher.direction = direction;
+        stream_cipher.message = (uint8_t*)src;
+        /*
+         * length in bits
+         */
+        stream_cipher.blength = length << 3;
+        nas_stream_encrypt_nea2 (&stream_cipher, (uint8_t*)dest);
+        OAILOG_FUNC_RETURN (LOG_NAS, length);
+          }
+          break;
+        case NAS_SECURITY_ALGORITHMS_NEA0:{
+          OAILOG_DEBUG (LOG_NAS, "NAS_SECURITY_ALGORITHMS_EEA0 dir %d ul_count.seq_num %d dl_count.seq_num %d\n", direction, fivegmm_security_context->ul_count.seq_num, fivegmm_security_context->dl_count.seq_num);
+          memcpy (dest, src, length);
+          OAILOG_FUNC_RETURN (LOG_NAS, length);
+          }
+          break;
+        default:{
+          OAILOG_ERROR(LOG_NAS, "Unknown Cyphering protection algorithm %d\n", fivegmm_security_context->selected_algorithms.encryption);
+          }
+          break;
+      }
+      break;
+   default:{
+     OAILOG_ERROR(LOG_NAS, "Unknown security header type %u\n", security_header_type);
+     OAILOG_FUNC_RETURN (LOG_NAS, 0);
+     } 
+     break;
   }
   OAILOG_FUNC_RETURN (LOG_NAS, length);
 }
@@ -438,6 +512,83 @@ static uint32_t _nas_message_get_mac (
   }
 
   switch (fivegmm_security_context->selected_algorithms.integrity) {
+    case NAS_SECURITY_ALGORITHMS_NIA1:{
+      uint8_t                                 mac[4];
+      nas_stream_cipher_t                     stream_cipher;
+      uint32_t                                count;
+      uint32_t                               *mac32;
+      
+      if (direction == SECU_DIRECTION_UPLINK) {
+        count = 0x00000000 | ((fivegmm_security_context->ul_count.overflow & 0x0000FFFF) << 8) | (fivegmm_security_context->ul_count.seq_num & 0x000000FF);
+      } else {
+        count = 0x00000000 | ((fivegmm_security_context->dl_count.overflow & 0x0000FFFF) << 8) | (fivegmm_security_context->dl_count.seq_num & 0x000000FF);
+      }
+      
+      OAILOG_DEBUG (LOG_NAS,
+                 "NAS_SECURITY_ALGORITHMS_EIA1 dir %s count.seq_num %u count %u\n",
+                 (direction == SECU_DIRECTION_UPLINK) ? "UPLINK" : "DOWNLINK",
+                 (direction == SECU_DIRECTION_UPLINK) ? fivegmm_security_context->ul_count.seq_num : fivegmm_security_context->dl_count.seq_num, count);
+      stream_cipher.key = fivegmm_security_context->knas_int;
+      stream_cipher.key_length = AUTH_KNAS_INT_SIZE;
+      stream_cipher.count = count;      
+      stream_cipher.bearer = 0x00;      //33.401 section 8.1.1
+      stream_cipher.direction = direction;
+      stream_cipher.message = (uint8_t*)buffer;
+      /*
+       * length in bits
+       */
+      stream_cipher.blength = length << 3;
+      nas_stream_encrypt_nia1 (&stream_cipher, mac);
+      OAILOG_DEBUG (LOG_NAS, "NAS_SECURITY_ALGORITHMS_EIA1 returned MAC %x.%x.%x.%x(%u) for length %lu direction %d, count %d\n",
+          mac[0], mac[1], mac[2], mac[3], *((uint32_t *) & mac), length, direction, count);
+      mac32 = (uint32_t *) & mac;
+      OAILOG_FUNC_RETURN (LOG_NAS, ntohl (*mac32));
+      }
+      break;
+    case NAS_SECURITY_ALGORITHMS_NIA2:{
+      uint8_t                                 mac[4];
+      nas_stream_cipher_t                     stream_cipher;
+      uint32_t                                count;
+      uint32_t                               *mac32;
+
+      if (direction == SECU_DIRECTION_UPLINK) {
+        count = 0x00000000 | ((fivegmm_security_context->ul_count.overflow & 0x0000FFFF) << 8) |
+            (fivegmm_security_context->ul_count.seq_num & 0x000000FF);
+      } else {
+        count = 0x00000000 | ((fivegmm_security_context->dl_count.overflow & 0x0000FFFF) << 8) |
+            (fivegmm_security_context->dl_count.seq_num & 0x000000FF);
+      }
+
+      OAILOG_DEBUG (LOG_NAS,
+                 "NAS_SECURITY_ALGORITHMS_EIA2 dir %s count.seq_num %u count %u\n",
+                 (direction == SECU_DIRECTION_UPLINK) ? "UPLINK" : "DOWNLINK", (direction == SECU_DIRECTION_UPLINK) ? fivegmm_security_context->ul_count.seq_num : fivegmm_security_context->dl_count.seq_num, count);
+      stream_cipher.key = fivegmm_security_context->knas_int;
+      stream_cipher.key_length = AUTH_KNAS_INT_SIZE;
+      stream_cipher.count = count;
+      stream_cipher.bearer = 0x00;      
+      stream_cipher.direction = direction;
+      stream_cipher.message = (uint8_t*)buffer;
+      /*
+       * length in bits
+       */
+      stream_cipher.blength = length << 3;
+      nas_stream_encrypt_nia2 (&stream_cipher, mac);
+      OAILOG_DEBUG (LOG_NAS, "NAS_SECURITY_ALGORITHMS_EIA2 returned MAC %x.%x.%x.%x(%u) for length %lu direction %d, count %d\n",
+          mac[0], mac[1], mac[2], mac[3], *((uint32_t *) & mac), length, direction, count);
+      mac32 = (uint32_t *) & mac;
+      OAILOG_FUNC_RETURN (LOG_NAS, ntohl (*mac32));
+      }
+      break;
+    case NAS_SECURITY_ALGORITHMS_NIA0:{
+      OAILOG_DEBUG (LOG_NAS,
+               "NAS_SECURITY_ALGORITHMS_EIA0 dir %s count.seq_num %u\n",
+               (direction == SECU_DIRECTION_UPLINK) ? "UPLINK" : "DOWNLINK", (direction == SECU_DIRECTION_UPLINK) ? fivegmm_security_context->ul_count.seq_num : fivegmm_security_context->dl_count.seq_num);
+      OAILOG_FUNC_RETURN (LOG_NAS, 0);
+      }
+      break;
+    default:
+      OAILOG_ERROR(LOG_NAS, "Unknown integrity protection algorithm %d\n", fivegmm_security_context->selected_algorithms.integrity);
+      break;
   }
   OAILOG_FUNC_RETURN (LOG_NAS, 0);
 }
