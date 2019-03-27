@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -5,22 +6,18 @@
 
 #include "TLVEncoder.h"
 #include "TLVDecoder.h"
-#include "AuthenticationFailureParameter.h"
+#include "AdditionalInformation.h"
 
 /*
  *
- oct1           Authentication Failure parameter IEI
- oct2           Length ofAuthentication Failure parameter contents
- oct3~oct16     Authentication Failure parameter
+ oct1           AdditionalInformation IEI
+ oct2           Length of AdditionalInformation
+ oct3           AdditionalInformation Elements
 
+ oct n
  *
  */
-int
-decode_authentication_failure_parameter (
-  AuthenticationFailureParameter * authenticationfailureparameter,
-  uint8_t iei,
-  uint8_t * buffer,
-  uint32_t len)
+int decode_additional_informaiton(AdditionalInformation *additionalinformation, uint8_t iei, uint8_t *buffer, uint32_t len);
 {
   int                                     decoded = 0;
   uint8_t                                 ielen = 0;
@@ -37,7 +34,7 @@ decode_authentication_failure_parameter (
   CHECK_LENGTH_DECODER (len - decoded, ielen);//看看剩下的长度,更ielen一不一样
 
   //把ie取出来,把IEI/Len of IE都丢弃了
-  if ((decode_result = decode_bstring (authenticationfailureparameter, ielen, buffer + decoded, len - decoded)) < 0)//目的地址,目的长度,长度,源地址,源长度,返回值为目的地址被赋予的实际长度
+  if ((decode_result = decode_bstring (additionalinformation, ielen, buffer + decoded, len - decoded)) < 0)//目的地址,目的长度,长度,源地址,源长度,返回值为目的地址被赋予的实际长度
     return decode_result;
   else
     decoded += decode_result;
@@ -45,12 +42,7 @@ decode_authentication_failure_parameter (
   return decoded;
 }
 
-int
-encode_authentication_failure_parameter (
-  AuthenticationFailureParameter authenticationfailureparameter,
-  uint8_t iei,
-  uint8_t * buffer,
-  uint32_t len)
+int encode_additional_information(AdditionalInformation additionalinformation, uint8_t iei, uint8_t *buffer, uint32_t len);
 {
   uint8_t                                *lenPtr;
   uint32_t                                encoded = 0;
@@ -59,8 +51,7 @@ encode_authentication_failure_parameter (
   /*
    * Checking IEI and pointer
    */
-  //检查buffer是否为NULL,len是否比AUTHENTICATION_FAILURE_PARAMETER_MINIMUM_LENGTH短,并报错的宏
-  CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, AUTHENTICATION_FAILURE_PARAMETER_MINIMUM_LENGTH, len);
+  CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, ADDITIONAL_INFORMATION_MINIMUM_LENGTH, len);
 
   if (iei > 0) {
     *buffer = iei;
@@ -70,7 +61,7 @@ encode_authentication_failure_parameter (
   lenPtr = (buffer + encoded);//指向len的地方
   encoded++;
 
-  if ((encode_result = encode_bstring (authenticationfailureparameter, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
+  if ((encode_result = encode_bstring (additionalinformation, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
     return encode_result;
   else
     encoded += encode_result;

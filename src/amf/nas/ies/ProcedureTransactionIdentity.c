@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -5,18 +6,16 @@
 
 #include "TLVEncoder.h"
 #include "TLVDecoder.h"
-#include "ExtendedProtocolDiscriminator.h"
+#include "ProcedureTransactionIdentity.h"
 
-int encode_protocol_discriminator(ExtendedProtocolDiscriminator extendedprotocoldiscriminator, uint8_t iei, uint8_t *buffer, uint32_t len)
+int encode_procedure_transaction_identity(ProcedureTransactionIdentity proceduretransactionidentity, uint8_t *buffer, uint32_t len);
 {
     //iei useless
-    //#define _5GSSessionManagementMessages       0b00101110
-    //#define _5GSMobilityManagementMessages      0b01111110
 
     uint32_t        encoded=0;
 
 
-    CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, PROTOCOL_DISCRIMINATOR_MINIMUM_LENGTH, len);
+    CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, PROCEDURE_TRANSACTION_IDENTITY_MINIMUM_LENGTH, len);
 
     //iei uselesss
 
@@ -27,7 +26,7 @@ int encode_protocol_discriminator(ExtendedProtocolDiscriminator extendedprotocol
     return encoded;
 
 }
-int decode_protocol_discriminator(ExtendedProtocolDiscriminator *extendedprotocoldiscriminator, uint8_t iei, uint8_t *buffer, uint32_t len)
+int decode_procedure_transaction_identity(ProcedureTransactionIdentity *proceduretransactionidentity, uint8_t iei, uint8_t *buffer, uint32_t len);
 {
     int decoded=0;
     int decode_result;
