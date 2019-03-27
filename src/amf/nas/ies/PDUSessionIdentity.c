@@ -7,25 +7,27 @@
 #include "TLVDecoder.h"
 #include "PDUSessionIdentity.h"
 
-int encode_PDU_session_identity(PDUSessionIdentity pdusessionidentity, uint8_t *buffer, uint32_t len);
+int encode_PDU_session_identity(PDUSessionIdentity pdusessionidentity, uint8_t *buffer, uint32_t len)
 {
     //iei useless
 
-    uint32_t        encoded=0;
+    int        encoded=0;
+    int encode_result;
 
 
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, PDU_SESSION_IDENTITY_MINIMUM_LENGTH, len);
 
     //iei uselesss
 
-    if((encode_result = encode_bstring(pdusessionidentity, buffer, len))<0))//目的变量, 源指针, len为指针指向地址的长度
+    if((encode_result = encode_bstring(pdusessionidentity, buffer, len))<0)//目的变量, 源指针, len为指针指向地址的长度
         return encode_result;
     else
         encoded++;
     return encoded;
 
 }
-int decode_PDU_session_identity(PDUSessionIdentity *pdusessionidentity, uint8_t iei, uint8_t *buffer, uint32_t len);
+
+int decode_PDU_session_identity(PDUSessionIdentity *pdusessionidentity, uint8_t iei, uint8_t *buffer, uint32_t len)
 {
     int decoded=0;
     int decode_result;

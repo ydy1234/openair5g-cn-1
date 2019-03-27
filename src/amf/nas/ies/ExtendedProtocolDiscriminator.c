@@ -13,14 +13,15 @@ int encode_protocol_discriminator(ExtendedProtocolDiscriminator extendedprotocol
     //#define _5GSSessionManagementMessages       0b00101110
     //#define _5GSMobilityManagementMessages      0b01111110
 
-    uint32_t        encoded=0;
+    int encoded=0;
+    int encode_result ;
 
 
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, PROTOCOL_DISCRIMINATOR_MINIMUM_LENGTH, len);
 
     //iei uselesss
 
-    if((encode_result = encode_bstring(extendedprotocoldiscriminator, buffer, len))<0))//目的变量, 源指针, len为指针指向地址的长度
+    if((encode_result = encode_bstring(extendedprotocoldiscriminator, buffer, len))<0)//目的变量, 源指针, len为指针指向地址的长度
         return encode_result;
     else
         encoded++;
