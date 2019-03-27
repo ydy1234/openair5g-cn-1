@@ -5,6 +5,8 @@
 #include "3gpp_38.401.h"
 #include "3gpp_23.003.h"
 #include "3gpp_24.007.h"
+#include "3gpp_24.501.h"
+
 
 typedef uint16_t                 sctp_stream_id_t;
 typedef uint32_t                 sctp_assoc_id_t;

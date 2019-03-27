@@ -6,6 +6,39 @@ set (OPENAIR5GCN_BIN_DIR  ${CMAKE_CURRENT_BINART_DIR}${CMAKE_FILES_DIRECTORY})
 message(${OPENAIR5GCN_BIN_DIR})
 project(amf)
 
+set(CMAKE_MODULE_PATH "${BUILD_TOP_DIR}/modules/")
+set(CMAKE_MODULE_PATH "${OPENAIR5GCN_DIR}/build/modules" "${CMAKE_MODULE_PATH}")
+include(FindPkgConfig)
+
+pkg_search_module(NETTLE nettle)
+if(NOT ${NETTLE_FOUND})
+  message("PACKAGE nettle not found: some targets will fail")
+else()
+  include_directories(${NETTLE_INCLUDE_DIRS})
+endif()
+
+pkg_search_module(NETTLE nettle)
+if(NOT ${NETTLE_FOUND})
+  message( FATAL_ERROR "PACKAGE nettle not found: some targets will fail. Run SCRIPTS/build_mme -i or SCRIPTS/build_hss -i  again!")
+else()
+  include_directories(${NETTLE_INCLUDE_DIRS})
+endif()
+
+message ("NETTLE VERSION_INSTALLED  = ${NETTLE_VERSION}")
+
+string(REGEX REPLACE "([0-9]+).*" "\\1" NETTLE_VERSION_MAJOR ${NETTLE_VERSION})
+string(REGEX REPLACE "[0-9]+\\.([0-9]+).*" "\\1" NETTLE_VERSION_MINOR ${NETTLE_VERSION})
+message ("NETTLE_VERSION_MAJOR = ${NETTLE_VERSION_MAJOR}")
+message ("NETTLE_VERSION_MINOR = ${NETTLE_VERSION_MINOR}")
+
+if ("${NETTLE_VERSION_MAJOR}" STREQUAL "" OR "${NETTLE_VERSION_MINOR}" STREQUAL "")
+  message( FATAL_ERROR "The nettle version not detected properly. Try to run SCRIPTS/build_mme -i or SCRIPTS/build_hss -i again" )
+endif()
+
+add_definitions("-DNETTLE_VERSION_MAJOR=${NETTLE_VERSION_MAJOR}")
+add_definitions("-DNETTLE_VERSION_MINOR=${NETTLE_VERSION_MINOR}")
+
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pg -g3 -fpermissive" )
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fstack-protector-all -g -DMALLOC_CHECK_=3 -DDEBUG_IS_ON=1 -DTRACE_IS_ON=1 -O0")
 ########################################################
@@ -85,6 +118,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/utils)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/NG-AP)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/amf_app)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/secu)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/ies)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/mm/msg)
@@ -92,6 +126,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/sm/msg)
 #include_directories("${NGAP_C_DIR}")
 
 file(GLOB NAS_C_CODE
+    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/secu/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/ies/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/mm/msg/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/sm/msg/*.c
@@ -138,4 +173,4 @@ file(GLOB SRCS
 )
 
 add_executable(${PROJECT_NAME} ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE})
-target_link_libraries(${PROJECT_NAME} pistache pthread rt ${LFDS} sctp)
+target_link_libraries(${PROJECT_NAME} pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES})
