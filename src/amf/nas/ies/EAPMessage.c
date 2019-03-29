@@ -15,7 +15,7 @@
  oct 1503
  *
  */
-int decode_EAP_Message(EAPMessage *eapmessage, uint8_t iei, uint8_t *buffer, uint32_t len);
+int decode_EAP_Message(EAPMessage *eapmessage, uint8_t iei, uint8_t *buffer, uint32_t len)
 {
   int                                     decoded = 0;
   uint8_t                                 ielen = 0;
@@ -40,7 +40,7 @@ int decode_EAP_Message(EAPMessage *eapmessage, uint8_t iei, uint8_t *buffer, uin
   return decoded;
 }
 
-int encode_EAP_Message(EAPMessage eapmessage, uint8_t iei, uint8_t *buffer, uint32_t len);
+int encode_EAP_Message(EAPMessage eapmessage, uint8_t iei, uint8_t *buffer, uint32_t len)
 {
   uint8_t                                *lenPtr;
   uint32_t                                encoded = 0;
@@ -64,6 +64,6 @@ int encode_EAP_Message(EAPMessage eapmessage, uint8_t iei, uint8_t *buffer, uint
   else
     encoded += encode_result;
 
-  *((*uint16_t)lenPtr)= encoded - 2 - ((iei > 0) ? 1 : 0);//对len赋值
+  *((uint16_t*)lenPtr)= encoded - 2 - ((iei > 0) ? 1 : 0);//对len赋值
   return encoded;
 }

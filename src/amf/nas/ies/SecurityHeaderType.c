@@ -26,7 +26,7 @@ int encode_security_header_type(SecurityHeaderType securityheadertype, uint8_t i
 
 
 
-    if ((encode_result = encode_bstring (authenticationfailureparameter, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
+    if ((encode_result = encode_bstring (securityheadertype, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
         return encode_result;
     else
         encoded+=encode_result;
@@ -38,7 +38,7 @@ int decode_security_header_type(SecurityHeaderType *securityheadertype, uint8_t 
   int                                     decoded = 0;
   int                                     decode_result;
 
-  if ((decode_result = decode_bstring (authenticationfailureparameter, ielen, buffer + decoded, len - decoded)) < 0)//目的地址,目的长度,长度,源地址,源长度,返回值为目的地址被赋予的实际长度
+  if ((decode_result = decode_bstring (securityheadertype, 1, buffer + decoded, len - decoded)) < 0)//目的地址,目的长度,长度,源地址,源长度,返回值为目的地址被赋予的实际长度
     return decode_result;
   else
     decoded += decode_result;

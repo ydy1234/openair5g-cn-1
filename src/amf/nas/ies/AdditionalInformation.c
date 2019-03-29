@@ -17,7 +17,7 @@
  oct n
  *
  */
-int decode_additional_informaiton(AdditionalInformation *additionalinformation, uint8_t iei, uint8_t *buffer, uint32_t len);
+int decode_additional_informaiton(AdditionalInformation *additionalinformation, uint8_t iei, uint8_t *buffer, uint32_t len)
 {
   int                                     decoded = 0;
   uint8_t                                 ielen = 0;
@@ -42,7 +42,7 @@ int decode_additional_informaiton(AdditionalInformation *additionalinformation, 
   return decoded;
 }
 
-int encode_additional_information(AdditionalInformation additionalinformation, uint8_t iei, uint8_t *buffer, uint32_t len);
+int encode_additional_information(AdditionalInformation additionalinformation, uint8_t iei, uint8_t *buffer, uint32_t len)
 {
   uint8_t                                *lenPtr;
   uint32_t                                encoded = 0;

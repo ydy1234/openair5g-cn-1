@@ -37,8 +37,10 @@ int decode_message_authentication_code(MessageAuthenticationCode * messageauthen
   int                                     decode_result;
 
 
+
   //把ie取出来,把IEI/Len of IE都丢弃了
-  if ((decode_result = decode_bstring (messageauthenticationcode, ielen, buffer + decoded, len - decoded)) < 0)//目的地址,目的长度,长度,源地址,源长度,返回值为目的地址被赋予的实际长度
+  //messageauthenticationcode 只有4 bytes
+  if ((decode_result = decode_bstring (messageauthenticationcode, 4, buffer + decoded, len - decoded)) < 0)//目的地址,目的长度,长度,源地址,源长度,返回值为目的地址被赋予的实际长度
     return decode_result;
   else
     decoded += decode_result;
