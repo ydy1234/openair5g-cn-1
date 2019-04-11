@@ -5,7 +5,11 @@
 
 #include "TLVEncoder.h"
 #include "TLVDecoder.h"
+#include "ExtendedProtocolDiscriminator.h"
+#include "SecurityHeaderType.h"
+#include "MessageType.h"
 #include "AuthenticationResponseParameter.h"
+#include "EAPMessage.h"
 
 int
 decode_authentication_response_parameter (

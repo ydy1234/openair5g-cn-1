@@ -22,6 +22,6 @@ typedef struct authentication_response_msg_tag {
   AuthenticationResponseParameter   authenticationresponseparameter;
 } authentication_response_msg;
 
-int decode_authentication_response(authentication_response_msg *authenticationresponse, uint8_t *buffer, uint32_t len);
+int decode_authentication_response( authentication_response_msg *authenticationresponse, uint8_t *buffer, uint32_t len);
 
-int encode_authentication_response(authentication_response_msg *authenticationresponse, uint8_t *buffer, uint32_t len);
+int encode_authentication_response( authentication_response_msg *authenticationresponse, uint8_t *buffer, uint32_t len);

@@ -21,6 +21,7 @@ int encode_protocol_discriminator(ExtendedProtocolDiscriminator extendedprotocol
 
     //iei uselesss
 
+    //buffer to extendedprotocoldiscriminator
     if((encode_result = encode_bstring(extendedprotocoldiscriminator, buffer, len))<0)//目的变量, 源指针, len为指针指向地址的长度
         return encode_result;
     else
@@ -28,7 +29,8 @@ int encode_protocol_discriminator(ExtendedProtocolDiscriminator extendedprotocol
     return encoded;
 
 }
-int decode_protocol_discriminator(ExtendedProtocolDiscriminator *extendedprotocoldiscriminator, uint8_t iei, uint8_t *buffer, uint32_t len)
+int decode_protocol_discriminator(ExtendedProtocolDiscriminator *extendedprotocoldiscriminator,
+        uint8_t iei, uint8_t *buffer, uint32_t len)
 {
     int decoded=0;
     int decode_result;
@@ -37,6 +39,7 @@ int decode_protocol_discriminator(ExtendedProtocolDiscriminator *extendedprotoco
 
     //把ie取出来,把IEI/Len of IE都丢弃了
     if ((decode_result = decode_bstring (extendedprotocoldiscriminator, len, buffer, len)) < 0)//目的地址,目的长度,长度,源地址,源长度,返回值为目的地址被赋予的实际长度
+        //decode buffer into extendedprotocoldiscriminator
         return decode_result;
     else
         decoded++;
