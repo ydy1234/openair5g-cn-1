@@ -47,7 +47,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fstack-protector-all -g -DMALLOC_
 set (asn1c_call "${BUILD_TOP_DIR}/tools/generate_asn1")
 set (asn1_generated_dir ${OPENAIR5GCN_BIN_DIR})
 
-set (NGAP_DIR ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP)
+set (NGAP_DIR ${OPENAIR5GCN_DIR}/src/amf/comm/ngap)
 set (ASN1RELDIR r15.2)
 set (NGAP_ASN_DIR ${NGAP_DIR}/messages/asn1/${ASN1RELDIR})
 set (NGAP_ASN_FILES 
@@ -115,7 +115,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/amf-models)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/common)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/sctp-5g)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/utils)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/NG-AP)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/ngap)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/amf_app)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/secu)
@@ -153,14 +153,14 @@ file(GLOB SRCS
     ${OPENAIR5GCN_DIR}/src/amf/comm/sctp-5g/sctp_primitives_server.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/conversions.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/sctp-5g/sctp_common.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_common.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_handlers.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_decoder.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_encoder.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_itti_messaging.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_ta.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/NG-AP/ngap_amf_nas_procedures.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_common.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_handlers.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_decoder.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_encoder.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_itti_messaging.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_ta.c
+    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_nas_procedures.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/log.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/hashtable.c
     ${OPENAIR5GCN_DIR}/src/amf/comm/utils/obj_hashtable.c
