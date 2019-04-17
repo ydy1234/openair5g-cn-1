@@ -15,7 +15,7 @@
  oct 1503
  *
  */
-int decode_EAP_Message(EAPMessage *eapmessage, uint8_t iei, uint8_t *buffer, uint32_t len)
+int decode_eap_message(EAPMessage *eapmessage, uint8_t iei, uint8_t *buffer, uint32_t len)
 {
   int                                     decoded = 0;
   uint8_t                                 ielen = 0;
@@ -40,7 +40,7 @@ int decode_EAP_Message(EAPMessage *eapmessage, uint8_t iei, uint8_t *buffer, uin
   return decoded;
 }
 
-int encode_EAP_Message(EAPMessage eapmessage, uint8_t iei, uint8_t *buffer, uint32_t len)
+int encode_eap_message(EAPMessage eapmessage, uint8_t iei, uint8_t *buffer, uint32_t len)
 {
   uint8_t                                *lenPtr;
   uint32_t                                encoded = 0;
@@ -49,7 +49,7 @@ int encode_EAP_Message(EAPMessage eapmessage, uint8_t iei, uint8_t *buffer, uint
   /*
    * Checking IEI and pointer
    */
-  CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, EAP_Message_MINIMUM_LENGTH, len);
+  CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, EAP_MESSAGE_MINIMUM_LENGTH, len);
 
   if (iei > 0) {
     *buffer = iei;
