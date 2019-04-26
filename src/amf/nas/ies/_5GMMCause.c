@@ -12,14 +12,14 @@ int encode__5gmm_cause ( _5GMMCause _5gmmcause, uint8_t iei, uint8_t * buffer, u
     uint32_t encoded = 0;
     int encode_result;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,_5GMM_CAUSE_MINIMUM_LENGTH , len);
-        
+    
 
-    if( iei >0  )
-    {
-        *buffer=iei;
-        encoded++;
-    }
-                 
+       if( iei >0  )
+       {
+           *buffer=iei;
+               encoded++;
+       }
+
 
 
 
@@ -28,9 +28,10 @@ int encode__5gmm_cause ( _5GMMCause _5gmmcause, uint8_t iei, uint8_t * buffer, u
         return encode_result;
     else
         encoded += encode_result;
-                
 
-    return encoded;}
+
+    return encoded;
+}
 
 int decode__5gmm_cause ( _5GMMCause * _5gmmcause, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
@@ -43,7 +44,7 @@ int decode__5gmm_cause ( _5GMMCause * _5gmmcause, uint8_t iei, uint8_t * buffer,
         CHECK_IEI_DECODER (iei, *buffer);
         decoded++;
     }
-            
+
 
 
 
@@ -51,6 +52,6 @@ int decode__5gmm_cause ( _5GMMCause * _5gmmcause, uint8_t iei, uint8_t * buffer,
         return decode_result;
     else
         decoded += decode_result;
-    return decoded;
+            return decoded;
 }
 

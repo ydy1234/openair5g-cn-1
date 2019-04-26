@@ -12,14 +12,14 @@ int encode_gprs_timer ( GPRSTimer gprstimer, uint8_t iei, uint8_t * buffer, uint
     uint32_t encoded = 0;
     int encode_result;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,GPRS_TIMER_MINIMUM_LENGTH , len);
-        
+    
 
-    if( iei >0  )
-    {
-        *buffer=iei;
-        encoded++;
-    }
-                 
+       if( iei >0  )
+       {
+           *buffer=iei;
+               encoded++;
+       }
+
 
 
 
@@ -28,9 +28,10 @@ int encode_gprs_timer ( GPRSTimer gprstimer, uint8_t iei, uint8_t * buffer, uint
         return encode_result;
     else
         encoded += encode_result;
-                
 
-    return encoded;}
+
+    return encoded;
+}
 
 int decode_gprs_timer ( GPRSTimer * gprstimer, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
@@ -43,7 +44,7 @@ int decode_gprs_timer ( GPRSTimer * gprstimer, uint8_t iei, uint8_t * buffer, ui
         CHECK_IEI_DECODER (iei, *buffer);
         decoded++;
     }
-            
+
 
 
 
@@ -51,6 +52,6 @@ int decode_gprs_timer ( GPRSTimer * gprstimer, uint8_t iei, uint8_t * buffer, ui
         return decode_result;
     else
         decoded += decode_result;
-    return decoded;
+            return decoded;
 }
 

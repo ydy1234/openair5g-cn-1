@@ -1,5 +1,8 @@
 # Generate Code of NAS messages and IEs
-author: puzeyu
+
+Date: 2019.04.26 15:13
+Author: puzeyu
+
 
 There are two programs to reduce the cumbersome and repetitive coding of NAS messages and IEs in 5G Core network. We will talk each splitly.
 
@@ -8,23 +11,44 @@ IEs comes first on the case that NAS messages are composed of IEs. We generate I
 
 compile:
 
-    g++ GenerateIECode.cpp -o GenerateIECode.out
+    g++ GenerateIECode.cpp -std=c++11 -o GenerateIECode.out
 
 running:
 
     ./GenerateIECode.out
 
-Input the IE's name splited into words with an extra "exit" (which means for "PaaCa", you should input "Paa","Ca","exit"; for "NASMessage", input "NAS","Message","exit"). The "exit" just ends the input of the IE's name.
-Then you should input whether the IE contains IEI and length and elements.(Refer for the 3GPP TS24.501 etc.)
-We get a *.c and a *.h(* is the IE name you input in the beginning.).
-###ATTENTION:The code defaultly regards the length of IEI and length element as ONE BTYE! While in some IE the length element is 2 BYTEs, you should edit the code manually. There are such IEs done which you can refer to.
+Every time you run the program, it will generate every IEs defined in the program in the current folder.
+Define the structure of IE in the GenerateIECode.h file. There is a vector named "inputs". The "inputs" is consisted of the structure named "Input".
+
+    {
+        {//IE's name splited with words, particularly regard the abbreviation as one single word such as "5GMM","GPRS", "PDU".
+            "Operator",
+            "Defined",
+            "Access",
+            "Category",
+            "Definitions"
+        },
+        3,//Minimum length of the IE
+        9999,//Maximum length of the IE
+        true,//IEI exists?
+        2//length of the length part of the IE. Three options: 0, 1, 2
+    }
 
 
 ## NASMessage
 
 
-NAS Message doesn't generate codes from input but from data in codes(I think data file is better but I haven't get down to that). To generate NAS Messages we have two files named "GenerateNASMessage.cpp" and "GenerateNASMessage.h".
-There is a main function which decides which NAS files to generate. Use the function "Generate()" to generate the NAS message you wanted. The parameter is the name of the NAS message. Before use the "Generate()", declare which IEs are included in the NAS message(refer the TS24.XXX).
+compile:
+
+    g++ GenerateNASMessage.cpp -std=c++11 -o GenerateIECode.out
+
+running:
+
+    ./GenerateNASMessage.out
+
+Every time you run the program, it will generate every NAS messages defined in the program in the current folder.
+NAS Message generate codes from from data in codes. To generate NAS Messages we have two files named "GenerateNASMessage.cpp" and "GenerateNASMessage.hpp".
+There is a main function which decides which NAS files to generate. Use the function "Generate()" to generate the NAS message you wanted(We haved done it, what you need to do is just declare the structure of the nas message). The parameter is the name of the NAS message. Before use the "Generate()", declare which IEs are included in the NAS message(refer the TS24.XXX).
 
     GenerateFile("AuthenticationRequest");
 
@@ -44,6 +68,3 @@ Declare it in the nas_init() in the same file. Below is an example. Easy to unde
 
 We get two files with NAS message name in the beginning.
 
-
-## SO
-Genrate the NAS, if IE doesn's exists. Generate it.

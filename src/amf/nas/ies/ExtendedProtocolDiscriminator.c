@@ -12,7 +12,7 @@ int encode_extended_protocol_discriminator ( ExtendedProtocolDiscriminator exten
     uint32_t encoded = 0;
     int encode_result;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,EXTENDED_PROTOCOL_DISCRIMINATOR_MINIMUM_LENGTH , len);
-        
+    
 
 
 
@@ -23,7 +23,7 @@ int encode_extended_protocol_discriminator ( ExtendedProtocolDiscriminator exten
         return encode_result;
     else
         encoded += encode_result;
-                
+
 
     return encoded;
 }
@@ -42,6 +42,6 @@ int decode_extended_protocol_discriminator ( ExtendedProtocolDiscriminator * ext
         return decode_result;
     else
         decoded += decode_result;
-    return decoded;
+            return decoded;
 }
 
