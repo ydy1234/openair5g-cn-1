@@ -185,6 +185,8 @@ install_asn1c_from_source(){
       flex \
       gcc \
       libtool \
+      pkg-config \
+      nettle-dev \
       python2.7
 
     if [[ $prompt =~ [yY](es)* ]]
