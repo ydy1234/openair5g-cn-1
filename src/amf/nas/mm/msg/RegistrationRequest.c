@@ -44,11 +44,6 @@ int decode_registration_request( registration_request_msg *registration_request,
     else
         decoded+=decoded_result;
 
-    if((decoded_result = decode_nas_key_set_identifier (&registration_request->naskeysetidentifier, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
     if((decoded_result = decode__5gmm_capability (&registration_request->_5gmmcapability, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
@@ -94,17 +89,12 @@ int decode_registration_request( registration_request_msg *registration_request,
     else
         decoded+=decoded_result;
 
-    if((decoded_result = decode__5gs_mobile_identity (&registration_request->_5gsmobileidentity, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
     if((decoded_result = decode_allowed_pdu_session_status (&registration_request->allowedpdusessionstatus, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
 
-    if((decoded_result = decode_u_ss_usage_setting (&registration_request->ussusagesetting, 0, buffer+decoded,len-decoded))<0)
+    if((decoded_result = decode_ues_usage_setting (&registration_request->uesusagesetting, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
@@ -187,11 +177,6 @@ int encode_registration_request( registration_request_msg *registration_request,
     else
         encoded+=encoded_result;
 
-    if((encoded_result = encode_nas_key_set_identifier (registration_request->naskeysetidentifier, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-
     if((encoded_result = encode__5gmm_capability (registration_request->_5gmmcapability, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
@@ -237,17 +222,12 @@ int encode_registration_request( registration_request_msg *registration_request,
     else
         encoded+=encoded_result;
 
-    if((encoded_result = encode__5gs_mobile_identity (registration_request->_5gsmobileidentity, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-
     if((encoded_result = encode_allowed_pdu_session_status (registration_request->allowedpdusessionstatus, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;
 
-    if((encoded_result = encode_u_ss_usage_setting (registration_request->ussusagesetting, 0, buffer+encoded,len-encoded))<0)
+    if((encoded_result = encode_ues_usage_setting (registration_request->uesusagesetting, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;

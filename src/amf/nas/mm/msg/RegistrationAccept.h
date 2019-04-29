@@ -9,7 +9,6 @@
 #include "_5GSTrackingAreaIdentityList.h"
 #include "NSSAI.h"
 #include "RejectedNSSAI.h"
-#include "NSSAI.h"
 #include "_5GSNetworkFeatureSupport.h"
 #include "PDUSessionStatus.h"
 #include "PDUSessionReactivationResult.h"
@@ -19,7 +18,6 @@
 #include "NetworkSlicingIndication.h"
 #include "ServiceAreaList.h"
 #include "GPRSTimer3.h"
-#include "GPRSTimer2.h"
 #include "GPRSTimer2.h"
 #include "EmergencyNumberList.h"
 #include "ExtendedEmergencyNumberList.h"
@@ -41,7 +39,6 @@
 		_5GS_TRACKING_AREA_IDENTITY_LIST_MINIMUM_LENGTH + \
 		NSSAI_MINIMUM_LENGTH + \
 		REJECTED_NSSAI_MINIMUM_LENGTH + \
-		NSSAI_MINIMUM_LENGTH + \
 		_5GS_NETWORK_FEATURE_SUPPORT_MINIMUM_LENGTH + \
 		PDU_SESSION_STATUS_MINIMUM_LENGTH + \
 		PDU_SESSION_REACTIVATION_RESULT_MINIMUM_LENGTH + \
@@ -51,7 +48,6 @@
 		NETWORK_SLICING_INDICATION_MINIMUM_LENGTH + \
 		SERVICE_AREA_LIST_MINIMUM_LENGTH + \
 		GPRS_TIMER3_MINIMUM_LENGTH + \
-		GPRS_TIMER2_MINIMUM_LENGTH + \
 		GPRS_TIMER2_MINIMUM_LENGTH + \
 		EMERGENCY_NUMBER_LIST_MINIMUM_LENGTH + \
 		EXTENDED_EMERGENCY_NUMBER_LIST_MINIMUM_LENGTH + \
@@ -73,7 +69,6 @@
 		_5GS_TRACKING_AREA_IDENTITY_LIST_MAXIMUM_LENGTH + \
 		NSSAI_MAXIMUM_LENGTH + \
 		REJECTED_NSSAI_MAXIMUM_LENGTH + \
-		NSSAI_MAXIMUM_LENGTH + \
 		_5GS_NETWORK_FEATURE_SUPPORT_MAXIMUM_LENGTH + \
 		PDU_SESSION_STATUS_MAXIMUM_LENGTH + \
 		PDU_SESSION_REACTIVATION_RESULT_MAXIMUM_LENGTH + \
@@ -83,7 +78,6 @@
 		NETWORK_SLICING_INDICATION_MAXIMUM_LENGTH + \
 		SERVICE_AREA_LIST_MAXIMUM_LENGTH + \
 		GPRS_TIMER3_MAXIMUM_LENGTH + \
-		GPRS_TIMER2_MAXIMUM_LENGTH + \
 		GPRS_TIMER2_MAXIMUM_LENGTH + \
 		EMERGENCY_NUMBER_LIST_MAXIMUM_LENGTH + \
 		EXTENDED_EMERGENCY_NUMBER_LIST_MAXIMUM_LENGTH + \
@@ -104,7 +98,6 @@ typedef struct registration_accept_msg_tag{
 	_5GSTrackingAreaIdentityList _5gstrackingareaidentitylist;
 	NSSAI nssai;
 	RejectedNSSAI rejectednssai;
-	NSSAI nssai;
 	_5GSNetworkFeatureSupport _5gsnetworkfeaturesupport;
 	PDUSessionStatus pdusessionstatus;
 	PDUSessionReactivationResult pdusessionreactivationresult;
@@ -114,7 +107,6 @@ typedef struct registration_accept_msg_tag{
 	NetworkSlicingIndication networkslicingindication;
 	ServiceAreaList servicearealist;
 	GPRSTimer3 gprstimer3;
-	GPRSTimer2 gprstimer2;
 	GPRSTimer2 gprstimer2;
 	EmergencyNumberList emergencynumberlist;
 	ExtendedEmergencyNumberList extendedemergencynumberlist;

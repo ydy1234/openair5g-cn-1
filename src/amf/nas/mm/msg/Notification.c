@@ -29,11 +29,6 @@ int decode_notification( notification_msg *notification, uint8_t* buffer, uint32
     else
         decoded+=decoded_result;
 
-    if((decoded_result = decode_access_type (&notification->accesstype, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
 
     return decoded;
 }
@@ -58,11 +53,6 @@ int encode_notification( notification_msg *notification, uint8_t* buffer, uint32
         encoded+=encoded_result;
 
     if((encoded_result = encode_message_type (notification->messagetype, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-
-    if((encoded_result = encode_access_type (notification->accesstype, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;

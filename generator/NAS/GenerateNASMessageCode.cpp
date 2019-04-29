@@ -60,8 +60,8 @@ int nas_init()
         "MessageType",
         "NASKeySetIdentifier",
         "ABBA",
-        "AuthenticationParameterRand",
-        "AuthenticationParameterAutn",
+        "AuthenticationParameterRAND",
+        "AuthenticationParameterAUTN",
         "EAPMessage"
     };
 
@@ -114,7 +114,7 @@ int nas_init()
         "_5GSRegistrationType",
         "NASKeySetIdentifier",
         "_5GSMobileIdentity",
-        "NASKeySetIdentifier",
+        //"NASKeySetIdentifier",
         "_5GMMCapability",
         "UESecurityCapability",
         "NSSAI",
@@ -124,9 +124,9 @@ int nas_init()
         "PDUSessionStatus",
         "MICOIndication",
         "UEStatus",
-        "_5GSMobileIdentity",
+        //"_5GSMobileIdentity",
         "AllowedPDUSessionStatus",
-        "USsUsageSetting",
+        "UESUsageSetting",
         "_5GSDRXParameters",
         "EPSNASMessageContainer",
         "LADNIndication",
@@ -147,7 +147,6 @@ int nas_init()
         "_5GSTrackingAreaIdentityList",
         "NSSAI",
         "RejectedNSSAI",
-        "NSSAI",
         "_5GSNetworkFeatureSupport",
         "PDUSessionStatus",
         "PDUSessionReactivationResult",
@@ -157,7 +156,6 @@ int nas_init()
         "NetworkSlicingIndication",
         "ServiceAreaList",
         "GPRSTimer3",
-        "GPRSTimer2",
         "GPRSTimer2",
         "EmergencyNumberList",
         "ExtendedEmergencyNumberList",
@@ -175,7 +173,6 @@ int nas_init()
         "MessageType",
         "_5GMMCause",
         "GPRSTimer2",
-        "GPRSTimer2",
         "EAPMessage"
     };
 
@@ -187,7 +184,7 @@ int nas_init()
         "PayloadContainerType",
         "PayloadContainer",
         "PDUSessionIdentity2",
-        "PDUSessionIdentity2",
+        //"PDUSessionIdentity2",
         "RequestType",
         "SNSSAI",
         "DNN",
@@ -370,6 +367,7 @@ int nas_init()
         "MessageType",
         "_5GMMCause"
     };
+    //MM end
 
     for(auto it=nas.begin();it!=nas.end();it++)
     {
@@ -553,53 +551,6 @@ int "+FunctionNameEncode(message)+"( "+DataTypeName(message)+" *"+DataName(messa
 
 }
 
-vector<string> BreakString(string str)
-{
-    vector<string> strs;
-    if(str.size()==0) return strs;
-    int i=0;
-    int j=0;
-    if(str.size()!=0&&str[0]=='_')
-    {
-        strs.push_back("_");
-        i++;
-    }
-    while(i<str.size())
-    {
-
-        j=i+1;
-        while(j<str.size()&&!IsUpper(str[j])&&str[j]!='_')
-        {
-            j++;
-        }
-        strs.push_back(str.substr(i,j-i));
-        i=j;
-    }
-    vector<string> rtn;
-    string tmp;
-    for(auto str:strs)
-    {
-        if(str.size()==1)
-        {
-            tmp+=str;
-        }else
-        {
-            if(tmp.size()!=0)
-            {
-                rtn.push_back(tmp);
-                tmp="";
-            }
-            rtn.push_back(str);
-        }
-    }
-    if(tmp.size()!=0)
-    {
-        rtn.push_back(tmp);
-        tmp="";
-    }
-    return rtn;
-
-}
 
 bool IsLower(char ch)
 {
@@ -779,13 +730,80 @@ char Lower(const char ch)
     return ch;
 }
 
+
+ostream& operator<< (ostream& os, vector<string> strs)
+{
+    for(auto str:strs)
+    {
+        cout<<str<<endl;
+    }
+    return os;
+}
+
+vector<string> BreakString(string str)
+{
+    vector<string> strs;
+    if(str.size()==0) return strs;
+    int i=0;
+    int j=0;
+    if(str.size()!=0&&str[0]=='_')
+    {
+        strs.push_back("_");
+        i++;
+    }
+    while(i<str.size())
+    {
+
+        j=i+1;
+        while(j<str.size()&&!IsUpper(str[j])&&str[j]!='_')
+        {
+            if(j>i&&IsDigit(str[j])&&(
+                        str[j-1]=='l'
+                        || str[j-1]=='n'
+                        ))
+            {
+                //j--;
+                break;
+            }
+
+            j++;
+        }
+        strs.push_back(str.substr(i,j-i));
+        i=j;
+    }
+    vector<string> rtn;
+    string tmp;
+    for(auto str:strs)
+    {
+        if(str.size()==1)
+        {
+            tmp+=str;
+        }else
+        {
+            if(tmp.size()!=0)
+            {
+                rtn.push_back(tmp);
+                tmp="";
+            }
+            rtn.push_back(str);
+        }
+    }
+    if(tmp.size()!=0)
+    {
+        rtn.push_back(tmp);
+        tmp="";
+    }
+    return rtn;
+
+}
 int main()
 {
-    //auto strs=BreakString("_5GMMCause");
-    //for(auto str:strs)
-    //{
-        //cout<<str<<endl;
-    //}
+    //cout<<BreakString("Additional5GSecurityInformation");
+    //cout<<BreakString("5GSMMCause");
+    //cout<<BreakString("GPRSTimer3");
+    //cout<<BreakString("GPRSTimer3Like");
+    //cout<<BreakString("UESUsageSetting");
+
 
     nas_init();
 

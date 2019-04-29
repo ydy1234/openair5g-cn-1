@@ -3,7 +3,6 @@
 #include "ExtendedProtocolDiscriminator.h"
 #include "SecurityHeaderType.h"
 #include "MessageType.h"
-#include "AccessType.h"
 
 
 /* Minimum length macro. Formed by minimum length of each mandatory field */
@@ -11,7 +10,6 @@
 		EXTENDED_PROTOCOL_DISCRIMINATOR_MINIMUM_LENGTH + \
 		SECURITY_HEADER_TYPE_MINIMUM_LENGTH + \
 		MESSAGE_TYPE_MINIMUM_LENGTH + \
-		ACCESS_TYPE_MINIMUM_LENGTH + \
 0)
 
 /* Maximum length macro. Formed by maximum length of each field */
@@ -19,14 +17,12 @@
 		EXTENDED_PROTOCOL_DISCRIMINATOR_MAXIMUM_LENGTH + \
 		SECURITY_HEADER_TYPE_MAXIMUM_LENGTH + \
 		MESSAGE_TYPE_MAXIMUM_LENGTH + \
-		ACCESS_TYPE_MAXIMUM_LENGTH + \
 0)
 
 typedef struct notification_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
-	AccessType accesstype;
 }notification_msg;
 
 

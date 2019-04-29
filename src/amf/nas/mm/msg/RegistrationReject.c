@@ -39,11 +39,6 @@ int decode_registration_reject( registration_reject_msg *registration_reject, ui
     else
         decoded+=decoded_result;
 
-    if((decoded_result = decode_gprs_timer2 (&registration_reject->gprstimer2, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
     if((decoded_result = decode_eap_message (&registration_reject->eapmessage, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
@@ -78,11 +73,6 @@ int encode_registration_reject( registration_reject_msg *registration_reject, ui
         encoded+=encoded_result;
 
     if((encoded_result = encode__5gmm_cause (registration_reject->_5gmmcause, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-
-    if((encoded_result = encode_gprs_timer2 (registration_reject->gprstimer2, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;

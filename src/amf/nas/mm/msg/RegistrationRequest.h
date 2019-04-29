@@ -6,7 +6,6 @@
 #include "_5GSRegistrationType.h"
 #include "NASKeySetIdentifier.h"
 #include "_5GSMobileIdentity.h"
-#include "NASKeySetIdentifier.h"
 #include "_5GMMCapability.h"
 #include "UESecurityCapability.h"
 #include "NSSAI.h"
@@ -16,9 +15,8 @@
 #include "PDUSessionStatus.h"
 #include "MICOIndication.h"
 #include "UEStatus.h"
-#include "_5GSMobileIdentity.h"
 #include "AllowedPDUSessionStatus.h"
-#include "USsUsageSetting.h"
+#include "UESUsageSetting.h"
 #include "_5GSDRXParameters.h"
 #include "EPSNASMessageContainer.h"
 #include "LADNIndication.h"
@@ -36,7 +34,6 @@
 		_5GS_REGISTRATION_TYPE_MINIMUM_LENGTH + \
 		NAS_KEY_SET_IDENTIFIER_MINIMUM_LENGTH + \
 		_5GS_MOBILE_IDENTITY_MINIMUM_LENGTH + \
-		NAS_KEY_SET_IDENTIFIER_MINIMUM_LENGTH + \
 		_5GMM_CAPABILITY_MINIMUM_LENGTH + \
 		UE_SECURITY_CAPABILITY_MINIMUM_LENGTH + \
 		NSSAI_MINIMUM_LENGTH + \
@@ -46,9 +43,8 @@
 		PDU_SESSION_STATUS_MINIMUM_LENGTH + \
 		MICO_INDICATION_MINIMUM_LENGTH + \
 		UE_STATUS_MINIMUM_LENGTH + \
-		_5GS_MOBILE_IDENTITY_MINIMUM_LENGTH + \
 		ALLOWED_PDU_SESSION_STATUS_MINIMUM_LENGTH + \
-		U_SS_USAGE_SETTING_MINIMUM_LENGTH + \
+		UES_USAGE_SETTING_MINIMUM_LENGTH + \
 		_5GSDRX_PARAMETERS_MINIMUM_LENGTH + \
 		EPSNAS_MESSAGE_CONTAINER_MINIMUM_LENGTH + \
 		LADN_INDICATION_MINIMUM_LENGTH + \
@@ -66,7 +62,6 @@
 		_5GS_REGISTRATION_TYPE_MAXIMUM_LENGTH + \
 		NAS_KEY_SET_IDENTIFIER_MAXIMUM_LENGTH + \
 		_5GS_MOBILE_IDENTITY_MAXIMUM_LENGTH + \
-		NAS_KEY_SET_IDENTIFIER_MAXIMUM_LENGTH + \
 		_5GMM_CAPABILITY_MAXIMUM_LENGTH + \
 		UE_SECURITY_CAPABILITY_MAXIMUM_LENGTH + \
 		NSSAI_MAXIMUM_LENGTH + \
@@ -76,9 +71,8 @@
 		PDU_SESSION_STATUS_MAXIMUM_LENGTH + \
 		MICO_INDICATION_MAXIMUM_LENGTH + \
 		UE_STATUS_MAXIMUM_LENGTH + \
-		_5GS_MOBILE_IDENTITY_MAXIMUM_LENGTH + \
 		ALLOWED_PDU_SESSION_STATUS_MAXIMUM_LENGTH + \
-		U_SS_USAGE_SETTING_MAXIMUM_LENGTH + \
+		UES_USAGE_SETTING_MAXIMUM_LENGTH + \
 		_5GSDRX_PARAMETERS_MAXIMUM_LENGTH + \
 		EPSNAS_MESSAGE_CONTAINER_MAXIMUM_LENGTH + \
 		LADN_INDICATION_MAXIMUM_LENGTH + \
@@ -95,7 +89,6 @@ typedef struct registration_request_msg_tag{
 	_5GSRegistrationType _5gsregistrationtype;
 	NASKeySetIdentifier naskeysetidentifier;
 	_5GSMobileIdentity _5gsmobileidentity;
-	NASKeySetIdentifier naskeysetidentifier;
 	_5GMMCapability _5gmmcapability;
 	UESecurityCapability uesecuritycapability;
 	NSSAI nssai;
@@ -105,9 +98,8 @@ typedef struct registration_request_msg_tag{
 	PDUSessionStatus pdusessionstatus;
 	MICOIndication micoindication;
 	UEStatus uestatus;
-	_5GSMobileIdentity _5gsmobileidentity;
 	AllowedPDUSessionStatus allowedpdusessionstatus;
-	USsUsageSetting ussusagesetting;
+	UESUsageSetting uesusagesetting;
 	_5GSDRXParameters _5gsdrxparameters;
 	EPSNASMessageContainer epsnasmessagecontainer;
 	LADNIndication ladnindication;

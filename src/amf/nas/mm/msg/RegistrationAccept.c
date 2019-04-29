@@ -59,11 +59,6 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         decoded+=decoded_result;
 
-    if((decoded_result = decode_nssai (&registration_accept->nssai, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
     if((decoded_result = decode__5gs_network_feature_support (&registration_accept->_5gsnetworkfeaturesupport, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
@@ -105,11 +100,6 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
         decoded+=decoded_result;
 
     if((decoded_result = decode_gprs_timer3 (&registration_accept->gprstimer3, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
-    if((decoded_result = decode_gprs_timer2 (&registration_accept->gprstimer2, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
@@ -212,11 +202,6 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         encoded+=encoded_result;
 
-    if((encoded_result = encode_nssai (registration_accept->nssai, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-
     if((encoded_result = encode__5gs_network_feature_support (registration_accept->_5gsnetworkfeaturesupport, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
@@ -258,11 +243,6 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
 
     if((encoded_result = encode_gprs_timer3 (registration_accept->gprstimer3, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-
-    if((encoded_result = encode_gprs_timer2 (registration_accept->gprstimer2, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;

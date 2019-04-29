@@ -6,7 +6,6 @@
 #include "PayloadContainerType.h"
 #include "PayloadContainer.h"
 #include "PDUSessionIdentity2.h"
-#include "PDUSessionIdentity2.h"
 #include "RequestType.h"
 #include "SNSSAI.h"
 #include "DNN.h"
@@ -20,7 +19,6 @@
 		MESSAGE_TYPE_MINIMUM_LENGTH + \
 		PAYLOAD_CONTAINER_TYPE_MINIMUM_LENGTH + \
 		PAYLOAD_CONTAINER_MINIMUM_LENGTH + \
-		PDU_SESSION_IDENTITY2_MINIMUM_LENGTH + \
 		PDU_SESSION_IDENTITY2_MINIMUM_LENGTH + \
 		REQUEST_TYPE_MINIMUM_LENGTH + \
 		SNSSAI_MINIMUM_LENGTH + \
@@ -36,7 +34,6 @@
 		PAYLOAD_CONTAINER_TYPE_MAXIMUM_LENGTH + \
 		PAYLOAD_CONTAINER_MAXIMUM_LENGTH + \
 		PDU_SESSION_IDENTITY2_MAXIMUM_LENGTH + \
-		PDU_SESSION_IDENTITY2_MAXIMUM_LENGTH + \
 		REQUEST_TYPE_MAXIMUM_LENGTH + \
 		SNSSAI_MAXIMUM_LENGTH + \
 		DNN_MAXIMUM_LENGTH + \
@@ -49,7 +46,6 @@ typedef struct ulnas_transport_msg_tag{
 	MessageType messagetype;
 	PayloadContainerType payloadcontainertype;
 	PayloadContainer payloadcontainer;
-	PDUSessionIdentity2 pdusessionidentity2;
 	PDUSessionIdentity2 pdusessionidentity2;
 	RequestType requesttype;
 	SNSSAI snssai;

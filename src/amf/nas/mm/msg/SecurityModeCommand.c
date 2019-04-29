@@ -54,7 +54,7 @@ int decode_security_mode_command( security_mode_command_msg *security_mode_comma
     else
         decoded+=decoded_result;
 
-    if((decoded_result = decode_additional5_g_security_information (&security_mode_command->additional5gsecurityinformation, 0, buffer+decoded,len-decoded))<0)
+    if((decoded_result = decode_additional_5g_security_information (&security_mode_command->additional5gsecurityinformation, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
@@ -127,7 +127,7 @@ int encode_security_mode_command( security_mode_command_msg *security_mode_comma
     else
         encoded+=encoded_result;
 
-    if((encoded_result = encode_additional5_g_security_information (security_mode_command->additional5gsecurityinformation, 0, buffer+encoded,len-encoded))<0)
+    if((encoded_result = encode_additional_5g_security_information (security_mode_command->additional5gsecurityinformation, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;

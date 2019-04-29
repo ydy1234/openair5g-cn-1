@@ -44,11 +44,6 @@ int decode_ulnas_transport( ulnas_transport_msg *ulnas_transport, uint8_t* buffe
     else
         decoded+=decoded_result;
 
-    if((decoded_result = decode_pdu_session_identity2 (&ulnas_transport->pdusessionidentity2, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
     if((decoded_result = decode_request_type (&ulnas_transport->requesttype, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
@@ -103,11 +98,6 @@ int encode_ulnas_transport( ulnas_transport_msg *ulnas_transport, uint8_t* buffe
         encoded+=encoded_result;
 
     if((encoded_result = encode_payload_container (ulnas_transport->payloadcontainer, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-
-    if((encoded_result = encode_pdu_session_identity2 (ulnas_transport->pdusessionidentity2, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;

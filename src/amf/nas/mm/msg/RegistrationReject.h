@@ -5,7 +5,6 @@
 #include "MessageType.h"
 #include "_5GMMCause.h"
 #include "GPRSTimer2.h"
-#include "GPRSTimer2.h"
 #include "EAPMessage.h"
 
 
@@ -15,7 +14,6 @@
 		SECURITY_HEADER_TYPE_MINIMUM_LENGTH + \
 		MESSAGE_TYPE_MINIMUM_LENGTH + \
 		_5GMM_CAUSE_MINIMUM_LENGTH + \
-		GPRS_TIMER2_MINIMUM_LENGTH + \
 		GPRS_TIMER2_MINIMUM_LENGTH + \
 		EAP_MESSAGE_MINIMUM_LENGTH + \
 0)
@@ -27,7 +25,6 @@
 		MESSAGE_TYPE_MAXIMUM_LENGTH + \
 		_5GMM_CAUSE_MAXIMUM_LENGTH + \
 		GPRS_TIMER2_MAXIMUM_LENGTH + \
-		GPRS_TIMER2_MAXIMUM_LENGTH + \
 		EAP_MESSAGE_MAXIMUM_LENGTH + \
 0)
 
@@ -36,7 +33,6 @@ typedef struct registration_reject_msg_tag{
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
 	_5GMMCause _5gmmcause;
-	GPRSTimer2 gprstimer2;
 	GPRSTimer2 gprstimer2;
 	EAPMessage eapmessage;
 }registration_reject_msg;

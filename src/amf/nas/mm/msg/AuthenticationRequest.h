@@ -5,8 +5,8 @@
 #include "MessageType.h"
 #include "NASKeySetIdentifier.h"
 #include "ABBA.h"
-#include "AuthenticationParameterRand.h"
-#include "AuthenticationParameterAutn.h"
+#include "AuthenticationParameterRAND.h"
+#include "AuthenticationParameterAUTN.h"
 #include "EAPMessage.h"
 
 
@@ -40,8 +40,8 @@ typedef struct authentication_request_msg_tag{
 	MessageType messagetype;
 	NASKeySetIdentifier naskeysetidentifier;
 	ABBA abba;
-	AuthenticationParameterRand authenticationparameterrand;
-	AuthenticationParameterAutn authenticationparameterautn;
+	AuthenticationParameterRAND authenticationparameterrand;
+	AuthenticationParameterAUTN authenticationparameterautn;
 	EAPMessage eapmessage;
 }authentication_request_msg;
 
