@@ -29,7 +29,32 @@ int decode_authentication_response( authentication_response_msg *authentication_
     else
         decoded+=decoded_result;
 
+    if((decoded_result = decode_nas_key_set_identifier (&authentication_response->naskeysetidentifier, 0, buffer+decoded,len-decoded))<0)
+        return decoded_result;
+    else
+        decoded+=decoded_result;
+
+    if((decoded_result = decode_abba (&authentication_response->abba, 0, buffer+decoded,len-decoded))<0)
+        return decoded_result;
+    else
+        decoded+=decoded_result;
+
+    if((decoded_result = decode_authentication_parameter_rand (&authentication_response->authenticationparameterrand, 0, buffer+decoded,len-decoded))<0)
+        return decoded_result;
+    else
+        decoded+=decoded_result;
+
+    if((decoded_result = decode_authentication_parameter_autn (&authentication_response->authenticationparameterautn, 0, buffer+decoded,len-decoded))<0)
+        return decoded_result;
+    else
+        decoded+=decoded_result;
+
     if((decoded_result = decode_authentication_response_parameter (&authentication_response->authenticationresponseparameter, 0, buffer+decoded,len-decoded))<0)
+        return decoded_result;
+    else
+        decoded+=decoded_result;
+
+    if((decoded_result = decode_eap_message (&authentication_response->eapmessage, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
@@ -62,7 +87,32 @@ int encode_authentication_response( authentication_response_msg *authentication_
     else
         encoded+=encoded_result;
 
+    if((encoded_result = encode_nas_key_set_identifier (authentication_response->naskeysetidentifier, 0, buffer+encoded,len-encoded))<0)
+        return encoded_result;
+    else
+        encoded+=encoded_result;
+
+    if((encoded_result = encode_abba (authentication_response->abba, 0, buffer+encoded,len-encoded))<0)
+        return encoded_result;
+    else
+        encoded+=encoded_result;
+
+    if((encoded_result = encode_authentication_parameter_rand (authentication_response->authenticationparameterrand, 0, buffer+encoded,len-encoded))<0)
+        return encoded_result;
+    else
+        encoded+=encoded_result;
+
+    if((encoded_result = encode_authentication_parameter_autn (authentication_response->authenticationparameterautn, 0, buffer+encoded,len-encoded))<0)
+        return encoded_result;
+    else
+        encoded+=encoded_result;
+
     if((encoded_result = encode_authentication_response_parameter (authentication_response->authenticationresponseparameter, 0, buffer+encoded,len-encoded))<0)
+        return encoded_result;
+    else
+        encoded+=encoded_result;
+
+    if((encoded_result = encode_eap_message (authentication_response->eapmessage, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;

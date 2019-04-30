@@ -150,9 +150,9 @@ function main()
 
   #-mkdir r15.2
   #$OPENAIR5GCN_DIR/build/tools/generate_asn1 ./r15.2 $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/r15.2/test/*.asn
-  #asn1c -pdu=all -fcompound-names -fno-include-deps -gen-PER -gen-OER -no-gen-example -D r15.2 $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/r15.2/test/*.asn
+  asn1c -pdu=all -fcompound-names -fno-include-deps -gen-PER -gen-OER -no-gen-example -D r15.2 $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/r15.2/test/*.asn
   #asn1c -D r15.2 $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/r15.2/test/*.asn
-  #python2.7 $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/asn1tostruct.py -f $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/r15.2/NGAP-PDU-Contents.asn -o ./r15.2
+  python2.7 $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/asn1tostruct.py -f $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/r15.2/NGAP-PDU-Contents.asn -o ./r15.2
   #python2.7 $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/asn1tostruct.py -f $OPENAIR5GCN_DIR/src/amf/comm/ngap/messages/asn1/r15.2/NGAP-PDU-Descriptions.asn -o ./r15.2
 
 

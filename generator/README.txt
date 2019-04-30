@@ -68,3 +68,21 @@ Declare it in the nas_init() in the same file. Below is an example. Easy to unde
 
 We get two files with NAS message name in the beginning.
 
+
+## Special
+AccessType 
+PDUSessionType -> _PDUSessionType
+The IE name "AccessType" duplicates with the name of the file in the AMF model source codes(See below). So we rename "AccessType.*" to "_AccessType.*".
+
+    user@host:~/openair5g-cn$ find . -name "AccessType.*"
+    ./src/amf/evet/model/AccessType.h
+    ./src/amf/evet/model/AccessType.cpp
+    ./src/amf/amf-models/AccessType.h
+    ./src/amf/amf-models/AccessType.cpp
+    ./src/amf/comm/model/AccessType.h
+    ./src/amf/comm/model/AccessType.cpp
+
+    user@host:~/openair5g-cn$~/openair5g-cn$ find -name "PDUSessionType.h"
+    ./src/amf/nas/ies/PDUSessionType.h
+    ./build/amf/build/r15.2/PDUSessionType.h
+

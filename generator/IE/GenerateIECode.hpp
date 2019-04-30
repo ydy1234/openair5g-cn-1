@@ -868,17 +868,199 @@ vector<Input> inputs=
     },
     {
         {
-            "Access",
+            "_Access",
             "Type"
         },
         1,
         1,
         false,
         0
+    },
+    //mm tail
+
+
+    //sm head
+    {
+        {
+            "_5GSM",
+            "Capability"
+        },
+        3,
+        15,
+        true,
+        1
+    },
+    {
+        {
+            "_5GSM",
+            "Cause"
+        },
+        2,
+        2,
+        true,
+        0
+    },
+    {
+        {
+            "Alwayson",
+            "PDU",
+            "Session",
+            "Indication"
+        },
+        1,
+        1,
+        false,
+        0
+    },
+    {
+        {
+            "Alwayson",
+            "PDU",
+            "Session",
+            "Requested"
+        },
+        1,
+        1,
+        false,
+        0
+    },
+    {
+        {
+            "Allowed",
+            "SSC",
+            "Mode"
+        },
+        1,
+        1,
+        false,
+        0
+    },
+    {
+        {
+            "Extended",
+            "Protocol",
+            "Configuration",
+            "Options"
+        },
+       4,
+        65538,
+        true,
+        2
+    },
+    {
+        {
+            "Intergrity",
+            "Protection",
+            "Maximum",
+            "Data",
+            "Rate"
+        },
+        3,
+        3,
+        true,
+        0
+    },
+    {
+        {
+            "Mapped",
+            "EPS",
+            "Bearer",
+            "Contexts"
+        },
+        7,
+        65538,
+        true,
+        2
+    },
+    {
+        {
+            "Maximum",
+            "Number",
+            "Of",
+            "Supported",
+            "Packet",
+            "Filters"
+        },
+        3,
+        3,
+        true,
+        false
+    },
+    {
+        {
+            "PDU",
+            "Address"
+        },
+        7,
+        15,
+        true,
+        1
+    },
+    {
+        {
+            "_PDU",
+            "Session",
+            "Type"
+        },
+        1,
+        1,
+        false,
+        0
+    },
+    {
+        {
+            "QOS",
+            "Flow",
+            "Descriptions"
+        },
+        5,
+        65538,
+        true,
+        2
+    },
+    {
+        {
+            "QOS",
+            "Rules"
+        },
+        7,
+        65538,
+        true,
+        2
+    },
+    {
+        {
+            "Session",
+            "AMBR"
+        },
+        8,
+        8,
+        true,
+        1
+    },
+    {
+        {
+            "SMPDUDN",
+            "Request",
+            "Container"
+        },
+        3,
+        255,
+        true,
+        1
+    },
+    {
+        {
+            "SSC",
+            "Mode"
+        },
+        1,
+        1,
+        false,
+        0
     }
-    //mm end
 
-
+    //sm tail
 
 
 };
