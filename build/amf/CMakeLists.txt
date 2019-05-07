@@ -47,7 +47,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fstack-protector-all -g -DMALLOC_
 set (asn1c_call "${BUILD_TOP_DIR}/tools/generate_asn1")
 set (asn1_generated_dir ${OPENAIR5GCN_BIN_DIR})
 
-set (NGAP_DIR ${OPENAIR5GCN_DIR}/src/amf/comm/ngap)
+set (NGAP_DIR ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer)
 set (ASN1RELDIR r15.2)
 set (NGAP_ASN_DIR ${NGAP_DIR}/messages/asn1/${ASN1RELDIR})
 set (NGAP_ASN_FILES 
@@ -84,7 +84,7 @@ include_directories ("${NGAP_C_DIR}")
 ###########################################################
 # ITTI 
 #########################################################
-set(ittiPath ${OPENAIR5GCN_DIR}/src/amf/comm/ittiFiles)
+set(ittiPath ${OPENAIR5GCN_DIR}/src/amf/IttiLibrary)
 set(ITTICFiles
     ${ittiPath}/inc/backtrace.c
     ${ittiPath}/inc/bstrlib.c
@@ -103,35 +103,35 @@ include_directories(/usr/local/include/nlohmann)
 include_directories(/usr/local/include/pistache)
 link_directories(/usr/local/lib)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/api)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/impl)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/api)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/impl)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/api)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/impl)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/api)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/impl)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/amf-models)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/common)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/sctp-5g)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/utils)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/ngap)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/amf_app)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/api)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/impl)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/EvetService/api)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/EvetService/impl)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/LocService/api)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/LocService/impl)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/MtService/api)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/MtService/impl)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/AmfGeneratedDataModels)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/common)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/N1N2ProtocolStack/AmfSctpLayer)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/utils)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/N1N2ProtocolStack/AmfNgapLayer)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/AmfAppLayer)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/secu)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/ies)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/mm/msg)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/sm/msg)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/Security)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/ies)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/mm/msg)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/sm/msg)
 #include_directories("${NGAP_C_DIR}")
 
 file(GLOB NAS_C_CODE
     #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/secu/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/ies/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/mm/msg/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/nas/sm/msg/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/utils/TLVDecoder.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/utils/TLVEncoder.c)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/ies/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/mm/msg/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/sm/msg/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/utils/TLVDecoder.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/utils/TLVEncoder.c)
 
 
 
@@ -139,32 +139,32 @@ file(GLOB NAS_C_CODE
 file(GLOB ASN1_C_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/*.c)
 
 file(GLOB SRCS
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/api/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/comm/impl/*.cpp
-    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/api/*.cpp
-    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/evet/impl/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/api/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/loc/impl/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/api/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/mt/impl/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/amf-models/*.cpp
-    ${OPENAIR5GCN_DIR}/src/amf/amf-server.cpp
-    ${OPENAIR5GCN_DIR}/src/amf/comm/sctp-5g/sctp_itti_messaging.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/sctp-5g/sctp_primitives_server.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/utils/conversions.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/sctp-5g/sctp_common.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_common.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_handlers.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_decoder.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_encoder.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_itti_messaging.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_ta.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/ngap/ngap_amf_nas_procedures.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/utils/log.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/utils/hashtable.c
-    ${OPENAIR5GCN_DIR}/src/amf/comm/utils/obj_hashtable.c
-    ${OPENAIR5GCN_DIR}/src/amf/amf_app/amf_app.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/api/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/impl/*.cpp
+    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/EvetService/api/*.cpp
+    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/EvetService/impl/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/LocService/api/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/LocService/impl/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/MtService/api/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/MtService/impl/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/AmfGeneratedDataModels/*.cpp
+    ${OPENAIR5GCN_DIR}/src/amf/AmfMain.cpp
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_itti_messaging.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_primitives_server.c
+    ${OPENAIR5GCN_DIR}/src/amf/utils/conversions.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_common.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_common.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_handlers.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_decoder.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_encoder.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_itti_messaging.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_ta.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_nas_procedures.c
+    ${OPENAIR5GCN_DIR}/src/amf/utils/log.c
+    ${OPENAIR5GCN_DIR}/src/amf/utils/hashtable.c
+    ${OPENAIR5GCN_DIR}/src/amf/utils/obj_hashtable.c
+    ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_app.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_decoder.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_encoder.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_xer_print.c
