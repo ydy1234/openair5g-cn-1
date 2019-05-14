@@ -121,17 +121,20 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/Security)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/ies)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/mm)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/mm/msg)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/sm/msg)
 #include_directories("${NGAP_C_DIR}")
 
 file(GLOB NAS_C_CODE
-    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/secu/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/secu/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/ies/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/mm/msg/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/sm/msg/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/utils/TLVDecoder.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/utils/TLVEncoder.c)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/utils/TLVEncoder.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/*.c)
 
 
 

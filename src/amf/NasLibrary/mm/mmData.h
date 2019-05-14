@@ -1,6 +1,6 @@
 #include "bstrlib.h"
 #include "common_types.h"
-
+#include "securityDef.h"
 
 /* Type of security context */
 typedef enum {

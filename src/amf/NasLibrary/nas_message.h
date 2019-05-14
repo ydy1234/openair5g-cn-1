@@ -24,7 +24,7 @@ typedef struct nas_message_security_header_s {
 /* Structure of plain NAS message */
 typedef union {
   MM_msg mm;    /* NAS MM */
-  SM_msg sm;    /* NAS SM  */
+  //SM_msg sm;    /* NAS SM  */
 } nas_message_plain_t;
 
 

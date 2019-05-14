@@ -15,7 +15,6 @@
 #include "dynamic_memory_check.h"
 
 
-
 /****************************************************************************/
 /*******************  L O C A L    D E F I N I T I O N S  *******************/
 /****************************************************************************/
@@ -313,7 +312,7 @@ static int _nas_message_header_encode (
   ENCODE_U8 (buffer,header->extended_protocol_discriminator,size);
   ENCODE_U8 (buffer+size,header->security_header_type,size);
 
-  if (header->extended_protocol_discriminator == FIVEG_MOBILITY_MANAGEMENT_MESSAGES) {
+  if (header->extended_protocol_discriminator == FIVEGS_MOBILITY_MANAGEMENT_MESSAGES) {
     if (header->security_header_type != SECURITY_HEADER_TYPE_NOT_PROTECTED) {
       if (length < NAS_MESSAGE_SECURITY_HEADER_SIZE) {
         /*
@@ -421,11 +420,11 @@ static int _nas_message_plain_encode (
      * Encode EPS Mobility Management L3 message
      */
     bytes = fivegmm_msg_encode ((MM_msg *) (&msg->mm), (uint8_t *) buffer, length);
-  } else if (header->protocol_discriminator == FIVEGS_SESSION_MANAGEMENT_MESSAGES) {
+  } else if (header->extended_protocol_discriminator == FIVEGS_SESSION_MANAGEMENT_MESSAGES) {
     /*
      * Encode EPS Session Management L3 message
      */
-    bytes = fivegsm_msg_encode ((SM_msg *) (&msg->sm), (uint8_t *) buffer, length);
+    //bytes = fivegsm_msg_encode ((SM_msg *) (&msg->sm), (uint8_t *) buffer, length);
   } else {
     /*
      * Discard L3 messages with not supported protocol discriminator
@@ -796,9 +795,9 @@ static int _nas_message_decrypt (
     OAILOG_DEBUG (LOG_NAS, "No decryption of message length %lu according to security header type 0x%02x\n", length, security_header_type);
     memcpy (dest, src, length);
     //DECODE_U8 (dest, *(uint8_t *) (&header), size);
-    DECODE_U8(dest,header->extended_protocol_discriminator,size);
-    DECODE_U8(dest+size,header->security_header_type,size);
-    OAILOG_FUNC_RETURN (LOG_NAS, header.protocol_discriminator);
+    DECODE_U8(dest,header.extended_protocol_discriminator,size);
+    DECODE_U8(dest+size,header.security_header_type,size);
+    OAILOG_FUNC_RETURN (LOG_NAS, header.extended_protocol_discriminator);
     //LOG_FUNC_RETURN (LOG_NAS, length);
     break;
 
@@ -837,9 +836,9 @@ static int _nas_message_decrypt (
            * * * * and protocol discriminator)
            */
           //DECODE_U8 (dest, *(uint8_t *) (&header), size);
-          DECODE_U8(dest,header->extended_protocol_discriminator,size);
-          DECODE_U8(dest+size,header->security_header_type,size);
-          OAILOG_FUNC_RETURN (LOG_NAS, header.protocol_discriminator);
+          DECODE_U8(dest,header.extended_protocol_discriminator,size);
+          DECODE_U8(dest+size,header.security_header_type,size);
+          OAILOG_FUNC_RETURN (LOG_NAS, header.extended_protocol_discriminator);
         }
         break;
         case NAS_SECURITY_ALGORITHMS_NEA2:{
@@ -873,9 +872,9 @@ static int _nas_message_decrypt (
            * * * * and protocol discriminator)
            */
           //DECODE_U8 (dest, *(uint8_t *) (&header), size);
-          DECODE_U8(dest,header->extended_protocol_discriminator,size);
-          DECODE_U8(dest+size,header->security_header_type,size);
-          OAILOG_FUNC_RETURN (LOG_NAS, header.protocol_discriminator);
+          DECODE_U8(dest,header.extended_protocol_discriminator,size);
+          DECODE_U8(dest+size,header.security_header_type,size);
+          OAILOG_FUNC_RETURN (LOG_NAS, header.extended_protocol_discriminator);
         }
         break;
         case NAS_SECURITY_ALGORITHMS_NEA0:
@@ -886,9 +885,9 @@ static int _nas_message_decrypt (
            * * * * and protocol discriminator)
            */
           //DECODE_U8 (dest, *(uint8_t *) (&header), size);
-          DECODE_U8(dest,header->extended_protocol_discriminator,size);
-          DECODE_U8(dest+size,header->security_header_type,size);
-          OAILOG_FUNC_RETURN (LOG_NAS, header.protocol_discriminator);
+          DECODE_U8(dest,header.extended_protocol_discriminator,size);
+          DECODE_U8(dest+size,header.security_header_type,size);
+          OAILOG_FUNC_RETURN (LOG_NAS, header.extended_protocol_discriminator);
           break;
 
         default:
@@ -899,9 +898,9 @@ static int _nas_message_decrypt (
            * * * * and protocol discriminator)
            */
           //DECODE_U8 (dest, *(uint8_t *) (&header), size);
-          DECODE_U8(dest,header->extended_protocol_discriminator,size);
-          DECODE_U8(dest+size,header->security_header_type,size);
-          OAILOG_FUNC_RETURN (LOG_NAS, header.protocol_discriminator);
+          DECODE_U8(dest,header.extended_protocol_discriminator,size);
+          DECODE_U8(dest+size,header.security_header_type,size);
+          OAILOG_FUNC_RETURN (LOG_NAS, header.extended_protocol_discriminator);
           break;
       }
     } else {
@@ -930,12 +929,12 @@ static int _nas_message_plain_decode (
     /*
      * Decode 5G Mobility Management L3 message
      */
-    bytes = mm_msg_decode (&msg->emm, (uint8_t *) buffer, length);
+    bytes = mm_msg_decode (&msg->mm, (uint8_t *) buffer, length);
   } else if (header->extended_protocol_discriminator == FIVEGS_SESSION_MANAGEMENT_MESSAGES) {
     /*
      * Decode 5G Session Management L3 message
      */
-    bytes = sm_msg_decode (&msg->esm, (uint8_t *) buffer, length);
+    //bytes = sm_msg_decode (&msg->esm, (uint8_t *) buffer, length);
     printf("\ndukl esm_msg_decode\n");
   } else {
     /*
