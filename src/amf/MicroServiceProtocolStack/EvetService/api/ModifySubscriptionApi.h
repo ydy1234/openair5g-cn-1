@@ -26,7 +26,7 @@
 
 
 #include "AmfUpdatedEventSubscription.h"
-//#include "Object.h"
+#include "Object.h"
 #include "ProblemDetails.h"
 #include <string>
 #include <vector>

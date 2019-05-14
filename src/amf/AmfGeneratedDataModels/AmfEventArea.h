@@ -1,6 +1,6 @@
 /**
-* Namf_EventExposure Service
-* AMF Event Exposure Service
+* AMF Communicaiton Service
+* AMF Communication Service
 *
 * OpenAPI spec version: 1.R15.0.0
 * 
@@ -23,10 +23,10 @@
 
 #include "Ecgi.h"
 #include "Ncgi.h"
-#include "Tai.h"
 #include <string>
 #include "PresenceState.h"
-#include "GlobalRanNodeId_2.h"
+#include "Tai.h"
+#include "GlobalRanNodeId.h"
 #include <vector>
 
 namespace org {
@@ -98,7 +98,7 @@ public:
     /// <summary>
     /// 
     /// </summary>
-    std::vector<GlobalRanNodeId_2>& getGlobalRanNodeId();
+    std::vector<GlobalRanNodeId>& getGlobalRanNodeId();
     bool globalRanNodeIdIsSet() const;
     void unsetGlobalRanNodeId();
 
@@ -115,7 +115,7 @@ protected:
     bool m_EcgiIsSet;
     std::vector<Ncgi> m_Ncgi;
     bool m_NcgiIsSet;
-    std::vector<GlobalRanNodeId_2> m_GlobalRanNodeId;
+    std::vector<GlobalRanNodeId> m_GlobalRanNodeId;
     bool m_GlobalRanNodeIdIsSet;
 };
 
