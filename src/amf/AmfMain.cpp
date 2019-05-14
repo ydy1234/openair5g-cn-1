@@ -34,30 +34,6 @@
 //
 #include <unordered_map>
 
-#include "AMFStatusChangeSubscribeApiImpl.h"
-#include "AMFStatusChangeSubscribeModifyApiImpl.h"
-#include "AMFStatusChangeUnSubscribeApiImpl.h"
-#include "CreateUEContxtApiImpl.h"
-#include "EBIAssignmentApiImpl.h"
-#include "N1N2MessageSubscribeApiImpl.h"
-#include "N1N2MessageTransferApiImpl.h"
-#include "N1N2MessageUnSubscribeApiImpl.h"
-#include "NonUEN2InfoSubscribeApiImpl.h"
-#include "NonUEN2InfoUnSubscribeApiImpl.h"
-#include "NonUEN2MessageTransferApiImpl.h"
-#include "ReleaseUEContxtApiImpl.h"
-#include "UEContextTransferApiImpl.h"
-
-//Event Exposure Services
-#include "CreateSubscriptionApiImpl.h"
-#include "DeleteSubscriptionApiImpl.h"
-#include "ModifySubscriptionApiImpl.h"
-//Location Service
-#include "ProvideLocationApiImpl.h"
-//MT Service
-#include "EnableUEReachabilityApiImpl.h"
-#include "ProvideDomainSelectionInfoApiImpl.h"
-
 #include "amf-services.h"
 
 ////////////////////////////////////////////////// itti header /////////////////////////////////
