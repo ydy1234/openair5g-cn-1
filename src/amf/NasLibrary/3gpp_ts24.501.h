@@ -563,7 +563,7 @@
 
 // 0b01******
 /* 5GS Mobility Management Messages */
-
+#if 0
 #define RegistrationRequest                 0b01000001
 #define RegistrationAccept                  0b01000010
 #define RegistrationComplete                0b01000011
@@ -595,6 +595,39 @@
 #define NotificationResponse                0b01100110
 #define ULNASTransport                      0b01100111
 #define DLNASTransport                      0b01101000
+#endif
+
+#define REGISTRATION_REQUEST                    0b01000001
+#define REGISTRATION_ACCEPT                     0b01000010
+#define REGISTRATION_COMPLETE                   0b01000011
+#define REGISTRATION_REJECT                     0b01000100
+#define DEREGISTRATION_REQUEST_UE_ORIGINATING   0b01000101
+#define DEREGISTRATION_ACCEPT_UE_ORIGINATING    0b01000110
+#define DEREGISTRATION_REQUEST_UE_TERMINATED    0b01000111
+#define DEREGISTRATION_ACCEPT_UE_TERMINATED     0b01001000
+
+#define SERVICE_REQUEST                         0b01001100
+#define SERVICE_REJECT                          0b01001101
+#define SERVICE_ACCEPT                          0b01001110
+
+#define CONFIGURATION_UPDATE_COMMAND            0b01010100
+#define CONFIGURATION_UPDATE_COMPLETE           0b01010101
+#define AUTHENTICATION_REQUEST                  0b01010110
+#define AUTHENTICATION_RESPONSE                 0b01010111
+#define AUTHENTICATION_REJECT                   0b01011000
+#define AUTHENTICATION_FAILURE                  0b01011001 
+#define AUTHENTICATION_RESULT                   0b01011010
+#define IDENTITY_REQUEST                        0b01011011
+#define IDENTITY_RESPONSE                       0b01011100
+#define SECURITY_MODE_COMMAND                   0b01011101
+#define SECURITY_MODE_COMPLETE                  0b01011110
+#define SECURITY_MODE_REJECT                    0b01011111
+
+#define _5GMM_STATUS                            0b01100100
+#define NOTIFICATION                            0b01100101
+#define NOTIFICATION_RESPONSE                   0b01100110
+#define ULNAS_TRANSPORT                         0b01100111
+#define DLNAS_TRANSPORT                         0b01101000
 
 
 //0b11******

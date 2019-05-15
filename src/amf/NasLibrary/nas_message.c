@@ -114,23 +114,30 @@ int nas_message_encode (
     size_t length,
     void *security)
 {
-  OAILOG_FUNC_IN (LOG_NAS);
+  //OAILOG_FUNC_IN (LOG_NAS);
+  printf("encode nas msg header 1.0\n");
   fivegmm_security_context_t                 *fivegmm_security_context = (fivegmm_security_context_t *) security;
   int                                     bytes;
 
   /*
    * Encode the header
    */
-  int                                     size = _nas_message_header_encode (buffer, &msg->header, length);
 
+  printf("encode nas msg header 1.1\n");
+  printf("extended_protocol_discriminator %x\n",(&msg->header)->extended_protocol_discriminator);
+  printf("security type %x\n",(&msg->header)->security_header_type);
+  int                                     size = _nas_message_header_encode (buffer, &msg->header, length);
+  printf("encode nas msg header 1.2\n");
+  printf("size %d\n",size);
   if (size < 0) {
-    OAILOG_FUNC_RETURN (LOG_NAS, TLV_BUFFER_TOO_SHORT);
+    //OAILOG_FUNC_RETURN (LOG_NAS, TLV_BUFFER_TOO_SHORT);
   } else if (size > 1) {
     /*
      * Encode security protected NAS message
      */
+    printf("encode protected nas msg header 1.2.1\n");
     bytes = _nas_message_protected_encode (buffer + size, &msg->security_protected, length - size, fivegmm_security_context);
-
+    printf("encode protected nas msg header 1.2.2\n");
     /*
      * Integrity protect the NAS message
      */
@@ -143,7 +150,7 @@ int nas_message_encode (
       /*
        * Compute the NAS message authentication code
        */
-      OAILOG_DEBUG (LOG_NAS, "offset %d = %d - %lu, hdr encode = %d, length = %lu bytes = %d\n", offset, size, sizeof (uint8_t), size, length, bytes);
+      //OAILOG_DEBUG (LOG_NAS, "offset %d = %d - %lu, hdr encode = %d, length = %lu bytes = %d\n", offset, size, sizeof (uint8_t), size, length, bytes);
       uint32_t                                mac = _nas_message_get_mac (buffer + offset,
                                                                           bytes + size - offset,
                                                                           SECU_DIRECTION_DOWNLINK,
@@ -161,9 +168,9 @@ int nas_message_encode (
           fivegmm_security_context->dl_count.overflow += 1;
         }
 
-        OAILOG_DEBUG (LOG_NAS, "Incremented fivegmm_security_context.dl_count.seq_num -> %u\n", fivegmm_security_context->dl_count.seq_num);
+        //OAILOG_DEBUG (LOG_NAS, "Incremented fivegmm_security_context.dl_count.seq_num -> %u\n", fivegmm_security_context->dl_count.seq_num);
       } else {
-        OAILOG_DEBUG (LOG_NAS, "Did not increment fivegmm_security_context.dl_count.seq_num because no security context\n");
+        //OAILOG_DEBUG (LOG_NAS, "Did not increment fivegmm_security_context.dl_count.seq_num because no security context\n");
       }
     }
     /*
@@ -178,14 +185,14 @@ int nas_message_encode (
   }
 
   if (bytes < 0) {
-    OAILOG_FUNC_RETURN (LOG_NAS, bytes);
+    //OAILOG_FUNC_RETURN (LOG_NAS, bytes);
   }
 
   if (size > 1) {
-    OAILOG_FUNC_RETURN (LOG_NAS, size + bytes);
+    //OAILOG_FUNC_RETURN (LOG_NAS, size + bytes);
   }
 
-  OAILOG_FUNC_RETURN (LOG_NAS, bytes);
+  //OAILOG_FUNC_RETURN (LOG_NAS, bytes);
 }
 
 
@@ -301,7 +308,7 @@ static int _nas_message_header_encode (
     const nas_message_security_header_t * header,
     size_t length)
 {
-  OAILOG_FUNC_IN (LOG_NAS);
+  //OAILOG_FUNC_IN (LOG_NAS);
   int                                     size = 0;
 
   /*
@@ -310,21 +317,30 @@ static int _nas_message_header_encode (
    */
   //ENCODE_U8 (buffer, *(uint8_t *) (header), size);
   ENCODE_U8 (buffer,header->extended_protocol_discriminator,size);
+  uint8_t decoded_protocol = 0,decoded_size = 0;
+  DECODE_U8(buffer,decoded_protocol,decoded_size);
+  printf("encoded nas header protocol(decode): %x\n",decoded_protocol);
+  printf("encoded nas header protocol: %x\n",*buffer);
+  printf("encoded nas header protocol: %x\n",header->extended_protocol_discriminator);
   ENCODE_U8 (buffer+size,header->security_header_type,size);
 
   if (header->extended_protocol_discriminator == FIVEGS_MOBILITY_MANAGEMENT_MESSAGES) {
+    printf("header->extended_protocol_discriminator == FIVEGS_MOBILITY_MANAGEMENT_MESSAGES\n");
+    printf("%x\n",header->security_header_type);
     if (header->security_header_type != SECURITY_HEADER_TYPE_NOT_PROTECTED) {
+      printf("header->security_header_type != SECURITY_HEADER_TYPE_NOT_PROTECTED\n");
       if (length < NAS_MESSAGE_SECURITY_HEADER_SIZE) {
         /*
          * The buffer is not big enough to contain security header
          */
-        OAILOG_WARNING(LOG_NAS, "NET-API   - The size of the header (%u) " "exceeds the buffer length (%lu)\n", NAS_MESSAGE_SECURITY_HEADER_SIZE, length);
-        OAILOG_FUNC_RETURN (LOG_NAS, RETURNerror);
+        //OAILOG_WARNING(LOG_NAS, "NET-API   - The size of the header (%u) " "exceeds the buffer length (%lu)\n", NAS_MESSAGE_SECURITY_HEADER_SIZE, length);
+        //OAILOG_FUNC_RETURN (LOG_NAS, RETURNerror);
       }
 
       /*
        * Encode the message authentication code
        */
+      printf("encode mac\n");
       ENCODE_U32 (buffer + size, header->message_authentication_code, size);
       /*
        * Encode the sequence number
@@ -332,8 +348,9 @@ static int _nas_message_header_encode (
       ENCODE_U8 (buffer + size, header->sequence_number, size);
     }
   }
-
-  OAILOG_FUNC_RETURN (LOG_NAS, size);
+  return size;
+  //OAILOG_STREAM_HEX(OAILOG_LEVEL_DEBUG, LOG_NAS, "encode nas header Incoming NAS message: ", buffer, size)
+  //OAILOG_FUNC_RETURN (LOG_NAS, size);
 }
 
 /****************************************************************************

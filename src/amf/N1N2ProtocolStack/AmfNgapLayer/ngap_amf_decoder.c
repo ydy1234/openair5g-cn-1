@@ -140,7 +140,7 @@ ngap_amf_decode_unsuccessful_outcome(
     char *message_string = NULL;
     size_t message_string_size;
 
-    OAILOG_FUNC_IN (LOG_S1AP);
+    //OAILOG_FUNC_IN (LOG_S1AP);
 
     DevAssert (unSuccessfulOutcome_p != NULL);
     message_string = calloc(10000,sizeof(char));
@@ -155,8 +155,15 @@ ngap_amf_decode_unsuccessful_outcome(
           *message_id = NGAP_INITIAL_CONTEXT_SETUP_FAILURE_LOG;
         }
         break;
+      case Ngap_ProcedureCode_id_NGSetup:{
+          printf("1.4\n");
+          ret = ngap_decode_ngsetupfailureies(&message->msg.ngSetupFailureIEs,&unSuccessfulOutcome_p->value);
+          //ngap_xer_print_ngsetupfailure(ngap_xer__print2fp,message_string,message);
+          //*message_id = NGAP_INITIAL_CONTEXT_SETUP_FAILURE_LOG;
+        }
+        break;
       default:{
-          OAILOG_ERROR (LOG_S1AP, "Unknown procedure ID (%d) for unsuccessfull outcome message\n", (int)unSuccessfulOutcome_p->procedureCode);
+          //OAILOG_ERROR (LOG_S1AP, "Unknown procedure ID (%d) for unsuccessfull outcome message\n", (int)unSuccessfulOutcome_p->procedureCode);
         }
         break;
     }
@@ -184,8 +191,9 @@ int ngap_amf_decode_pdu(
   asn_dec_rval_t                          dec_ret = {(RC_OK)};
   DevAssert (raw != NULL);
   memset ((void *)pdu_p, 0, sizeof (NGAP_PDU_t));
+  printf("1.1\n");
   dec_ret = uper_decode (NULL, &asn_DEF_NGAP_PDU, (void **)&pdu_p, bdata(raw), blength(raw), 0, 0);
-        
+  printf("1.2\n");
   if (dec_ret.code != RC_OK) {
     OAILOG_ERROR (LOG_S1AP, "Failed to decode PDU\n");
     return -1;
@@ -201,10 +209,11 @@ int ngap_amf_decode_pdu(
       return ngap_amf_decode_successful_outcome (message, &pdu_p->choice.successfulOutcome, message_id);
 
     case NGAP_PDU_PR_unsuccessfulOutcome:
+      printf("1.3\n");
       return ngap_amf_decode_unsuccessful_outcome (message, &pdu_p->choice.unsuccessfulOutcome, message_id);
         
     default:
-      OAILOG_ERROR (LOG_S1AP, "Unknown message outcome (%d) or not implemented", (int)pdu_p->present);
+      //OAILOG_ERROR (LOG_S1AP, "Unknown message outcome (%d) or not implemented", (int)pdu_p->present);
       break;
   }
   ASN_STRUCT_FREE(asn_DEF_NGAP_PDU, pdu_p);

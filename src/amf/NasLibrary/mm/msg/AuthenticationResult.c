@@ -13,7 +13,7 @@ int decode_authentication_result( authentication_result_msg *authentication_resu
 
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, AUTHENTICATION_RESULT_MINIMUM_LENGTH, len);
-
+/*
     if((decoded_result = decode_extended_protocol_discriminator (&authentication_result->extendedprotocoldiscriminator, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
@@ -28,7 +28,8 @@ int decode_authentication_result( authentication_result_msg *authentication_resu
         return decoded_result;
     else
         decoded+=decoded_result;
-
+*/
+/*
     if((decoded_result = decode_nas_key_set_identifier (&authentication_result->naskeysetidentifier, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
@@ -44,7 +45,7 @@ int decode_authentication_result( authentication_result_msg *authentication_resu
     else
         decoded+=decoded_result;
 
-
+*/
     return decoded;
 }
 
@@ -56,7 +57,7 @@ int encode_authentication_result( authentication_result_msg *authentication_resu
     
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, AUTHENTICATION_RESULT_MINIMUM_LENGTH, len);
-
+/*
     if((encoded_result = encode_extended_protocol_discriminator (authentication_result->extendedprotocoldiscriminator, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
@@ -87,6 +88,6 @@ int encode_authentication_result( authentication_result_msg *authentication_resu
     else
         encoded+=encoded_result;
 
-
+*/
     return encoded;
 }

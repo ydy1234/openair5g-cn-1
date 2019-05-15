@@ -1,4 +1,5 @@
 #include "mm_msg.h"
+#include "common_types.h"
 
 
 

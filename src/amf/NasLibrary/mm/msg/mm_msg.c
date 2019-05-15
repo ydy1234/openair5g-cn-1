@@ -64,6 +64,21 @@ fivegmm_msg_encode (
     //case AuthenticationRequest:
       //encode_result = encode_authentication_request(&msg->authentication_request,buffer,len);/* msg define in openair5g-cn/src/amf/nas/mm/msg  */
       //break;
+      case AUTHENTICATION_REQUEST:
+	  	  encode_result = encode_authentication_request(&msg->authentication_request, buffer, len);
+	  break;	  
+	  case AUTHENTICATION_RESPONSE:
+	      encode_result = encode_authentication_response(&msg->authentication_response, buffer, len);	  
+	  break;	  
+	  case AUTHENTICATION_REJECT:
+	      encode_result = encode_authentication_reject(&msg->authentication_reject, buffer, len);
+	  break;
+	  case AUTHENTICATION_FAILURE:
+	      encode_result = encode_authentication_failure(&msg->authentication_failure, buffer, len);
+	  break;
+	  case AUTHENTICATION_RESULT:
+	      encode_result = encode_authentication_result(&msg->authentication_result, buffer, len);
+	  break;
   }
   if (encode_result < 0) {
     OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to encode L3 EMM message 0x%x " "(%d)\n", msg->header.message_type, encode_result);
@@ -155,6 +170,21 @@ mm_msg_decode (
   len -= header_result;
   OAILOG_INFO (LOG_NAS_EMM, "EMM-MSG   - Message Type 0x%02x\n", msg->header.message_type);
   switch (msg->header.message_type) {//plain nas message e.g. registrationrequest message
+      case AUTHENTICATION_REQUEST:
+	      decode_result = decode_authentication_request(&msg->authentication_request, buffer, len);
+	  break;
+	  case AUTHENTICATION_RESPONSE:
+	      decode_result = decode_authentication_response(&msg->authentication_response, buffer, len);
+	  break;
+	  case AUTHENTICATION_REJECT:
+	  	  decode_result = decode_authentication_reject(&msg->authentication_reject, buffer, len);
+	  break;
+	  case AUTHENTICATION_FAILURE:
+	      decode_result = decode_authentication_failure(&msg->authentication_failure, buffer, len);
+	  break;
+	  case AUTHENTICATION_RESULT:
+	      decode_result = decode_authentication_result(&msg->authentication_result, buffer, len);
+	  break;
   }
   if (decode_result < 0) {
     OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to decode L3 EMM message 0x%x " "(%d)\n", msg->header.message_type, decode_result);

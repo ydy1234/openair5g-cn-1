@@ -60,9 +60,10 @@ extern "C"{
 #include "ngap_amf.h"
 #include "amf_app.h"
 #include "log.h"
+#include "nas_mm.h"
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 #define PISTACHE_SERVER_THREADS 2
 
 static Pistache::Http::Endpoint *httpEndpoint;
@@ -102,6 +103,7 @@ static void setUpUnixSignals(std::vector<int> quitSignals) {
 using namespace org::openapitools::server::api;
 using namespace std;
 std::unordered_map<std::string,org::openapitools::server::model::UeContext> RecordUEContext;
+*/
 /*
 void * demo_receiver_thread(__attribute__((unused)) void *args)
 {
@@ -125,6 +127,9 @@ void * demo_receiver_thread(__attribute__((unused)) void *args)
         }
 }
 */
+
+
+
 int main(
     int argc,
     char * argv[])
@@ -135,11 +140,12 @@ int main(
     pid_file_name = get_exe_absolute_path("/var/run");
 */
     CHECK_INIT_RETURN (OAILOG_INIT (LOG_SPGW_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
-    CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,NULL,NULL));
+    //CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,NULL,NULL));
     //CHECK_INIT_RETURN (nas_mm_init());
-    CHECK_INIT_RETURN (sctp_init());
-    CHECK_INIT_RETURN (ngap_amf_init());
-    CHECK_INIT_RETURN (amf_app_init());
+    nas_mm_init();
+    //CHECK_INIT_RETURN (sctp_init());
+    //CHECK_INIT_RETURN (ngap_amf_init());
+    //CHECK_INIT_RETURN (amf_app_init());
 /*
     MessageDef                             *message_p = NULL;
 
@@ -187,7 +193,7 @@ int main() {
         }
     cout<<"init itti success"<<endl;
 */
-
+/*
 #ifdef __linux__
     std::vector<int> sigs{SIGQUIT, SIGINT, SIGTERM, SIGHUP};
     setUpUnixSignals(sigs);
@@ -242,7 +248,7 @@ int main() {
     httpEndpoint->serve();
 
     httpEndpoint->shutdown();
-
+*/
     itti_wait_tasks_end();
     return 0;
 }

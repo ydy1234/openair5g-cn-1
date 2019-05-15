@@ -13,7 +13,7 @@ int decode_security_mode_command( security_mode_command_msg *security_mode_comma
 
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, SECURITY_MODE_COMMAND_MINIMUM_LENGTH, len);
-
+/*
     if((decoded_result = decode_extended_protocol_discriminator (&security_mode_command->extendedprotocoldiscriminator, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
@@ -74,7 +74,7 @@ int decode_security_mode_command( security_mode_command_msg *security_mode_comma
     else
         decoded+=decoded_result;
 
-
+*/
     return decoded;
 }
 
@@ -86,7 +86,7 @@ int encode_security_mode_command( security_mode_command_msg *security_mode_comma
     
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, SECURITY_MODE_COMMAND_MINIMUM_LENGTH, len);
-
+/*
     if((encoded_result = encode_extended_protocol_discriminator (security_mode_command->extendedprotocoldiscriminator, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
@@ -147,6 +147,6 @@ int encode_security_mode_command( security_mode_command_msg *security_mode_comma
     else
         encoded+=encoded_result;
 
-
+*/
     return encoded;
 }

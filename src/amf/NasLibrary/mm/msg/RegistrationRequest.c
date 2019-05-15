@@ -13,7 +13,7 @@ int decode_registration_request( registration_request_msg *registration_request,
 
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, REGISTRATION_REQUEST_MINIMUM_LENGTH, len);
-
+/*
     if((decoded_result = decode_extended_protocol_discriminator (&registration_request->extendedprotocoldiscriminator, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
@@ -133,7 +133,7 @@ int decode_registration_request( registration_request_msg *registration_request,
         return decoded_result;
     else
         decoded+=decoded_result;
-
+*/
 
     return decoded;
 }
@@ -146,7 +146,7 @@ int encode_registration_request( registration_request_msg *registration_request,
     
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, REGISTRATION_REQUEST_MINIMUM_LENGTH, len);
-
+/*
     if((encoded_result = encode_extended_protocol_discriminator (registration_request->extendedprotocoldiscriminator, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
@@ -267,6 +267,6 @@ int encode_registration_request( registration_request_msg *registration_request,
     else
         encoded+=encoded_result;
 
-
+*/
     return encoded;
 }

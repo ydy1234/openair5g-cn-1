@@ -5,7 +5,6 @@
 #include "MessageType.h"
 #include "NASKeySetIdentifier.h"
 #include "EAPMessage.h"
-#include "ABBA.h"
 
 
 /* Minimum length macro. Formed by minimum length of each mandatory field */
@@ -15,7 +14,6 @@
 		MESSAGE_TYPE_MINIMUM_LENGTH + \
 		NAS_KEY_SET_IDENTIFIER_MINIMUM_LENGTH + \
 		EAP_MESSAGE_MINIMUM_LENGTH + \
-		ABBA_MINIMUM_LENGTH + \
 0)
 
 /* Maximum length macro. Formed by maximum length of each field */
@@ -25,16 +23,16 @@
 		MESSAGE_TYPE_MAXIMUM_LENGTH + \
 		NAS_KEY_SET_IDENTIFIER_MAXIMUM_LENGTH + \
 		EAP_MESSAGE_MAXIMUM_LENGTH + \
-		ABBA_MAXIMUM_LENGTH + \
 0)
 
 typedef struct authentication_result_msg_tag{
+/*
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
 	NASKeySetIdentifier naskeysetidentifier;
 	EAPMessage eapmessage;
-	ABBA abba;
+*/
 }authentication_result_msg;
 
 
