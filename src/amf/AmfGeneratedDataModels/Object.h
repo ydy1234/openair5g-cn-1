@@ -29,8 +29,9 @@ public:
     /// ModelBase overrides
     void validate() ;
 
-    nlohmann::json toJson() const ;
-    void fromJson(nlohmann::json& json) ;
+    nlohmann::json toJson() const;
+    void fromJson(const nlohmann::json& json) ;
+
 
      /////////////////////////////////////////////
     /// Object manipulation

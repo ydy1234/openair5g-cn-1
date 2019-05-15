@@ -30,8 +30,6 @@
 
 #include <iostream>
 
-
-//
 #include <unordered_map>
 
 #include "amf-services.h"
@@ -45,9 +43,11 @@ extern "C"{
 #include "ngap_amf.h"
 #include "amf_app.h"
 #include "log.h"
-#include "nas_mm.h"
+//#include "nas_mm.h"
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
+
+
 /*
 #define PISTACHE_SERVER_THREADS 2
 
@@ -85,9 +85,7 @@ static void setUpUnixSignals(std::vector<int> quitSignals) {
 }
 #endif
 
-using namespace org::openapitools::server::api;
-using namespace std;
-std::unordered_map<std::string,org::openapitools::server::model::UeContext> RecordUEContext;
+
 */
 /*
 void * demo_receiver_thread(__attribute__((unused)) void *args)
@@ -114,6 +112,9 @@ void * demo_receiver_thread(__attribute__((unused)) void *args)
 */
 
 
+using namespace org::openapitools::server::api;
+using namespace std;
+std::unordered_map<std::string,org::openapitools::server::model::UeContext> RecordUEContext;
 
 int main(
     int argc,
@@ -125,12 +126,22 @@ int main(
     pid_file_name = get_exe_absolute_path("/var/run");
 */
     CHECK_INIT_RETURN (OAILOG_INIT (LOG_SPGW_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
-    //CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,NULL,NULL));
+    CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,NULL,NULL));
     //CHECK_INIT_RETURN (nas_mm_init());
-    nas_mm_init();
-    //CHECK_INIT_RETURN (sctp_init());
-    //CHECK_INIT_RETURN (ngap_amf_init());
-    //CHECK_INIT_RETURN (amf_app_init());
+    //nas_mm_init();
+    CHECK_INIT_RETURN (sctp_init());
+    CHECK_INIT_RETURN (ngap_amf_init());
+    CHECK_INIT_RETURN (amf_app_init());
+
+
+
+    //TTN (16/05/2019) first activate NGAP->SCTP
+
+    MessageDef                             *message_p;
+    //Activate NGAP and wait for connection from gNB
+    message_p = itti_alloc_new_message (TASK_AMF_MAIN, ACTIVATE_MESSAGE);
+    itti_send_msg_to_task (TASK_NGAP, INSTANCE_DEFAULT, message_p);
+
 
 /*
     MessageDef                             *message_p = NULL;
@@ -175,70 +186,19 @@ int main(
 */
 /*
 
+
 #ifdef __linux__
     std::vector<int> sigs{SIGQUIT, SIGINT, SIGTERM, SIGHUP};
     setUpUnixSignals(sigs);
 #endif
-<<<<<<< HEAD
-    Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(5000));
-
-    {//log
-        cout<<"amf server:"<<addr.host()<<":"<<addr.port().toString()<<endl;
-    }
-
-    httpEndpoint = new Pistache::Http::Endpoint((addr));
-    auto router = std::make_shared<Pistache::Rest::Router>();
-
-    auto opts = Pistache::Http::Endpoint::options()
-        .threads(PISTACHE_SERVER_THREADS);
-    httpEndpoint->init(opts);
-
-
-    AMFStatusChangeSubscribeApiImpl AMFStatusChangeSubscribeApiserver(router);
-    AMFStatusChangeSubscribeApiserver.init();
-    AMFStatusChangeSubscribeModifyApiImpl AMFStatusChangeSubscribeModifyApiserver(router);
-    AMFStatusChangeSubscribeModifyApiserver.init();
-    AMFStatusChangeUnSubscribeApiImpl AMFStatusChangeUnSubscribeApiserver(router);
-    AMFStatusChangeUnSubscribeApiserver.init();
-    CreateUEContxtApiImpl CreateUEContxtApiserver(router);
-    CreateUEContxtApiserver.init();
-    EBIAssignmentApiImpl EBIAssignmentApiserver(router);
-    EBIAssignmentApiserver.init();
-    N1N2MessageSubscribeApiImpl N1N2MessageSubscribeApiserver(router);
-    N1N2MessageSubscribeApiserver.init();
-    N1N2MessageTransferApiImpl N1N2MessageTransferApiserver(router);
-    N1N2MessageTransferApiserver.init();
-    N1N2MessageUnSubscribeApiImpl N1N2MessageUnSubscribeApiserver(router);
-    N1N2MessageUnSubscribeApiserver.init();
-    NonUEN2InfoSubscribeApiImpl NonUEN2InfoSubscribeApiserver(router);
-    NonUEN2InfoSubscribeApiserver.init();
-    NonUEN2InfoUnSubscribeApiImpl NonUEN2InfoUnSubscribeApiserver(router);
-    NonUEN2InfoUnSubscribeApiserver.init();
-    NonUEN2MessageTransferApiImpl NonUEN2MessageTransferApiserver(router);
-    NonUEN2MessageTransferApiserver.init();
-    ReleaseUEContxtApiImpl ReleaseUEContxtApiserver(router);
-    ReleaseUEContxtApiserver.init();
-    UEContextTransferApiImpl UEContextTransferApiserver(router);
-    UEContextTransferApiserver.init();
-
-    EnableUEReachabilityApiImpl EnableUEReachabilityApiserver(router);
-    EnableUEReachabilityApiserver.init();
-    ProvideDomainSelectionInfoApiImpl ProvideDomainSelectionInfoApiserver(router);
-    ProvideDomainSelectionInfoApiserver.init();
-
-    httpEndpoint->setHandler(router->handler());
-    httpEndpoint->serve();
-
-    httpEndpoint->shutdown();
 */
+
     //launch AMF services
-/*
-    Pistache::Address comm_service_addr(Pistache::Ipv4::any(), Pistache::Port(5001));
-    AMFServicesManager amfServicesManager(comm_service_addr);
+    Pistache::Address amf_service_addr(Pistache::Ipv4::any(), Pistache::Port(5001));
+    AMFServicesManager amfServicesManager(amf_service_addr);
     amfServicesManager.init(2);
     amfServicesManager.start();
     amfServicesManager.shutdown();
-*/
     //std::thread amf_services_manager_app(&AMFServicesManager::start, amfServicesManager);
 
     itti_wait_tasks_end();

@@ -35,7 +35,8 @@ nlohmann::json Object::toJson() const
     return m_object;
 }
 
-void Object::fromJson(nlohmann::json & val)
+void Object::fromJson(const nlohmann::json & val)
+
 {
 
        m_object = val;

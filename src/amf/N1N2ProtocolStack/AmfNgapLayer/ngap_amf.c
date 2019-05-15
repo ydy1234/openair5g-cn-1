@@ -31,7 +31,7 @@ static int ngap_send_init_sctp(void)
   message_p->ittiMsg.sctpInit.ipv4 = 1;
   message_p->ittiMsg.sctpInit.ipv6 = 0;
   message_p->ittiMsg.sctpInit.nb_ipv4_addr = 1;
-  message_p->ittiMsg.sctpInit.ipv4_address[0] =1684303882;//1546416138;//117506058;
+  message_p->ittiMsg.sctpInit.ipv4_address[0] = 0; //1684303882;//1546416138;//117506058;
   message_p->ittiMsg.sctpInit.nb_ipv6_addr = 0;
   message_p->ittiMsg.sctpInit.ipv6_address[0] = "0:0:0:0:0:0:0:1";
   return itti_send_msg_to_task (TASK_SCTP, INSTANCE_DEFAULT, message_p);
@@ -51,6 +51,13 @@ ngap_amf_thread (
       switch(ITTI_MSG_ID (received_message_p)){
         case MESSAGE_TEST:{
             OAILOG_DEBUG(LOG_S1AP,"NGAP TEST MSG\n");
+          }
+          break;
+        case ACTIVATE_MESSAGE:{
+        	 OAILOG_DEBUG(LOG_S1AP,"ACTIVATE MESSAGE\n");
+            if (ngap_send_init_sctp () < 0) {
+              OAILOG_CRITICAL (LOG_S1AP, "Error while sending SCTP_INIT_MSG to SCTP\n");
+            }
           }
           break;
         case SCTP_NEW_ASSOCIATION:{

@@ -326,7 +326,7 @@ static int sctp_create_new_listener (SctpInit * init_p)
       ip4_addr = (struct sockaddr_in *)&addr[i];
       ip4_addr->sin_family = AF_INET;
       ip4_addr->sin_port = htons (init_p->port);
-      ip4_addr->sin_addr.s_addr = init_p->ipv4_address[i];
+      ip4_addr->sin_addr.s_addr = htonl(init_p->ipv4_address[i]);
       char ipv4[INET_ADDRSTRLEN];
       inet_ntop (AF_INET, (void*)&ip4_addr->sin_addr.s_addr, ipv4, INET_ADDRSTRLEN);
       OAILOG_DEBUG (LOG_SCTP, "\t- %s\n", ipv4);
@@ -562,6 +562,7 @@ void *sctp_receiver_thread (void *args_p)
     for (i = 0; i <= fdmax; i++) {
       if (FD_ISSET (i, &read_fds)) {
         if (i == sctp_arg_p.sd) {
+        	OAILOG_INFO(LOG_SCTP, "Received a connection from a SCTP client\n");
           /*
            * There is data to read on listener socket. This means we have to accept
            * * * * the connection.
@@ -633,13 +634,13 @@ static void * sctp_intertask_interface (
         /*
          * We received a new connection request
          */
-        /*if ((sctp_sd = sctp_create_new_listener (&received_message_p->ittiMsg.sctpInit)) < 0) {*/
+        if ((sctp_sd = sctp_create_new_listener (&received_message_p->ittiMsg.sctpInit)) < 0) {
           /*
            * SCTP socket creation or bind failed...
-           * Die as this MME is not going to be useful.
+           * Die as this AMF is not going to be useful.
            */
-          /*AssertFatal(false, "Failed to create new SCTP listener\n");*/
-        /*}*/
+          AssertFatal(false, "Failed to create new SCTP listener\n");
+        }
       }
       break;
 
