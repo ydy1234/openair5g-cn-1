@@ -102,7 +102,7 @@ include_directories(${ittiPath}/inc)
 include_directories(/usr/local/include/nlohmann)
 include_directories(/usr/local/include/pistache)
 link_directories(/usr/local/lib)
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/api)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/impl)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/EvetService/api)

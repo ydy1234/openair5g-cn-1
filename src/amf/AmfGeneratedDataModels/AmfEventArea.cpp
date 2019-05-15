@@ -1,6 +1,6 @@
 /**
-* Namf_EventExposure Service
-* AMF Event Exposure Service
+* AMF Communicaiton Service
+* AMF Communication Service
 *
 * OpenAPI spec version: 1.R15.0.0
 * 
@@ -183,11 +183,11 @@ void AmfEventArea::fromJson(const nlohmann::json& val)
                 
                 if(item.is_null())
                 {
-                    m_GlobalRanNodeId.push_back( GlobalRanNodeId_2() );
+                    m_GlobalRanNodeId.push_back( GlobalRanNodeId() );
                 }
                 else
                 {
-                    GlobalRanNodeId_2 newItem;
+                    GlobalRanNodeId newItem;
                     newItem.fromJson(item);
                     m_GlobalRanNodeId.push_back( newItem );
                 }
@@ -291,7 +291,7 @@ void AmfEventArea::unsetNcgi()
 {
     m_NcgiIsSet = false;
 }
-std::vector<GlobalRanNodeId_2>& AmfEventArea::getGlobalRanNodeId()
+std::vector<GlobalRanNodeId>& AmfEventArea::getGlobalRanNodeId()
 {
     return m_GlobalRanNodeId;
 }

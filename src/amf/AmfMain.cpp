@@ -34,22 +34,7 @@
 //
 #include <unordered_map>
 
-#include "AMFStatusChangeSubscribeApiImpl.h"
-#include "AMFStatusChangeSubscribeModifyApiImpl.h"
-#include "AMFStatusChangeUnSubscribeApiImpl.h"
-#include "CreateUEContxtApiImpl.h"
-#include "EBIAssignmentApiImpl.h"
-#include "N1N2MessageSubscribeApiImpl.h"
-#include "N1N2MessageTransferApiImpl.h"
-#include "N1N2MessageUnSubscribeApiImpl.h"
-#include "NonUEN2InfoSubscribeApiImpl.h"
-#include "NonUEN2InfoUnSubscribeApiImpl.h"
-#include "NonUEN2MessageTransferApiImpl.h"
-#include "ReleaseUEContxtApiImpl.h"
-#include "UEContextTransferApiImpl.h"
-
-#include "EnableUEReachabilityApiImpl.h"
-#include "ProvideDomainSelectionInfoApiImpl.h"
+#include "amf-services.h"
 
 ////////////////////////////////////////////////// itti header /////////////////////////////////
 extern "C"{
@@ -78,7 +63,7 @@ static void sigHandler(int sig){
         case SIGTERM:
         case SIGHUP:
         default:
-            httpEndpoint->shutdown();
+        	httpEndpoint->shutdown();
             break;
     }
     exit(0);
@@ -146,6 +131,7 @@ int main(
     //CHECK_INIT_RETURN (sctp_init());
     //CHECK_INIT_RETURN (ngap_amf_init());
     //CHECK_INIT_RETURN (amf_app_init());
+
 /*
     MessageDef                             *message_p = NULL;
 
@@ -160,13 +146,7 @@ int main(
   message_p->ittiMsg.sctpInit.ipv6_address[0] = "0:0:0:0:0:0:0:1";
   int ret = itti_send_msg_to_task (TASK_SCTP, INSTANCE_DEFAULT, message_p);
 */
-  //itti_wait_tasks_end();
-
-//std::unordered_map<std::string,org::openapitools::server::model::UeContext> RecordUEContext;
-//RecordUEContext.clear();
-//
 /*
-int main() {
 
          CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,
 #if ENABLE_ITTI_ANALYZER
@@ -194,10 +174,12 @@ int main() {
     cout<<"init itti success"<<endl;
 */
 /*
+
 #ifdef __linux__
     std::vector<int> sigs{SIGQUIT, SIGINT, SIGTERM, SIGHUP};
     setUpUnixSignals(sigs);
 #endif
+<<<<<<< HEAD
     Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(5000));
 
     {//log
@@ -249,6 +231,16 @@ int main() {
 
     httpEndpoint->shutdown();
 */
+    //launch AMF services
+/*
+    Pistache::Address comm_service_addr(Pistache::Ipv4::any(), Pistache::Port(5001));
+    AMFServicesManager amfServicesManager(comm_service_addr);
+    amfServicesManager.init(2);
+    amfServicesManager.start();
+    amfServicesManager.shutdown();
+*/
+    //std::thread amf_services_manager_app(&AMFServicesManager::start, amfServicesManager);
+
     itti_wait_tasks_end();
     return 0;
 }
