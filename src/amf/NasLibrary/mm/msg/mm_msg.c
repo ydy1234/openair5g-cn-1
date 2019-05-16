@@ -43,7 +43,7 @@ fivegmm_msg_encode (
   uint8_t * buffer,
   uint32_t len)
 {
-  OAILOG_FUNC_IN (LOG_NAS_EMM);
+  //OAILOG_FUNC_IN (LOG_NAS_EMM);
   int                                     header_result;
   int                                     encode_result;
   uint8_t                                *buffer_log = buffer;
@@ -51,11 +51,12 @@ fivegmm_msg_encode (
   /*
    * First encode the EMM message header
    */
+  printf("_fivegmm_msg_encode_header\n");
   header_result = _fivegmm_msg_encode_header (&msg->header, buffer, len);
 
   if (header_result < 0) {
-    OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to encode EMM message header " "(%d)\n", header_result);
-    OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result);
+    //OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to encode EMM message header " "(%d)\n", header_result);
+    //OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result);
   }
 
   buffer += header_result;
@@ -65,6 +66,7 @@ fivegmm_msg_encode (
       //encode_result = encode_authentication_request(&msg->authentication_request,buffer,len);/* msg define in openair5g-cn/src/amf/nas/mm/msg  */
       //break;
       case AUTHENTICATION_REQUEST:
+                  printf("encode AUTHENTICATION_REQUEST\n");
 	  	  encode_result = encode_authentication_request(&msg->authentication_request, buffer, len);
 	  break;	  
 	  case AUTHENTICATION_RESPONSE:
@@ -81,12 +83,12 @@ fivegmm_msg_encode (
 	  break;
   }
   if (encode_result < 0) {
-    OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to encode L3 EMM message 0x%x " "(%d)\n", msg->header.message_type, encode_result);
+    //OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to encode L3 EMM message 0x%x " "(%d)\n", msg->header.message_type, encode_result);
   } else {
     //nas_itti_plain_msg ((char *)buffer_log, (nas_message_t *) msg, header_result + encode_result, is_down_link);
   }
 
-  OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result + encode_result);
+  //OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result + encode_result);
 }
 
 
@@ -126,7 +128,7 @@ _fivegmm_msg_encode_header (
    * Check the protocol discriminator
    */
   if (header->extended_protocol_discriminator != FIVEGS_MOBILITY_MANAGEMENT_MESSAGES) {
-    OAILOG_ERROR (LOG_NAS_EMM, "ESM-MSG   - Unexpected protocol discriminator: 0x%x\n", header->extended_protocol_discriminator);
+    //OAILOG_ERROR (LOG_NAS_EMM, "ESM-MSG   - Unexpected protocol discriminator: 0x%x\n", header->extended_protocol_discriminator);
     return (TLV_PROTOCOL_NOT_SUPPORTED);
   }
 
@@ -149,7 +151,7 @@ mm_msg_decode (
   uint8_t * buffer,
   uint32_t len)
 {
-  OAILOG_FUNC_IN (LOG_NAS_EMM);
+  //OAILOG_FUNC_IN (LOG_NAS_EMM);
   int                                     header_result = 0;
   int                                     decode_result = 0;
   uint8_t                                *buffer_log = buffer;
@@ -162,13 +164,13 @@ mm_msg_decode (
   header_result = _fivegmm_msg_decode_header (&msg->header, buffer, len);
 
   if (header_result < 0) {
-    OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to decode MM message header " "(%d)\n", header_result);
-    OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result);
+    //OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to decode MM message header " "(%d)\n", header_result);
+    //OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result);
   }
 
   buffer += header_result;
   len -= header_result;
-  OAILOG_INFO (LOG_NAS_EMM, "EMM-MSG   - Message Type 0x%02x\n", msg->header.message_type);
+  //OAILOG_INFO (LOG_NAS_EMM, "EMM-MSG   - Message Type 0x%02x\n", msg->header.message_type);
   switch (msg->header.message_type) {//plain nas message e.g. registrationrequest message
       case AUTHENTICATION_REQUEST:
 	      decode_result = decode_authentication_request(&msg->authentication_request, buffer, len);
@@ -187,8 +189,8 @@ mm_msg_decode (
 	  break;
   }
   if (decode_result < 0) {
-    OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to decode L3 EMM message 0x%x " "(%d)\n", msg->header.message_type, decode_result);
-    OAILOG_FUNC_RETURN (LOG_NAS_EMM, decode_result);
+    //OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to decode L3 EMM message 0x%x " "(%d)\n", msg->header.message_type, decode_result);
+    //OAILOG_FUNC_RETURN (LOG_NAS_EMM, decode_result);
   } else {
     /*
      * Message has been decoded and security header removed, handle it has a plain message
@@ -196,7 +198,7 @@ mm_msg_decode (
     //nas_itti_plain_msg ((char *)buffer_log, (nas_message_t *) msg, len_log, is_down_link);
   }
 
-  OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result + decode_result);
+  //OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result + decode_result);
 }
 
 static int
@@ -229,7 +231,7 @@ _fivegmm_msg_decode_header (
    * Check the protocol discriminator
    */
   if (header->extended_protocol_discriminator != FIVEGS_MOBILITY_MANAGEMENT_MESSAGES) {
-    OAILOG_ERROR (LOG_NAS_EMM, "ESM-MSG   - Unexpected protocol discriminator: 0x%x\n", header->protocol_discriminator);
+    //OAILOG_ERROR (LOG_NAS_EMM, "ESM-MSG   - Unexpected protocol discriminator: 0x%x\n", header->protocol_discriminator);
     return (TLV_PROTOCOL_NOT_SUPPORTED);
   }
 

@@ -16,7 +16,8 @@ int main(){
   memset (&nas_msg,       0, sizeof (nas_message_t));
 
   nas_msg.header.extended_protocol_discriminator = FIVEGS_MOBILITY_MANAGEMENT_MESSAGES;
-  nas_msg.header.security_header_type = 0x20;
+  nas_msg.header.security_header_type = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
+  printf("security header type: %x\n",(&nas_msg)->header.security_header_type);
   uint8_t sequencenumber = 0;
   uint32_t mac = 0;
   nas_msg.header.sequence_number = sequencenumber;
@@ -29,12 +30,12 @@ int main(){
   mm_msg->header.security_header_type = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
   mm_msg->header.message_type = AUTHENTICATION_REQUEST;
 
-  memset (&mm_msg->authentication_request,       0, sizeof (authentication_request_msg));
+  //memset (&mm_msg->authentication_request,       0, sizeof (authentication_request_msg));
 
-  mm_msg->authentication_request.extendedprotocoldiscriminator = FIVEGS_MOBILITY_MANAGEMENT_MESSAGES;
-  mm_msg->authentication_request.securityheadertype = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
-  mm_msg->authentication_request.messagetype = AUTHENTICATION_REQUEST;
-  size += MESSAGE_TYPE_MAXIMUM_LENGTH;
+  //mm_msg->authentication_request.extendedprotocoldiscriminator = FIVEGS_MOBILITY_MANAGEMENT_MESSAGES;
+  //mm_msg->authentication_request.securityheadertype = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
+  //mm_msg->authentication_request.messagetype = AUTHENTICATION_REQUEST;
+  //size += MESSAGE_TYPE_MAXIMUM_LENGTH;
 
   nas_msg.security_protected.plain.mm = *mm_msg;
 
@@ -56,20 +57,22 @@ int main(){
   int length;
   unsigned char data[2048];
 
-  bstring * info = bfromcstralloc(length, "\0");//info the nas_message_encode result
-  printf("1\n");
+  bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
+  printf("1 start nas_message_encode \n");
   printf("security %p\n",security);
   printf("info %p\n",info);
   bytes = nas_message_encode (data, &nas_msg, 100/*don't know the size*/, security);
-  printf("2\n");
-  (*info)->data = data;
-  (*info)->slen = bytes;
+  printf("2 nas_message_encode over\n");
+  info->data = data;
+  info->slen = bytes;
  
 
 /*************************************************************************************************************************/
 /*********     NAS DECODE     ***********************/
 /************************************************************************************************************************/
-  bstring plain_msg = bstrcpy(*info); 
+  
+  printf("start nas_message_decode\n");
+  bstring plain_msg = bstrcpy(info); 
   nas_message_security_header_t header = {0};
   //fivegmm_security_context_t  * security = NULL;
   nas_message_decode_status_t   decode_status = {0};
@@ -81,7 +84,8 @@ int main(){
   memset (&decoded_nas_msg,       0, sizeof (nas_message_t));
 
   int decoder_rc = RETURNok;
-  decoder_rc = nas_message_decode (plain_msg->data, &decoded_nas_msg, blength(*info), security, &decode_status);
+  printf("calling nas_message_decode\n");
+  decoder_rc = nas_message_decode (plain_msg->data, &decoded_nas_msg, blength(info), security, &decode_status);
   MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
   printf("message type:%x\n",decoded_mm_msg->header.message_type);
 

@@ -12,10 +12,10 @@
 typedef struct nas_message_security_header_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   extended_protocol_discriminator_t    extended_protocol_discriminator;//3gpp_24.501.h
-  uint8_t                         security_header_type:4;
+  uint8_t                         security_header_type;
 #endif
 #ifdef __BIG_ENDIAN_BITFIELD
-  uint8_t security_header_type:4;
+  uint8_t security_header_type;
   uint8_t extended_protocol_discriminator;
 #endif
   uint32_t message_authentication_code;
@@ -38,7 +38,7 @@ typedef struct nas_message_security_protected_s {
 /*
  * Structure of a layer 3 NAS message
  */
-typedef union {
+typedef struct {
   nas_message_security_header_t header;
   nas_message_security_protected_t security_protected;
   nas_message_plain_t plain;
