@@ -21,7 +21,7 @@ int decode_authentication_request( authentication_request_msg *authentication_re
     return decoded_result;
   
   decoded++;
-
+/*
   if ((decoded_result = decode_authentication_parameter_rand (&authentication_request->authenticationparameterrand, 0, buffer + decoded, len - decoded)) < 0)
     return decoded_result;                
   else                                    
@@ -31,7 +31,7 @@ int decode_authentication_request( authentication_request_msg *authentication_re
     return decoded_result;
   else
     decoded += decoded_result;
-  
+*/
   return decoded;
 }
 
@@ -47,17 +47,22 @@ int encode_authentication_request( authentication_request_msg *authentication_re
     *(buffer + encoded) = ((encode_u8_nas_key_set_identifier(&authentication_request->naskeysetidentifier) & 0x0f) << 4) | 0x00;
     encoded ++;
 
-
+    printf("encoded nas key set identifier\n");
+/*
     if((encoded_result = encode_authentication_parameter_rand (authentication_request->authenticationparameterrand, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;
 
+    printf("encoded parameter rand\n");
+
     if((encoded_result = encode_authentication_parameter_autn (authentication_request->authenticationparameterautn, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;
-/*
+
+    printf("encoded parameter autn\n");
+
     if((encoded_result = encode_eap_message (authentication_request->eapmessage, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
