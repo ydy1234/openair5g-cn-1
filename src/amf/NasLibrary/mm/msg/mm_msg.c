@@ -67,19 +67,19 @@ fivegmm_msg_encode (
       //break;
       case AUTHENTICATION_REQUEST:
                   printf("encode AUTHENTICATION_REQUEST\n");
-	  	  encode_result = encode_authentication_request(&msg->authentication_request, buffer, len);
+	  	  encode_result = encode_authentication_request(&msg->specific_msg.authentication_request, buffer, len);
 	  break;	  
 	  case AUTHENTICATION_RESPONSE:
-	      encode_result = encode_authentication_response(&msg->authentication_response, buffer, len);	  
+	      encode_result = encode_authentication_response(&msg->specific_msg.authentication_response, buffer, len);	  
 	  break;	  
 	  case AUTHENTICATION_REJECT:
-	      encode_result = encode_authentication_reject(&msg->authentication_reject, buffer, len);
+	      encode_result = encode_authentication_reject(&msg->specific_msg.authentication_reject, buffer, len);
 	  break;
 	  case AUTHENTICATION_FAILURE:
-	      encode_result = encode_authentication_failure(&msg->authentication_failure, buffer, len);
+	      encode_result = encode_authentication_failure(&msg->specific_msg.authentication_failure, buffer, len);
 	  break;
 	  case AUTHENTICATION_RESULT:
-	      encode_result = encode_authentication_result(&msg->authentication_result, buffer, len);
+	      encode_result = encode_authentication_result(&msg->specific_msg.authentication_result, buffer, len);
 	  break;
   }
   if (encode_result < 0) {
@@ -173,19 +173,19 @@ mm_msg_decode (
   //OAILOG_INFO (LOG_NAS_EMM, "EMM-MSG   - Message Type 0x%02x\n", msg->header.message_type);
   switch (msg->header.message_type) {//plain nas message e.g. registrationrequest message
       case AUTHENTICATION_REQUEST:
-	      decode_result = decode_authentication_request(&msg->authentication_request, buffer, len);
+	      decode_result = decode_authentication_request(&msg->specific_msg.authentication_request, buffer, len);
 	  break;
 	  case AUTHENTICATION_RESPONSE:
-	      decode_result = decode_authentication_response(&msg->authentication_response, buffer, len);
+	      decode_result = decode_authentication_response(&msg->specific_msg.authentication_response, buffer, len);
 	  break;
 	  case AUTHENTICATION_REJECT:
-	  	  decode_result = decode_authentication_reject(&msg->authentication_reject, buffer, len);
+	  	  decode_result = decode_authentication_reject(&msg->specific_msg.authentication_reject, buffer, len);
 	  break;
 	  case AUTHENTICATION_FAILURE:
-	      decode_result = decode_authentication_failure(&msg->authentication_failure, buffer, len);
+	      decode_result = decode_authentication_failure(&msg->specific_msg.authentication_failure, buffer, len);
 	  break;
 	  case AUTHENTICATION_RESULT:
-	      decode_result = decode_authentication_result(&msg->authentication_result, buffer, len);
+	      decode_result = decode_authentication_result(&msg->specific_msg.authentication_result, buffer, len);
 	  break;
   }
   if (decode_result < 0) {

@@ -30,12 +30,12 @@ int main(){
   mm_msg->header.security_header_type = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
   mm_msg->header.message_type = AUTHENTICATION_REQUEST;
 
-  //memset (&mm_msg->authentication_request,       0, sizeof (authentication_request_msg));
+  memset (&mm_msg->specific_msg.authentication_request,       0, sizeof (authentication_request_msg));
 
-  //mm_msg->authentication_request.extendedprotocoldiscriminator = FIVEGS_MOBILITY_MANAGEMENT_MESSAGES;
-  //mm_msg->authentication_request.securityheadertype = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
-  //mm_msg->authentication_request.messagetype = AUTHENTICATION_REQUEST;
-  //size += MESSAGE_TYPE_MAXIMUM_LENGTH;
+  mm_msg->specific_msg.authentication_request.extendedprotocoldiscriminator = FIVEGS_MOBILITY_MANAGEMENT_MESSAGES;
+  mm_msg->specific_msg.authentication_request.securityheadertype = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
+  mm_msg->specific_msg.authentication_request.messagetype = AUTHENTICATION_REQUEST;
+  size += MESSAGE_TYPE_MAXIMUM_LENGTH;
 
   nas_msg.security_protected.plain.mm = *mm_msg;
 
