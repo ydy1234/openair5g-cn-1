@@ -65,4 +65,5 @@ typedef struct sctp_new_peer_s {
   sctp_assoc_id_t assoc_id;
 } sctp_new_peer_t;
 
+
 #endif /* FILE_SCTP_MESSAGES_TYPES_SEEN */

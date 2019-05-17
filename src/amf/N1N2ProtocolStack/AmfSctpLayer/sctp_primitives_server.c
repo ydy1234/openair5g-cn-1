@@ -637,7 +637,6 @@ static void * sctp_intertask_interface (
         if ((sctp_sd = sctp_create_new_listener (&received_message_p->ittiMsg.sctpInit)) < 0) {
           /*
            * SCTP socket creation or bind failed...
-           * Die as this AMF is not going to be useful.
            */
           AssertFatal(false, "Failed to create new SCTP listener\n");
         }

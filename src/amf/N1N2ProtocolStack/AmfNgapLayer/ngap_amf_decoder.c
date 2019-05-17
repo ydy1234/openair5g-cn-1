@@ -21,10 +21,10 @@ ngap_amf_decode_initiating (
     char *message_string = NULL;
     size_t message_string_size;
 
-    OAILOG_FUNC_IN (LOG_S1AP);
+    //OAILOG_FUNC_IN (LOG_S1AP);
     
     DevAssert (initiating_p != NULL);
-    message_string = calloc(10000,sizeof(char));
+    message_string = calloc (20000, sizeof (char));
     ngap_string_total_size = 0;
     message->procedureCode = initiating_p->procedureCode;
     message->criticality = initiating_p->criticality;
@@ -38,7 +38,7 @@ ngap_amf_decode_initiating (
         break;
       case Ngap_ProcedureCode_id_NGSetup:{
           ret = ngap_decode_ngsetuprequesties(&message->msg.ngSetupRequestIEs,&initiating_p->value);
-          ngap_xer_print_ngsetuprequest(ngap_xer__print2fp,message_string,message);
+          //ngap_xer_print_ngsetuprequest(ngap_xer__print2fp,message_string,message);
           *message_id = NGAP_NG_SETUP_LOG;
         }
         break;
@@ -193,14 +193,13 @@ int ngap_amf_decode_pdu(
   memset ((void *)pdu_p, 0, sizeof (NGAP_PDU_t));
   printf("1.1\n");
   dec_ret = uper_decode (NULL, &asn_DEF_NGAP_PDU, (void **)&pdu_p, bdata(raw), blength(raw), 0, 0);
-  printf("1.2\n");
+  printf("1.2: %d\n");
   if (dec_ret.code != RC_OK) {
     OAILOG_ERROR (LOG_S1AP, "Failed to decode PDU\n");
     return -1;
   }
         
   message->direction = pdu_p->present;
-      
   switch (pdu_p->present) {
     case NGAP_PDU_PR_initiatingMessage:
       return ngap_amf_decode_initiating (message, &pdu_p->choice.initiatingMessage, message_id);
