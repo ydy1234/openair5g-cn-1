@@ -24,7 +24,7 @@ ngap_amf_decode_initiating (
     OAILOG_FUNC_IN (LOG_S1AP);
     
     DevAssert (initiating_p != NULL);
-    message_string = calloc(10000,sizeof(char));
+    message_string = calloc (10000, sizeof (char));
     ngap_string_total_size = 0;
     message->procedureCode = initiating_p->procedureCode;
     message->criticality = initiating_p->criticality;
@@ -38,7 +38,7 @@ ngap_amf_decode_initiating (
         break;
       case Ngap_ProcedureCode_id_NGSetup:{
           ret = ngap_decode_ngsetuprequesties(&message->msg.ngSetupRequestIEs,&initiating_p->value);
-          ngap_xer_print_ngsetuprequest(ngap_xer__print2fp,message_string,message);
+          //ngap_xer_print_ngsetuprequest(ngap_xer__print2fp,message_string,message);
           *message_id = NGAP_NG_SETUP_LOG;
         }
         break;
@@ -200,7 +200,6 @@ int ngap_amf_decode_pdu(
   }
         
   message->direction = pdu_p->present;
-      
   switch (pdu_p->present) {
     case NGAP_PDU_PR_initiatingMessage:
       return ngap_amf_decode_initiating (message, &pdu_p->choice.initiatingMessage, message_id);

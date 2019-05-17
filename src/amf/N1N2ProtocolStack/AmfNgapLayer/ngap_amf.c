@@ -21,7 +21,7 @@ hash_table_ts_t g_ngap_amf_id2assoc_id_coll = {.mutex = PTHREAD_MUTEX_INITIALIZE
 
 
 
-
+//TODO: get config info from a configuration file
 static int ngap_send_init_sctp(void)
 {
   MessageDef                             *message_p = NULL;

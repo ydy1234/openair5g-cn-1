@@ -38,6 +38,10 @@ static inline int                       ngap_amf_encode_unsuccessfull_outcome (
   ngap_message * message_p,
   uint8_t ** buffer,
   uint32_t * len);
+static inline int                       ngap_amf_encode_ngsetuprequest (
+  ngap_message * message_p,
+  uint8_t ** buffer,
+  uint32_t * length);
 
 int
 ngap_amf_encode_pdu (
@@ -51,7 +55,7 @@ ngap_amf_encode_pdu (
   
   switch (message_p->direction) {
   case NGAP_PDU_PR_initiatingMessage:
-    //return ngap_amf_encode_initiating (message_p, buffer, length);
+    return ngap_amf_encode_initiating (message_p, buffer, length);
 
   case NGAP_PDU_PR_successfulOutcome:
     //return ngap_amf_encode_successfull_outcome (message_p, buffer, length);
@@ -103,6 +107,42 @@ ngap_amf_encode_unsuccessfull_outcome (
   return -1;
 }
 
+
+static inline int
+ngap_amf_encode_initiating (
+  ngap_message * message_p,
+  uint8_t ** buffer,
+  uint32_t * length)
+{
+  switch (message_p->procedureCode) {
+  case Ngap_ProcedureCode_id_NGSetup:
+    return ngap_amf_encode_ngsetuprequest (message_p, buffer, length);
+
+  default:
+    OAILOG_DEBUG (LOG_S1AP, "Unknown procedure ID (%d) for unsuccessfull outcome message\n", (int)message_p->procedureCode);
+    break;
+  }
+
+  return -1;
+}
+
+static inline int
+ngap_amf_encode_ngsetuprequest (
+  ngap_message * message_p,
+  uint8_t ** buffer,
+  uint32_t * length)
+{
+	NGSetupRequest_t                   ngSetupRequest;
+	NGSetupRequest_t                  *ngSetupRequest_p = &ngSetupRequest;
+
+  memset (ngSetupRequest_p, 0, sizeof (NGSetupRequest_t));
+
+  if (ngap_encode_ngsetuprequesties (ngSetupRequest_p, &message_p->msg.ngSetupRequestIEs) < 0) {
+    return -1;
+  }
+
+  return ngap_generate_initiating_message (buffer, length, Ngap_ProcedureCode_id_NGSetup, message_p->criticality, &asn_DEF_NGSetupRequest, ngSetupRequest_p);
+}
 /*
 Ngap_IE_t                              *
 ngap_new_ie (
