@@ -33,7 +33,7 @@ static inline void ngap_amf_itti_amf_app_initial_ue_message(
   const void      const*  allowedNSSAI)
 {
   MessageDef  * message_p = NULL;
-  OAILOG_FUNC_IN(LOG_S1AP);
+  OAILOG_FUNC_IN(LOG_NGAP);
   AssertFatal((nas_msg_length<1000),"Bad length for NAS message %lu",nas_msg_length);
   message_p = itti_alloc_new_message(TASK_NGAP,AMF_APP_INITIAL_UE_MESSAGE);
   
@@ -47,7 +47,7 @@ static inline void ngap_amf_itti_amf_app_initial_ue_message(
   //AMF_APP_INITIAL_UE_MESSAGE(message_p).as_cause             = rrc_cause + 1;
   //AMF_APP_INITIAL_UE_MESSAGE(message_p)
   itti_send_msg_to_task(TASK_AMF_APP, INSTANCE_DEFAULT, message_p);
-  OAILOG_FUNC_OUT (LOG_S1AP);
+  OAILOG_FUNC_OUT (LOG_NGAP);
 }
 
 #endif

@@ -239,21 +239,14 @@ void log_set_config(const log_config_t * const config)
 {
   if (config) {
     if ((MAX_LOG_LEVEL > config->udp_log_level) && (MIN_LOG_LEVEL <= config->udp_log_level))         g_oai_log.log_level[LOG_UDP] = config->udp_log_level;
-    if ((MAX_LOG_LEVEL > config->gtpv1u_log_level) && (MIN_LOG_LEVEL <= config->gtpv1u_log_level))   g_oai_log.log_level[LOG_GTPV1U]   = config->gtpv1u_log_level;
-    if ((MAX_LOG_LEVEL > config->gtpv2c_log_level) && (MIN_LOG_LEVEL <= config->gtpv2c_log_level))   g_oai_log.log_level[LOG_GTPV2C]   = config->gtpv2c_log_level;
     if ((MAX_LOG_LEVEL > config->sctp_log_level) && (MIN_LOG_LEVEL <= config->sctp_log_level))       g_oai_log.log_level[LOG_SCTP]     = config->sctp_log_level;
-    if ((MAX_LOG_LEVEL > config->s1ap_log_level) && (MIN_LOG_LEVEL <= config->s1ap_log_level))       g_oai_log.log_level[LOG_S1AP]     = config->s1ap_log_level;
-    if ((MAX_LOG_LEVEL > config->mme_app_log_level) && (MIN_LOG_LEVEL <= config->mme_app_log_level)) g_oai_log.log_level[LOG_MME_APP]  = config->mme_app_log_level;
+    if ((MAX_LOG_LEVEL > config->ngap_log_level) && (MIN_LOG_LEVEL <= config->ngap_log_level))       g_oai_log.log_level[LOG_NGAP]     = config->ngap_log_level;
+    if ((MAX_LOG_LEVEL > config->amf_app_log_level) && (MIN_LOG_LEVEL <= config->amf_app_log_level)) g_oai_log.log_level[LOG_AMF_APP]  = config->amf_app_log_level;
     if ((MAX_LOG_LEVEL > config->nas_log_level) && (MIN_LOG_LEVEL <= config->nas_log_level)) {
       g_oai_log.log_level[LOG_NAS]      = config->nas_log_level;
       g_oai_log.log_level[LOG_NAS_EMM]  = config->nas_log_level;
       g_oai_log.log_level[LOG_NAS_ESM]  = config->nas_log_level;
     }
-    if ((MAX_LOG_LEVEL > config->spgw_app_log_level) && (MIN_LOG_LEVEL <= config->spgw_app_log_level)) g_oai_log.log_level[LOG_SPGW_APP] = config->spgw_app_log_level;
-    if ((MAX_LOG_LEVEL > config->s10_log_level) && (MIN_LOG_LEVEL <= config->s10_log_level))           g_oai_log.log_level[LOG_S10]      = config->s10_log_level;
-    if ((MAX_LOG_LEVEL > config->s11_log_level) && (MIN_LOG_LEVEL <= config->s11_log_level))           g_oai_log.log_level[LOG_S11]      = config->s11_log_level;
-    if ((MAX_LOG_LEVEL > config->s6a_log_level) && (MIN_LOG_LEVEL <= config->s6a_log_level))           g_oai_log.log_level[LOG_S6A]      = config->s6a_log_level;
-    if ((MAX_LOG_LEVEL > config->secu_log_level) && (MIN_LOG_LEVEL <= config->secu_log_level))         g_oai_log.log_level[LOG_SECU]     = config->secu_log_level;
     if ((MAX_LOG_LEVEL > config->util_log_level) && (MIN_LOG_LEVEL <= config->util_log_level))         g_oai_log.log_level[LOG_UTIL]     = config->util_log_level;
     if ((MAX_LOG_LEVEL > config->msc_log_level) && (MIN_LOG_LEVEL <= config->msc_log_level))           g_oai_log.log_level[LOG_MSC]      = config->msc_log_level;
     if ((MAX_LOG_LEVEL > config->xml_log_level) && (MIN_LOG_LEVEL <= config->xml_log_level))           g_oai_log.log_level[LOG_XML]      = config->xml_log_level;
@@ -380,17 +373,11 @@ log_init (
 
   snprintf (&g_oai_log.log_proto2str[LOG_SCTP][0], LOG_MAX_PROTO_NAME_LENGTH, "SCTP");
   snprintf (&g_oai_log.log_proto2str[LOG_UDP][0], LOG_MAX_PROTO_NAME_LENGTH, "UDP");
-  snprintf (&g_oai_log.log_proto2str[LOG_GTPV1U][0], LOG_MAX_PROTO_NAME_LENGTH, "GTPv1-U");
-  snprintf (&g_oai_log.log_proto2str[LOG_GTPV2C][0], LOG_MAX_PROTO_NAME_LENGTH, "GTPv2-C");
-  snprintf (&g_oai_log.log_proto2str[LOG_S1AP][0], LOG_MAX_PROTO_NAME_LENGTH, "S1AP");
-  snprintf (&g_oai_log.log_proto2str[LOG_MME_APP][0], LOG_MAX_PROTO_NAME_LENGTH, "MME-APP");
+  snprintf (&g_oai_log.log_proto2str[LOG_NGAP][0], LOG_MAX_PROTO_NAME_LENGTH, "S1AP");
+  snprintf (&g_oai_log.log_proto2str[LOG_AMF_APP][0], LOG_MAX_PROTO_NAME_LENGTH, "MME-APP");
   snprintf (&g_oai_log.log_proto2str[LOG_NAS][0], LOG_MAX_PROTO_NAME_LENGTH, "NAS");
   snprintf (&g_oai_log.log_proto2str[LOG_NAS_EMM][0], LOG_MAX_PROTO_NAME_LENGTH, "NAS-EMM");
   snprintf (&g_oai_log.log_proto2str[LOG_NAS_ESM][0], LOG_MAX_PROTO_NAME_LENGTH, "NAS-ESM");
-  snprintf (&g_oai_log.log_proto2str[LOG_SPGW_APP][0], LOG_MAX_PROTO_NAME_LENGTH, "SPGW-APP");
-  snprintf (&g_oai_log.log_proto2str[LOG_S10][0], LOG_MAX_PROTO_NAME_LENGTH, "S10");
-  snprintf (&g_oai_log.log_proto2str[LOG_S11][0], LOG_MAX_PROTO_NAME_LENGTH, "S11");
-  snprintf (&g_oai_log.log_proto2str[LOG_S6A][0], LOG_MAX_PROTO_NAME_LENGTH, "S6A");
   snprintf (&g_oai_log.log_proto2str[LOG_SECU][0], LOG_MAX_PROTO_NAME_LENGTH, "SECU");
   snprintf (&g_oai_log.log_proto2str[LOG_UTIL][0], LOG_MAX_PROTO_NAME_LENGTH, "UTIL");
   snprintf (&g_oai_log.log_proto2str[LOG_CONFIG][0], LOG_MAX_PROTO_NAME_LENGTH, "CONFIG");

@@ -9,7 +9,6 @@
 #include "intertask_interface_types.h"
 #include "common_defs.h"
 #include "log.h"
-#include "ngap_ies_defs.h"
 #include "asn_internal.h"
 #include "hashtable.h"
 #include "ngap_amf.h"
@@ -50,27 +49,27 @@ ngap_amf_thread (
       DevAssert (received_message_p != NULL);
       switch(ITTI_MSG_ID (received_message_p)){
         case MESSAGE_TEST:{
-            OAILOG_DEBUG(LOG_S1AP,"NGAP TEST MSG\n");
+            OAILOG_DEBUG(LOG_NGAP,"NGAP TEST MSG\n");
           }
           break;
         case ACTIVATE_MESSAGE:{
-        	 OAILOG_DEBUG(LOG_S1AP,"ACTIVATE MESSAGE\n");
+        	 OAILOG_DEBUG(LOG_NGAP,"ACTIVATE MESSAGE\n");
             if (ngap_send_init_sctp () < 0) {
-              OAILOG_CRITICAL (LOG_S1AP, "Error while sending SCTP_INIT_MSG to SCTP\n");
+              OAILOG_CRITICAL (LOG_NGAP, "Error while sending SCTP_INIT_MSG to SCTP\n");
             }
           }
           break;
         case SCTP_NEW_ASSOCIATION:{
-            OAILOG_DEBUG(LOG_S1AP,"SCTP_NEW_ASSOCIATION\n");
-            ngap_handle_new_association(&received_message_p->ittiMsg.sctp_new_peer);
+            OAILOG_DEBUG(LOG_NGAP,"SCTP_NEW_ASSOCIATION\n");
+           // ngap_handle_new_association(&received_message_p->ittiMsg.sctp_new_peer);
           }
           break;
         case SCTP_DATA_IND:{
-            OAILOG_DEBUG(LOG_S1AP,"SCTP_DATA_IND(recv N2 Messages from AN)\n");
-            ngap_message  message = {0};
+            OAILOG_DEBUG(LOG_NGAP,"SCTP_DATA_IND(recv N2 Messages from AN)\n");
+            /*ngap_message  message = {0};
 
             if (ngap_amf_decode_pdu (&message, SCTP_DATA_IND (received_message_p).payload, &message_id) < 0) {
-              OAILOG_ERROR (LOG_S1AP, "Failed to decode new buffer\n");
+              OAILOG_ERROR (LOG_NGAP, "Failed to decode new buffer\n");
             } else {
               ngap_amf_handle_message (SCTP_DATA_IND (received_message_p).assoc_id,
                                    SCTP_DATA_IND (received_message_p).stream, &message);
@@ -79,7 +78,7 @@ ngap_amf_thread (
               ngap_free_amf_decode_pdu(&message, message_id);
             }
             bdestroy (SCTP_DATA_IND (received_message_p).payload);
-
+*/
           }
           break;
       }
@@ -92,15 +91,15 @@ ngap_amf_thread (
 int 
 ngap_amf_init(void)
 {  
-    OAILOG_DEBUG (LOG_S1AP, "Initializing NGAP interface\n");
+    OAILOG_DEBUG (LOG_NGAP, "Initializing NGAP interface\n");
     //if (get_asn1c_environment_version () < ASN1_MINIMUM_VERSION) {
-      //OAILOG_ERROR (LOG_S1AP, "ASN1C version %d fount, expecting at least %d\n", get_asn1c_environment_version (), ASN1_MINIMUM_VERSION);
+      //OAILOG_ERROR (LOG_NGAP, "ASN1C version %d fount, expecting at least %d\n", get_asn1c_environment_version (), ASN1_MINIMUM_VERSION);
     //  return RETURNerror;
     //} else {
-      //OAILOG_DEBUG (LOG_S1AP, "ASN1C version %d\n", get_asn1c_environment_version ());
+      //OAILOG_DEBUG (LOG_NGAP, "ASN1C version %d\n", get_asn1c_environment_version ());
     //}
   
-    //OAILOG_DEBUG (LOG_S1AP, "S1AP Release v10.5\n");
+    //OAILOG_DEBUG (LOG_NGAP, "S1AP Release v10.5\n");
 
     bstring bs1 = bfromcstr("ngap_gNB_coll");
     hash_table_ts_t * h = hashtable_ts_init(&g_ngap_gnb_coll,16,NULL,free_wrapper,bs1);
@@ -113,16 +112,16 @@ ngap_amf_init(void)
     if(!h) return RETURNerror;
 
     if (itti_create_task (TASK_NGAP, &ngap_amf_thread, NULL) < 0) {
-      OAILOG_ERROR (LOG_S1AP, "Error while creating NGAP task\n");
+      OAILOG_ERROR (LOG_NGAP, "Error while creating NGAP task\n");
       return RETURNerror;
     }
 /*
     if (ngap_send_init_sctp () < 0) {
-      OAILOG_ERROR (LOG_S1AP, "Error while sendind SCTP_INIT_MSG to SCTP \n");
+      OAILOG_ERROR (LOG_NGAP, "Error while sendind SCTP_INIT_MSG to SCTP \n");
       return RETURNerror;
     }
 */
-    OAILOG_DEBUG (LOG_S1AP, "Initializing NGAP interface: DONE\n");
+    OAILOG_DEBUG (LOG_NGAP, "Initializing NGAP interface: DONE\n");
     return RETURNok;
 }
 
@@ -189,7 +188,7 @@ ngap_new_ue (
     
   hashtable_rc_t  hashrc = hashtable_ts_insert (&gnb_ref->ue_coll, (const hash_key_t) ran_ue_ngap_id, (void *)ue_ref);
   if (HASH_TABLE_OK != hashrc) {
-    OAILOG_ERROR(LOG_S1AP, "Could not insert UE descr in ue_coll: %s\n", hashtable_rc_code2string(hashrc));
+    OAILOG_ERROR(LOG_NGAP, "Could not insert UE descr in ue_coll: %s\n", hashtable_rc_code2string(hashrc));
     free_wrapper((void**) &ue_ref);
     return NULL;
   }

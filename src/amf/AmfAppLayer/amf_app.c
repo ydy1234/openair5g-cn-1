@@ -64,8 +64,8 @@ amf_app_init (
    * Create the thread associated with MME applicative layer
    */
   if (itti_create_task (TASK_AMF_APP, &amf_app_thread, NULL) < 0) {
-    OAILOG_ERROR (LOG_MME_APP, "MME APP create task failed\n");
-    OAILOG_FUNC_RETURN (LOG_MME_APP, RETURNerror);
+    OAILOG_ERROR (LOG_AMF_APP, "MME APP create task failed\n");
+    OAILOG_FUNC_RETURN (LOG_AMF_APP, RETURNerror);
   }
 
   //mme_app_desc.statistic_timer_period = mme_config_p->mme_statistic_timer;
@@ -78,6 +78,6 @@ amf_app_init (
     OAILOG_ERROR (LOG_MME_APP, "Failed to request new timer for statistics with %ds " "of periocidity\n", mme_config_p->mme_statistic_timer);
     mme_app_desc.statistic_timer_id = 0;
   }*/
-  OAILOG_DEBUG (LOG_MME_APP, "Initializing AMF applicative layer: DONE\n");
-  OAILOG_FUNC_RETURN (LOG_MME_APP, RETURNok);
+  OAILOG_DEBUG (LOG_AMF_APP, "Initializing AMF applicative layer: DONE\n");
+  OAILOG_FUNC_RETURN (LOG_AMF_APP, RETURNok);
 }
