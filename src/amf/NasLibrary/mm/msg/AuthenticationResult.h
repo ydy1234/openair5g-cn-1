@@ -35,8 +35,8 @@ typedef struct authentication_result_msg_tag{
 	MessageType messagetype;
 	NASKeySetIdentifier naskeysetidentifier;
 	EAPMessage eapmessage;
-        uint8_t presence;
-        ABBA abba;
+    uint8_t presence;
+    ABBA abba;
 }authentication_result_msg;
 
 

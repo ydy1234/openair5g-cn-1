@@ -51,12 +51,13 @@ fivegmm_msg_encode (
   /*
    * First encode the EMM message header
    */
-  printf("_fivegmm_msg_encode_header\n");
+  //printf("_fivegmm_msg_encode_header\n");
   header_result = _fivegmm_msg_encode_header (&msg->header, buffer, len);
 
   if (header_result < 0) {
     //OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to encode EMM message header " "(%d)\n", header_result);
     //OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result);
+    return header_result;
   }
 
   buffer += header_result;
@@ -66,7 +67,7 @@ fivegmm_msg_encode (
       //encode_result = encode_authentication_request(&msg->authentication_request,buffer,len);/* msg define in openair5g-cn/src/amf/nas/mm/msg  */
       //break;
       case AUTHENTICATION_REQUEST:
-                  printf("encode AUTHENTICATION_REQUEST\n");
+           //printf("encode AUTHENTICATION_REQUEST\n");
 	  	  encode_result = encode_authentication_request(&msg->specific_msg.authentication_request, buffer, len);
 	  break;	  
 	  case AUTHENTICATION_RESPONSE:
@@ -87,7 +88,7 @@ fivegmm_msg_encode (
   } else {
     //nas_itti_plain_msg ((char *)buffer_log, (nas_message_t *) msg, header_result + encode_result, is_down_link);
   }
-  printf("plain mm msg header result(%d),encode result(%d)\n",header_result,encode_result);
+  //printf("plain mm msg header result(%d),encode result(%d)\n",header_result,encode_result);
   return header_result+encode_result;
   //OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result + encode_result);
 }
@@ -163,12 +164,13 @@ mm_msg_decode (
    * First decode the MM message header
    */
   header_result = _fivegmm_msg_decode_header (&msg->header, buffer, len);
-  printf("after _fivegmm_msg_decode_header,decoded protocol %x\n",msg->header.extended_protocol_discriminator);
-  printf("after _fivegmm_msg_decode_header,decoded security type %x\n",msg->header.security_header_type);
-  printf("after _fivegmm_msg_decode_header,decoded message type %x\n",msg->header.message_type);
+  //printf("after _fivegmm_msg_decode_header,decoded protocol %x\n",msg->header.extended_protocol_discriminator);
+  //printf("after _fivegmm_msg_decode_header,decoded security type %x\n",msg->header.security_header_type);
+  //printf("after _fivegmm_msg_decode_header,decoded message type %x\n",msg->header.message_type);
   if (header_result < 0) {
     //OAILOG_ERROR (LOG_NAS_EMM, "EMM-MSG   - Failed to decode MM message header " "(%d)\n", header_result);
     //OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result);
+    return header_result;
   }
 
   buffer += header_result;
@@ -176,7 +178,7 @@ mm_msg_decode (
   //OAILOG_INFO (LOG_NAS_EMM, "EMM-MSG   - Message Type 0x%02x\n", msg->header.message_type);
   switch (msg->header.message_type) {//plain nas message e.g. registrationrequest message
       case AUTHENTICATION_REQUEST:
-              printf("decoding AUTHENTICATION_REQUEST\n");
+              //printf("decoding AUTHENTICATION_REQUEST\n");
 	      decode_result = decode_authentication_request(&msg->specific_msg.authentication_request, buffer, len);
 	  break;
 	  case AUTHENTICATION_RESPONSE:
@@ -201,7 +203,7 @@ mm_msg_decode (
      */
     //nas_itti_plain_msg ((char *)buffer_log, (nas_message_t *) msg, len_log, is_down_link);
   }
-
+  return header_result  + decode_result;
   //OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result + decode_result);
 }
 
@@ -238,6 +240,6 @@ _fivegmm_msg_decode_header (
     //OAILOG_ERROR (LOG_NAS_EMM, "ESM-MSG   - Unexpected protocol discriminator: 0x%x\n", header->protocol_discriminator);
     return (TLV_PROTOCOL_NOT_SUPPORTED);
   }
-  printf("decoded plain msg header size %d\n",size);
+  //printf("decoded plain msg header size %d\n",size);
   return (size);
 }

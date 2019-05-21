@@ -35,7 +35,7 @@ typedef struct authentication_response_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
-        uint8_t presence;
+    uint8_t presence;
 	AuthenticationResponseParameter authenticationresponseparameter;
 	EAPMessage eapmessage;
 }authentication_response_msg;

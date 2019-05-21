@@ -15,10 +15,10 @@ int decode_authentication_response( authentication_response_msg *authentication_
     CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, AUTHENTICATION_RESPONSE_MINIMUM_LENGTH, len);
   
   while (len - decoded > 0) {
-    printf("encoding ies left(%d)\n",len-decoded);
-    printf("decoded(%d)\n",decoded);
+    //printf("encoding ies left(%d)\n",len-decoded);
+    //printf("decoded(%d)\n",decoded);
     uint8_t ieiDecoded = *(buffer+decoded);
-    printf("ieiDecoded(%x)\n",ieiDecoded);
+    //printf("ieiDecoded(%x)\n",ieiDecoded);
     if(ieiDecoded == 0)
       break;
     switch(ieiDecoded){

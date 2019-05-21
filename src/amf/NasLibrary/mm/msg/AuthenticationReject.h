@@ -29,8 +29,8 @@ typedef struct authentication_reject_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
-        uint8_t presence;
-        EAPMessage eapmessage;
+    uint8_t presence;
+    EAPMessage eapmessage;
 }authentication_reject_msg;
 
 

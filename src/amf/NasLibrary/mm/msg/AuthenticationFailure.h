@@ -34,7 +34,7 @@ typedef struct authentication_failure_msg_tag{
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
 	_5GMMCause _5gmmcause;
-        uint32_t                         presence;
+    uint32_t                         presence;
 	AuthenticationFailureParameter authenticationfailureparameter;
 }authentication_failure_msg;
 
