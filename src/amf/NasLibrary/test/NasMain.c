@@ -7,6 +7,7 @@
 #include "mmData.h"
 #include "common_types.h"
 #include "common_defs.h"
+//add-test
 int main(){
 
   int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
