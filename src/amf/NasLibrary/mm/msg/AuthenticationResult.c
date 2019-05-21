@@ -12,17 +12,26 @@ int decode_authentication_result( authentication_result_msg *authentication_resu
     int decoded_result = 0;
 
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
+    printf("decode_authentication_result len:%d\n", len);
     CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, AUTHENTICATION_RESULT_MINIMUM_LENGTH, len);
     
     if ((decoded_result = decode_u8_nas_key_set_identifier (&authentication_result->naskeysetidentifier, 0, *(buffer + decoded) >> 4, len - decoded)) < 0)
       return decoded_result;
     decoded++;
+	printf("decoded:%d\n", decoded,decoded_result);
     if((decoded_result = decode_eap_message (&authentication_result->eapmessage, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
+	int i = 0;
+	printf("decoded:%d\n", decoded, decoded_result);
+	 for(;i<30;i++)
+	   printf("nas msg byte test bype[%d] = 0x%x\n",i,buffer[i]);
+	 
     while(len-decoded>0){
       uint8_t ieiDecoded = *(buffer+decoded);
+	  printf("ieiDecoded:0x%x\n", ieiDecoded);
+	  sleep(1);
       if(ieiDecoded==0)
         break;
       switch(ieiDecoded){
@@ -54,6 +63,7 @@ int encode_authentication_result( authentication_result_msg *authentication_resu
         return encoded_result;
     else
         encoded+=encoded_result;
+	printf("encode_authentication_result encoded:%d, encoded_result:%d\n", encoded,encoded_result);
 
     if((authentication_result->presence & AUTHENTICATION_RESULT_ABBA_PRESENT)
         == AUTHENTICATION_RESULT_ABBA_PRESENT){

@@ -571,7 +571,7 @@ int auth_reject()
      return 0;
 }
 
-#if 0
+
 int auth_result()
 {
      printf("AUTHENTICATION_RESULT------------ start\n");
@@ -605,17 +605,17 @@ int auth_result()
 	 uint8_t bitStream_abba = 0b00110100;
 	 abba->data = (unsigned char *)(&bitStream_abba);
 	 abba->slen = 1; 
-	 mm_msg->specific_msg.authentication_request.abba = abba;
+	 
    
-	 bstring rand = bfromcstralloc(10, "\0");
-	 uint8_t bitStream_rand = 0b00110111;
-	 rand->data = (unsigned char *)(&bitStream_rand);
-	 rand->slen = 1;
-   
-	 mm_msg->specific_msg.authentication_request.presence = 0x07;
-	 mm_msg->specific_msg.authentication_request.authenticationparameterrand = rand;
-	 mm_msg->specific_msg.authentication_request.authenticationparameterautn = abba;
-	 mm_msg->specific_msg.authentication_request.eapmessage = abba;
+	 bstring eapmsg = bfromcstralloc(10, "\0");
+	 uint8_t bitStream_eap = 0b00110111;
+	 eapmsg->data = (unsigned char *)(&bitStream_eap);
+	 eapmsg->slen = 1;
+
+     mm_msg->specific_msg.authentication_result.eapmessage = eapmsg;
+	 mm_msg->specific_msg.authentication_result.presence   = 0x07;
+	 mm_msg->specific_msg.authentication_result.abba       = abba;
+	 
 	 
 	 size += MESSAGE_TYPE_MAXIMUM_LENGTH;
    
@@ -637,7 +637,7 @@ int auth_result()
 	 //complete sercurity context
    
 	 int length = BUF_LEN;
-	 unsigned char data[BUF_LEN];
+	 unsigned char data[BUF_LEN] = {'\0'};
    
 	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 
@@ -647,6 +647,7 @@ int auth_result()
 	 printf("info %p\n",info);
 	 #endif
 
+     printf("encode-----------------\n");
 	 printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
 	 nas_msg.header.extended_protocol_discriminator,
 	 nas_msg.header.security_header_type,
@@ -654,12 +655,12 @@ int auth_result()
 	 nas_msg.header.message_authentication_code);
 
 	 printf("message type:0x%x\n",mm_msg->header.message_type);
-	 printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
-	 printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
-	 printf("abba buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.abba)->data));
-	 printf("rand buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
-	 printf("autn buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
-	 printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.eapmessage)->data));
+	 printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_result.naskeysetidentifier.tsc);
+	 printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_result.naskeysetidentifier.naskeysetidentifier);
+	 printf("abba buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_result.abba)->data));
+	 printf("presence:0x%x\n", mm_msg->specific_msg.authentication_result.presence);
+	 printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_result.eapmessage)->data));
+     
 
 	 //bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	 bytes = nas_message_encode (data, &nas_msg, sizeof(data)/*don't know the size*/, security);
@@ -668,11 +669,10 @@ int auth_result()
 	 //printf("2 nas_message_encode over\n");
 	
 	 int i = 0;
-	 
-	 #if 0
+	
 	 for(;i<30;i++)
 	   printf("nas msg byte test bype[%d] = 0x%x\n",i,data[i]);
-	 #endif
+	 
 	 
 	 info->data = data;
 	 info->slen = bytes;
@@ -682,7 +682,7 @@ int auth_result()
    /*********	  NAS DECODE	 ***********************/
    /************************************************************************************************************************/
 	 
-	 printf("start nas_message_decode bytes:%d\n", bytes);
+	 //printf("start nas_message_decode bytes:%d\n", bytes);
 	 bstring plain_msg = bstrcpy(info); 
 	 nas_message_security_header_t header = {0};
 	 //fivegmm_security_context_t  * security = NULL;
@@ -695,11 +695,11 @@ int auth_result()
 	 memset (&decoded_nas_msg,		 0, sizeof (nas_message_t));
    
 	 int decoder_rc = RETURNok;
-	 printf("calling nas_message_decode-----------\n");
+	 //printf("calling nas_message_decode-----------\n");
 	 //decoder_rc = nas_message_decode (plain_msg->data, &decoded_nas_msg, 60/*blength(info)*/, security, &decode_status);
 	 decoder_rc = nas_message_decode (data, &decoded_nas_msg, sizeof(data) /*blength(info)*/, security, &decode_status);
 
-
+     printf("decode-----------------\n");
      printf("nas header  decode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
 	 decoded_nas_msg.header.extended_protocol_discriminator,
 	 decoded_nas_msg.header.security_header_type,
@@ -708,25 +708,25 @@ int auth_result()
 
 	 MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
 	 printf("message type:0x%x\n",decoded_mm_msg->header.message_type);
-	 printf("naskey tsc:0x%x\n",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
-	 printf("naskey tsc:0x%x\n",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
-	 printf("abba buffer:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.abba)->data));
-	 printf("rand buffer:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
-	 printf("autn buffer:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
-	 printf("eap message buffer:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.eapmessage)->data));
-
+	 printf("naskey tsc:0x%x\n",decoded_mm_msg->specific_msg.authentication_result.naskeysetidentifier.tsc);
+	 printf("naskey tsc:0x%x\n",decoded_mm_msg->specific_msg.authentication_result.naskeysetidentifier.naskeysetidentifier);
+	 printf("abba buffer:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_result.abba)->data));
+	 printf("presence:0x%x\n", decoded_mm_msg->specific_msg.authentication_result.presence);
+	 printf("eap message buffer:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_result.eapmessage)->data));
+     
      printf("AUTHENTICATION_REQUEST------------ end\n");
      return  0;
 }
-#endif
+
 
 int main()
 { 
   
-  auth_request();
-  auth_response();
-  auth_failure();
-  auth_reject();
+  //auth_request();
+  //auth_response();
+  //auth_failure();
+  //auth_reject();
+  auth_result();
   
   return 0;
 }
