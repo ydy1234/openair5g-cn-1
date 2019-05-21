@@ -12,23 +12,22 @@ int decode_authentication_reject( authentication_reject_msg *authentication_reje
     int decoded_result = 0;
 
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
-//    CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, AUTHENTICATION_REJECT_MINIMUM_LENGTH, len);
-/*
-    if((decoded_result = decode_extended_protocol_discriminator (&authentication_reject->extendedprotocoldiscriminator, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
+    CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, AUTHENTICATION_REJECT_MINIMUM_LENGTH, len);
 
-    if((decoded_result = decode_security_header_type (&authentication_reject->securityheadertype, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
-    if((decoded_result = decode_message_type (&authentication_reject->messagetype, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-*/
+    while(len-decoded>0){
+      uint8_t ieiDecoded = *(buffer+decoded);
+      if(ieiDecoded == 0)
+        break;
+      switch(ieiDecoded){
+        case AUTHENTICATION_REJECT_EAP_MESSAGE_IEI:
+          if((decoded_result = decode_message_type (&authentication_reject->messagetype, AUTHENTICATION_REJECT_EAP_MESSAGE_IEI, buffer+decoded,len-decoded))<0)
+            return decoded_result;
+          else{
+            decoded+=decoded_result; 
+            authentication_reject->presence |= AUTHENTICATION_REJECT_EAP_MESSAGE_PRESENT;
+          }
+        }
+    }
 
     return decoded;
 }
@@ -40,23 +39,15 @@ int encode_authentication_reject( authentication_reject_msg *authentication_reje
     int encoded_result = 0;
     
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
-//    CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, AUTHENTICATION_REJECT_MINIMUM_LENGTH, len);
-/*
-    if((encoded_result = encode_extended_protocol_discriminator (authentication_reject->extendedprotocoldiscriminator, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
+    CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, AUTHENTICATION_REJECT_MINIMUM_LENGTH, len);
 
-    if((encoded_result = encode_security_header_type (authentication_reject->securityheadertype, 0, buffer+encoded,len-encoded))<0)
+    if(authentication_reject->presence & AUTHENTICATION_REJECT_EAP_MESSAGE_PRESENT
+       == AUTHENTICATION_REJECT_EAP_MESSAGE_PRESENT){
+      if((encoded_result = encode_eap_message (authentication_reject->eapmessage, AUTHENTICATION_REJECT_EAP_MESSAGE_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
-    else
+      else
         encoded+=encoded_result;
-
-    if((encoded_result = encode_message_type (authentication_reject->messagetype, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-*/
+    }
 
     return encoded;
 }

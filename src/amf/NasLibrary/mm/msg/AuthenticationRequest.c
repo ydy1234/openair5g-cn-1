@@ -61,8 +61,6 @@ int decode_authentication_request( authentication_request_msg *authentication_re
         }
       break;
   }
-  if(authentication_request->presence == 0x07)
-    break; 
 }
 
   return decoded;

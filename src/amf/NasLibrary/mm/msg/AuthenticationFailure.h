@@ -25,8 +25,8 @@
 		AUTHENTICATION_FAILURE_PARAMETER_MAXIMUM_LENGTH + \
 0)
 
-# define AUTHENTICATION_FAILURE_PARAMETER_PRESENT (1<<0)
-#define AUTHENTICATION_FAILURE_PARAMETER_IEI 0x21
+#define AUTHENTICATION_FAILURE_AUTHENTICATION_FAILURE_PARAMETER_PRESENT (1<<0)
+#define AUTHENTICATION_FAILURE_AUTHENTICATION_FAILURE_PARAMETER_IEI 0x21
 
 
 typedef struct authentication_failure_msg_tag{
@@ -34,7 +34,7 @@ typedef struct authentication_failure_msg_tag{
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
 	_5GMMCause _5gmmcause;
-        uint32_t                         presencemask;
+        uint32_t                         presence;
 	AuthenticationFailureParameter authenticationfailureparameter;
 }authentication_failure_msg;
 
