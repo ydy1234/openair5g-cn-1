@@ -19,6 +19,7 @@ int encode_authentication_parameter_autn ( AuthenticationParameterAUTN authentic
 
   if (iei > 0) {
     *buffer = iei;
+    printf("encoded autn iei(%x)\n",iei);
     encoded++;
   }
 

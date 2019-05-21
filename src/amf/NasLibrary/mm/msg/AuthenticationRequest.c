@@ -23,26 +23,48 @@ int decode_authentication_request( authentication_request_msg *authentication_re
   
   decoded++;
 
-if ((decoded_result = decode_abba (&authentication_request->abba,0 , buffer + decoded, len - decoded)) < 0)
+  if ((decoded_result = decode_abba (&authentication_request->abba,0 , buffer + decoded, len - decoded)) < 0)
     return decoded_result;                
   else                                    
-    decoded += decoded_result;
-/*
-  if ((decoded_result = decode_authentication_parameter_rand (&authentication_request->authenticationparameterrand, AUTHENTICATION_PARAMETER_RAND_IEI, buffer + decoded, len - decoded)) < 0)
-    return decoded_result;                
-  else                                    
-    decoded += decoded_result;
-  
-  if ((decoded_result = decode_authentication_parameter_autn (&authentication_request->authenticationparameterautn, AUTHENTICATION_PARAMETER_RAND_IEI, buffer + decoded, len - decoded)) < 0)
-    return decoded_result;
-  else
     decoded += decoded_result;
 
-  if ((decoded_result = decode_eap_message (&authentication_request->eapmessage, EAP_MESSAGE_IEI, buffer + decoded, len - decoded)) < 0)
-    return decoded_result;
-  else
-    decoded += decoded_result;
-*/
+  while (len - decoded > 0) {
+    printf("encoding ies left(%d)\n",len-decoded);
+    printf("decoded(%d)\n",decoded);
+    uint8_t ieiDecoded = *(buffer+decoded);
+    printf("ieiDecoded(%x)\n",ieiDecoded);
+    if(ieiDecoded == 0)
+      break;
+    switch(ieiDecoded){
+      case AUTHENTICATION_PARAMETER_RAND_IEI:
+        if ((decoded_result = decode_authentication_parameter_rand (&authentication_request->authenticationparameterrand, AUTHENTICATION_PARAMETER_RAND_IEI, buffer + decoded, len - decoded)) < 0)
+          return decoded_result;                
+        else{                                    
+          decoded += decoded_result;
+          authentication_request->presence |= AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_RAND_PRESENT;
+        }
+      break;
+      case AUTHENTICATION_PARAMETER_AUTN_IEI:
+        if ((decoded_result = decode_authentication_parameter_autn (&authentication_request->authenticationparameterautn, AUTHENTICATION_PARAMETER_AUTN_IEI, buffer + decoded, len - decoded)) < 0)
+          return decoded_result;
+        else{
+          decoded += decoded_result;
+          authentication_request->presence |= AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_AUTN_PRESENT;
+        }
+      break;
+      case EAP_MESSAGE_IEI:
+        if ((decoded_result = decode_eap_message (&authentication_request->eapmessage, EAP_MESSAGE_IEI, buffer + decoded, len - decoded)) < 0)
+          return decoded_result;
+        else{
+          decoded += decoded_result;
+          authentication_request->presence |= AUTHENTICATION_REQUEST_EAP_MESSAGE_PRESENT;
+        }
+      break;
+  }
+  if(authentication_request->presence == 0x07)
+    break; 
+}
+
   return decoded;
 }
 
@@ -67,6 +89,7 @@ int encode_authentication_request( authentication_request_msg *authentication_re
 
     if((authentication_request->presence & AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_RAND_PRESENT)
         == AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_RAND_PRESENT){
+      printf("encoding encode_authentication_parameter_rand\n");
       if((encoded_result = encode_authentication_parameter_rand (authentication_request->authenticationparameterrand, AUTHENTICATION_PARAMETER_RAND_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
       else
