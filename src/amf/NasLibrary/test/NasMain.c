@@ -32,8 +32,15 @@ int main(){
 
   memset (&mm_msg->specific_msg.authentication_request,       0, sizeof (authentication_request_msg));
 
-  //mm_msg->specific_msg.authentication_request.extendedprotocoldiscriminator = FIVEGS_MOBILITY_MANAGEMENT_MESSAGES;
-  //mm_msg->specific_msg.authentication_request.securityheadertype = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
+  mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc = 1;
+  mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier = 0b101;
+
+  bstring abba = bfromcstralloc(10, "\0");;
+  uint8_t bitStream = 0b00110100;
+  abba->data = (unsigned char *)(&bitStream);
+  abba->slen = 1; 
+  mm_msg->specific_msg.authentication_request.abba = abba;
+
   //mm_msg->specific_msg.authentication_request.messagetype = AUTHENTICATION_REQUEST;
   size += MESSAGE_TYPE_MAXIMUM_LENGTH;
 
@@ -54,7 +61,7 @@ int main(){
   security->knas_int[0] = 0x41;
   //complete sercurity context
 
-  int length;
+  int length = 60;
   unsigned char data[60];
 
   bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
@@ -91,7 +98,9 @@ int main(){
   decoder_rc = nas_message_decode (plain_msg->data, &decoded_nas_msg, 60/*blength(info)*/, security, &decode_status);
   MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
   printf("message type:0x%x\n",decoded_mm_msg->header.message_type);
-
+  printf("naskey tsc:0x%x\n",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
+  printf("naskey tsc:0x%x\n",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
+  printf("abba buffer:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.abba)->data));
 
 
 

@@ -103,15 +103,15 @@ include_directories(/usr/local/include/nlohmann)
 include_directories(/usr/local/include/pistache)
 link_directories(/usr/local/lib)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/api)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/impl)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/EvetService/api)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/EvetService/impl)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/LocService/api)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/LocService/impl)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/MtService/api)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/MtService/impl)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/AmfGeneratedDataModels)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/api)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/CommService/impl)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/EvetService/api)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/EvetService/impl)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/LocService/api)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/LocService/impl)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/MtService/api)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/MicroServiceProtocolStack/MtService/impl)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/AmfGeneratedDataModels)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/common)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/N1N2ProtocolStack/AmfSctpLayer)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/utils)
@@ -187,7 +187,7 @@ file(GLOB SRCS
     ${OPENAIR5GCN_DIR}/src/amf/utils/hashtable.c
     ${OPENAIR5GCN_DIR}/src/amf/utils/obj_hashtable.c
     ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_app.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_decoder.c
+    #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_decoder.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_encoder.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_xer_print.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/*.c
@@ -204,7 +204,7 @@ add_executable(nas ${OPENAIR5GCN_DIR}/src/amf/NasLibrary/test/NasMain.c ${SRCS} 
 target_link_libraries(nas pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES} )
 
 
-#add_executable(fake_gNB ${OPENAIR5GCN_DIR}/src/amf/test/fake_gNB.cpp ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_primitives_client.c ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} )
+#add_executable(fake_gNB ${OPENAIR5GCN_DIR}/src/amf/test/fake_gNB.c ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_primitives_client.c ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NGAP_LAYER_SOURCE_CODE} ${NGAP_LIB_SOURCE_CODE} )
 #target_link_libraries(fake_gNB
 #pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES}
 #  )

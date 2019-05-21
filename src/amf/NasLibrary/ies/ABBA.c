@@ -20,7 +20,8 @@ int encode_abba ( ABBA abba, uint8_t iei, uint8_t * buffer, uint32_t len  )
                encoded++;
        }
 
-
+//    *buffer = iei;
+//    encoded++;
 
     lenPtr = (buffer + encoded);
     encoded++;

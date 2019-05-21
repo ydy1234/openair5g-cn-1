@@ -22,13 +22,13 @@ int encode__5gs_tracking_area_identity ( _5GSTrackingAreaIdentity _5gstrackingar
 
 
 
-
+/*
 
     if ((encode_result = encode_bstring (_5gstrackingareaidentity, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
         return encode_result;
     else
         encoded += encode_result;
-
+*/
 
     return encoded;
 }

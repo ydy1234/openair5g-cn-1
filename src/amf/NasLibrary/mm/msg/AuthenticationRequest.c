@@ -5,6 +5,7 @@
 #include "TLVEncoder.h"
 #include "TLVDecoder.h"
 #include "AuthenticationRequest.h"
+#include "3gpp_ts24.501.h"
 
 int decode_authentication_request( authentication_request_msg *authentication_request, uint8_t* buffer, uint32_t len)
 {
@@ -21,13 +22,23 @@ int decode_authentication_request( authentication_request_msg *authentication_re
     return decoded_result;
   
   decoded++;
+
+if ((decoded_result = decode_abba (&authentication_request->abba,0 , buffer + decoded, len - decoded)) < 0)
+    return decoded_result;                
+  else                                    
+    decoded += decoded_result;
 /*
-  if ((decoded_result = decode_authentication_parameter_rand (&authentication_request->authenticationparameterrand, 0, buffer + decoded, len - decoded)) < 0)
+  if ((decoded_result = decode_authentication_parameter_rand (&authentication_request->authenticationparameterrand, AUTHENTICATION_PARAMETER_RAND_IEI, buffer + decoded, len - decoded)) < 0)
     return decoded_result;                
   else                                    
     decoded += decoded_result;
   
-  if ((decoded_result = decode_authentication_parameter_autn (&authentication_request->authenticationparameterautn, 0, buffer + decoded, len - decoded)) < 0)
+  if ((decoded_result = decode_authentication_parameter_autn (&authentication_request->authenticationparameterautn, AUTHENTICATION_PARAMETER_RAND_IEI, buffer + decoded, len - decoded)) < 0)
+    return decoded_result;
+  else
+    decoded += decoded_result;
+
+  if ((decoded_result = decode_eap_message (&authentication_request->eapmessage, EAP_MESSAGE_IEI, buffer + decoded, len - decoded)) < 0)
     return decoded_result;
   else
     decoded += decoded_result;
@@ -48,26 +59,35 @@ int encode_authentication_request( authentication_request_msg *authentication_re
     encoded ++;
 
     printf("encoded nas key set identifier\n");
-/*
-    if((encoded_result = encode_authentication_parameter_rand (authentication_request->authenticationparameterrand, 0, buffer+encoded,len-encoded))<0)
+
+    if((encoded_result = encode_abba (authentication_request->abba,0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;
 
-    printf("encoded parameter rand\n");
-
-    if((encoded_result = encode_authentication_parameter_autn (authentication_request->authenticationparameterautn, 0, buffer+encoded,len-encoded))<0)
+    if((authentication_request->presence & AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_RAND_PRESENT)
+        == AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_RAND_PRESENT){
+      if((encoded_result = encode_authentication_parameter_rand (authentication_request->authenticationparameterrand, AUTHENTICATION_PARAMETER_RAND_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
-    else
+      else
         encoded+=encoded_result;
+    }
 
-    printf("encoded parameter autn\n");
-
-    if((encoded_result = encode_eap_message (authentication_request->eapmessage, 0, buffer+encoded,len-encoded))<0)
+    if((authentication_request->presence & AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_AUTN_PRESENT)
+        == AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_AUTN_PRESENT){
+      if((encoded_result = encode_authentication_parameter_autn (authentication_request->authenticationparameterautn, AUTHENTICATION_PARAMETER_AUTN_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
-    else
+      else
         encoded+=encoded_result;
-*/
+    }
+
+    if((authentication_request->presence & AUTHENTICATION_REQUEST_EAP_MESSAGE_PRESENT)
+        == AUTHENTICATION_REQUEST_EAP_MESSAGE_PRESENT){
+      if((encoded_result = encode_eap_message (authentication_request->eapmessage, EAP_MESSAGE_IEI, buffer+encoded,len-encoded))<0)
+        return encoded_result;
+      else
+        encoded+=encoded_result;
+    }
 
     return encoded;
 }

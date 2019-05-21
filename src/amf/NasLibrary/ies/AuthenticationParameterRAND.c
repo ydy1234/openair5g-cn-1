@@ -15,11 +15,14 @@ int encode_authentication_parameter_rand ( AuthenticationParameterRAND  authenti
    * Checking IEI and pointer
    */
   CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, AUTHENTICATION_PARAMETER_RAND_MINIMUM_LENGTH, len);
-
+/*
   if (iei > 0) {
     *buffer = iei;
     encoded++;
   }
+*/
+  *buffer = iei;
+  encoded++;
 
   if ((encode_result = encode_bstring (authenticationparameterrand, buffer + encoded, len - encoded)) < 0) {
        return encode_result;

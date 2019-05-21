@@ -18,12 +18,12 @@ int encode__5gs_registration_type ( _5GSRegistrationType _5gsregistrationtype, u
 
 
 
-
+/*
     if ((encode_result = encode_bstring (_5gsregistrationtype, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
         return encode_result;
     else
         encoded += encode_result;
-
+*/
 
     return encoded;
 }

@@ -1,8 +1,7 @@
 #include <stdint.h>
 #include "bstrlib.h"
 
-#define ABBA_MINIMUM_LENGTH 6
-#define ABBA_MAXIMUM_LENGTH 6
+#define ABBA_MINIMUM_LENGTH 3
 
 typedef bstring ABBA;
 

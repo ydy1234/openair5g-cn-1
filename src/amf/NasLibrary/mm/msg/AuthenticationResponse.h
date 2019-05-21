@@ -25,6 +25,8 @@
 		EAP_MESSAGE_MAXIMUM_LENGTH + \
 0)
 
+#define AUTHENTICATION_RESPONSE_PARAMETER_IEI 0x20
+
 typedef struct authentication_response_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;

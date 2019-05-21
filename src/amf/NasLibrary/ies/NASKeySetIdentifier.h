@@ -11,7 +11,7 @@
 typedef struct nasKeySetIdentifier {
 #define NAS_KEY_SET_IDENTIFIER_NATIVE 0
 #define NAS_KEY_SET_IDENTIFIER_MAPPED 1   
-  uint8_t  tsc:1;                        
+  uint8_t  tsc:1; //type of security context flag                       
 #define NAS_KEY_SET_IDENTIFIER_NOT_AVAILABLE 0b111
   uint8_t  naskeysetidentifier:3;         
 } NASKeySetIdentifier;

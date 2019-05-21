@@ -26,12 +26,12 @@ int encode_ue_security_capability ( UESecurityCapability uesecuritycapability, u
     encoded++;
 
 
-
+/*
     if ((encode_result = encode_bstring (uesecuritycapability, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
         return encode_result;
     else
         encoded += encode_result;
-
+*/
     *lenPtr = encoded - 1 - ((iei > 0) ? 1 : 0);    
     return encoded;
 }

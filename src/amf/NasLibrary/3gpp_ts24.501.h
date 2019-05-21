@@ -563,39 +563,6 @@
 
 // 0b01******
 /* 5GS Mobility Management Messages */
-#if 0
-#define RegistrationRequest                 0b01000001
-#define RegistrationAccept                  0b01000010
-#define RegistrationComplete                0b01000011
-#define RegistrationReject                  0b01000100
-#define DeregistrationRequestUEOriginating  0b01000101
-#define DeregistrationAcceptUEOriginating   0b01000110
-#define DeregistrationRequestUETerminated   0b01000111
-#define DeregistrationAcceptUETerminated    0b01001000
-
-#define ServiceRequest                      0b01001100
-#define ServiceReject                       0b01001101
-#define ServiceAccept                       0b01001110
-
-#define ConfigurationUpdateCommand          0b01010100
-#define ConfigurationUpdateComplete         0b01010101
-#define AuthenticationRequest               0b01010110
-#define AuthenticationResponse              0b01010111
-#define AuthenticationReject                0b01011000
-#define AuthenticationFailure               0b01011001
-#define AuthenticationResult                0b01011010
-#define IdentityRequest                     0b01011011
-#define IdentityResponse                    0b01011100
-#define SecurityModeCommand                 0b01011101
-#define SecurityModeComplete                0b01011110
-#define SecurityModeReject                  0b01011111
-
-#define _5GMMStatus                         0b01100100
-#define Notification                        0b01100101
-#define NotificationResponse                0b01100110
-#define ULNASTransport                      0b01100111
-#define DLNASTransport                      0b01101000
-#endif
 
 #define REGISTRATION_REQUEST                    0b01000001
 #define REGISTRATION_ACCEPT                     0b01000010
@@ -704,6 +671,40 @@
  */
 
 
-
 /*---------------------------------------------------------------------------------------------*/
 
+
+/*
+ * 5GMM cause types
+*/
+
+#define IIEGAL_UE                         	0b00000011 
+#define PEI_NOT_ACCEPTED                        0b00000101
+#define IIEGAL_ME                               0b00000110
+#define FGS_SERVICES_NOT_ALLOWED                0b00000111
+#define IMPLICITLY_DE-REGISTERED                0b00001010
+#define PLMN_NOT_ALLOWED                        0b00001011
+#define TRACKING_AREA_NOT_ALLOWED               0b00001100
+#define ROAMING_NOT_ALLOWED_IN_THIS_TA          0b00001101
+//#define 
+//#define 
+//#define 
+//#define 
+//#define 
+//#define 
+//#define 
+//#define
+
+/*********************************************************************************************/
+/*
+*  5GS mobile identity information element
+*  Type of Identity*/
+#define NO_IDENTITY 0b000
+#define SUCI        0b001
+#define _5G-GUTI    0b110
+#define IMEI        0b011
+#define _5G-S-TMSI  0b100
+#define IMEISVI     0b101
+
+#define EVEN_IENTITY 0
+#define ODD_IDENTITY 1

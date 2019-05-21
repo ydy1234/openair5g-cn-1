@@ -6,7 +6,7 @@
 #include "TLVDecoder.h"
 #include "ExtendedProtocolDiscriminator.h"
 
-int encode_extended_protocol_discriminator ( ExtendedProtocolDiscriminator * extendedprotocoldiscriminator, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
+int encode_extended_protocol_discriminator ( ExtendedProtocolDiscriminator  extendedprotocoldiscriminator, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
 /*
     uint8_t *lenPtr;

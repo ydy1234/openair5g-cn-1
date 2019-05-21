@@ -17,13 +17,13 @@ int encode_mico_indication ( MICOIndication micoindication, uint8_t iei, uint8_t
 
 
 
-
+/*
 
     if ((encode_result = encode_bstring (micoindication, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
         return encode_result;
     else
         encoded += encode_result;
-
+*/
 
     return encoded;
 }

@@ -27,12 +27,12 @@ int encode__5gs_mobile_identity ( _5GSMobileIdentity _5gsmobileidentity, uint8_t
     encoded++;
 
 
-
+/*
     if ((encode_result = encode_bstring (_5gsmobileidentity, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
         return encode_result;
     else
         encoded += encode_result;
-
+*/
     uint32_t res = encoded - 1 - ((iei > 0) ? 1 : 0);
     *lenPtr =res/(1<<8);
     lenPtr++;
