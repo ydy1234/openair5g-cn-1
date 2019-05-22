@@ -66,6 +66,18 @@ fivegmm_msg_encode (
     //case AuthenticationRequest:
       //encode_result = encode_authentication_request(&msg->authentication_request,buffer,len);/* msg define in openair5g-cn/src/amf/nas/mm/msg  */
       //break;
+      case REGISTRATION_REQUEST:
+	  	   encode_result = encode_registration_request(&msg->specific_msg.registration_request, buffer, len);
+	  break;
+	  case REGISTRATION_ACCEPT:
+	  	   encode_result = encode_registration_accept(&msg->specific_msg.registration_accept, buffer, len);
+	  break;
+	  case REGISTRATION_COMPLETE:
+	  	   encode_result = encode_registration_complete(&msg->specific_msg.registration_complete, buffer, len);
+	  break;
+	  case REGISTRATION_REJECT:
+	  	   encode_result = encode_registration_reject(&msg->specific_msg.registration_reject, buffer, len);
+	  break;
       case AUTHENTICATION_REQUEST:
            //printf("encode AUTHENTICATION_REQUEST\n");
 	  	  encode_result = encode_authentication_request(&msg->specific_msg.authentication_request, buffer, len);
@@ -177,7 +189,20 @@ mm_msg_decode (
   len -= header_result;
   //OAILOG_INFO (LOG_NAS_EMM, "EMM-MSG   - Message Type 0x%02x\n", msg->header.message_type);
   switch (msg->header.message_type) {//plain nas message e.g. registrationrequest message
-      case AUTHENTICATION_REQUEST:
+
+      case REGISTRATION_REQUEST:
+	  	   decode_result = decode_registration_request(&msg->specific_msg.registration_request, buffer, len);
+	  break;
+	  case REGISTRATION_ACCEPT:
+	  	   decode_result = decode_registration_accept(&msg->specific_msg.registration_accept, buffer, len);
+	  break;
+	  case REGISTRATION_COMPLETE:
+	  	   decode_result = decode_registration_complete(&msg->specific_msg.registration_complete, buffer, len);
+	  break;
+	  case REGISTRATION_REJECT:
+	  	   decode_result = decode_registration_reject(&msg->specific_msg.registration_reject, buffer, len);
+	  break;
+	  case AUTHENTICATION_REQUEST:
               //printf("decoding AUTHENTICATION_REQUEST\n");
 	      decode_result = decode_authentication_request(&msg->specific_msg.authentication_request, buffer, len);
 	  break;
