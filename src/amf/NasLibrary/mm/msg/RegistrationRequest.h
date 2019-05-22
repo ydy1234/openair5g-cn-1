@@ -20,6 +20,7 @@
 #include "_5GSDRXParameters.h"
 #include "EPSNASMessageContainer.h"
 #include "LADNIndication.h"
+#include "PayloadContainerType.h"
 #include "PayloadContainer.h"
 #include "NetworkSlicingIndication.h"
 #include "_5GSUpdateType.h"

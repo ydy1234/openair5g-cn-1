@@ -1,3 +1,6 @@
+#ifndef _NETWORK_SLICING_INDICATION_H_
+#define _NETWORK_SLICING_INDICATION_H_
+
 #include <stdint.h>
 #include "bstrlib.h"
 
@@ -11,4 +14,6 @@ typedef struct{
 
 int encode_network_slicing_indication ( NetworkSlicingIndication networkslicingindication, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 int decode_network_slicing_indication ( NetworkSlicingIndication * networkslicingindication, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
+
+#endif
 

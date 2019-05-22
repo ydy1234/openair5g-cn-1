@@ -10,7 +10,7 @@ int encode_pdu_session_status ( PDUSessionStatus pdusessionstatus, uint8_t iei, 
 {
     uint8_t *lenPtr;
     uint32_t encoded = 0;
-    CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,UPLINK_DATA_STATUS_MINIMUM_LENGTH , len);
+    CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,PDU_SESSION_STATUS_MINIMUM_LENGTH , len);
     
     if( iei >0  ){
       *buffer=iei;
