@@ -61,6 +61,7 @@ int decode_authentication_request( authentication_request_msg *authentication_re
           return decoded_result;
         else{
           decoded += decoded_result;
+		  
           authentication_request->presence |= AUTHENTICATION_REQUEST_EAP_MESSAGE_PRESENT;
         }
       break;
@@ -82,23 +83,18 @@ int encode_authentication_request( authentication_request_msg *authentication_re
     *(buffer + encoded) = ((encode_u8_nas_key_set_identifier(&authentication_request->naskeysetidentifier) & 0x0f) << 4) | 0x00;
     encoded ++;
 
-     printf("encoded nas key set identifier,encoded:%d\n", encoded);
-
     if((encoded_result = encode_abba (authentication_request->abba,0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;
-	//printf("abba  encoded_result:%d\n", encoded_result);
-
+	
     if((authentication_request->presence & AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_RAND_PRESENT)
         == AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_RAND_PRESENT){
-      //printf("encoding encode_authentication_parameter_rand\n");
       if((encoded_result = encode_authentication_parameter_rand (authentication_request->authenticationparameterrand, AUTHENTICATION_PARAMETER_RAND_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
       else
         encoded+=encoded_result;
     }
-    //printf("parameter_rand:%d\n", encoded_result);
     if((authentication_request->presence & AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_AUTN_PRESENT)
         == AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_AUTN_PRESENT){
       if((encoded_result = encode_authentication_parameter_autn (authentication_request->authenticationparameterautn, AUTHENTICATION_PARAMETER_AUTN_IEI, buffer+encoded,len-encoded))<0)
@@ -106,7 +102,6 @@ int encode_authentication_request( authentication_request_msg *authentication_re
       else
         encoded+=encoded_result;
     }
-    //printf("parameter_autn:%d\n", encoded_result);
     if((authentication_request->presence & AUTHENTICATION_REQUEST_EAP_MESSAGE_PRESENT)
         == AUTHENTICATION_REQUEST_EAP_MESSAGE_PRESENT){
       if((encoded_result = encode_eap_message (authentication_request->eapmessage, EAP_MESSAGE_IEI, buffer+encoded,len-encoded))<0)
@@ -114,7 +109,5 @@ int encode_authentication_request( authentication_request_msg *authentication_re
       else
         encoded+=encoded_result;
     }
-     //printf("eap_message:%d\n", encoded_result);
-	 //printf("encode_authentication_request return encoded:%d\n", encoded);
     return encoded;
 }

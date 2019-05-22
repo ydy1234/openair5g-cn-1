@@ -669,10 +669,11 @@ int auth_result()
 	 //printf("2 nas_message_encode over\n");
 	
 	 int i = 0;
-	
+
+	 #if 0
 	 for(;i<30;i++)
 	   printf("nas msg byte test bype[%d] = 0x%x\n",i,data[i]);
-	 
+	 #endif
 	 
 	 info->data = data;
 	 info->slen = bytes;
@@ -722,10 +723,10 @@ int auth_result()
 int main()
 { 
   
-  //auth_request();
-  //auth_response();
-  //auth_failure();
-  //auth_reject();
+  auth_request();
+  auth_response();
+  auth_failure();
+  auth_reject();
   auth_result();
   
   return 0;
