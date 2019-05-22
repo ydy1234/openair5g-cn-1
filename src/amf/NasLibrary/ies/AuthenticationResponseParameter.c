@@ -18,6 +18,7 @@ int encode_authentication_response_parameter ( AuthenticationResponseParameter a
        {
            *buffer=iei;
                encoded++;
+           printf("encode_authentication_response_parameter iei(%x)\n",iei);
        }
 
 

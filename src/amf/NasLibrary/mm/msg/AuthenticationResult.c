@@ -17,13 +17,16 @@ int decode_authentication_result( authentication_result_msg *authentication_resu
     if ((decoded_result = decode_u8_nas_key_set_identifier (&authentication_result->naskeysetidentifier, 0, *(buffer + decoded) >> 4, len - decoded)) < 0)
       return decoded_result;
     decoded++;
+
     if((decoded_result = decode_eap_message (&authentication_result->eapmessage, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
+	
     while(len-decoded>0){
       uint8_t ieiDecoded = *(buffer+decoded);
-      if(ieiDecoded==0)
+	  printf("ieiDecoded:0x%x\n", ieiDecoded);
+      if(ieiDecoded==0 )
         break;
       switch(ieiDecoded){
         case AUTHENTICATION_RESULT_ABBA_IEI:
@@ -35,6 +38,12 @@ int decode_authentication_result( authentication_result_msg *authentication_resu
           }
       }
     }
+/*
+	if ((decoded_result = decode_abba (&authentication_result->abba,0 , buffer + decoded, len - decoded)) < 0)
+         return decoded_result;                
+    else                                    
+         decoded += decoded_result;
+  */
     return decoded;
 }
 
@@ -49,12 +58,12 @@ int encode_authentication_result( authentication_result_msg *authentication_resu
 
     *(buffer + encoded) = ((encode_u8_nas_key_set_identifier(&authentication_result->naskeysetidentifier) & 0x0f) << 4) | 0x00;
     encoded ++;
-
-    if((encoded_result = encode_eap_message (authentication_result->eapmessage, 0, buffer+encoded,len-encoded))<0)
+	
+    if((encoded_result = encode_eap_message (authentication_result->eapmessage,0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;
-
+	
     if((authentication_result->presence & AUTHENTICATION_RESULT_ABBA_PRESENT)
         == AUTHENTICATION_RESULT_ABBA_PRESENT){
       if((encoded_result = encode_abba (authentication_result->abba, AUTHENTICATION_RESULT_ABBA_IEI, buffer+encoded,len-encoded))<0)
@@ -62,6 +71,11 @@ int encode_authentication_result( authentication_result_msg *authentication_resu
       else
         encoded+=encoded_result;
     }
-
+/*
+	if((encoded_result = encode_abba (authentication_result->abba,0, buffer+encoded,len-encoded))<0)
+        return encoded_result;
+    else
+        encoded+=encoded_result;
+*/
     return encoded;
 }

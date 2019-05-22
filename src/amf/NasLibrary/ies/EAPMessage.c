@@ -34,10 +34,12 @@ int encode_eap_message ( EAPMessage eapmessage, uint8_t iei, uint8_t * buffer, u
         encoded += encode_result;
 
     uint32_t res = encoded - 2 - ((iei > 0) ? 1 : 0);
-
-    *lenPtr = res & 0x0000ff00;
+    printf("eap message length (%d)\n",res);
+    *lenPtr =res/(1<<8);
+    printf("eap message length 1(%x)\n",*lenPtr);
     lenPtr++;
-    *lenPtr = res & 0x000000ff;
+    *lenPtr = res%(1<<8);
+    printf("eap message length 2(%x)\n",*lenPtr);
 
     return encoded;
 }
@@ -45,27 +47,21 @@ int encode_eap_message ( EAPMessage eapmessage, uint8_t iei, uint8_t * buffer, u
 int decode_eap_message ( EAPMessage * eapmessage, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
 	int decoded=0;
-	uint32_t ielen=0;
+	uint8_t ielen=0;
 	int decode_result;
-    
-    printf("if iei(%x) >0?\n",iei);
- 
+
     if (iei > 0)
     {
         CHECK_IEI_DECODER (iei, *buffer);
         decoded++;
-        printf("eapmessage deoceded ie(%x)\n",*buffer);
     }
 
-/*
+
     ielen = *(buffer + decoded);
     decoded++;
     ielen = ( ielen << 8)+*(buffer + decoded);
     decoded++;
-*/
-    DECODE_U16(buffer+decoded,ielen,decoded);   
- 
-//    CHECK_LENGTH_DECODER (len - decoded, ielen);
+    CHECK_LENGTH_DECODER (len - decoded, ielen);
 
 
     if((decode_result = decode_bstring (eapmessage, ielen, buffer + decoded, len - decoded)) < 0)

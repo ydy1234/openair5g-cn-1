@@ -25,7 +25,7 @@
 		EAP_MESSAGE_MAXIMUM_LENGTH + \
 0)
 
-#define AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_IEI 0x2D
+#define AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_IEI 0x2d
 #define AUTHENTICATION_RESPONSE_EAP_MESSAGE_IEI 0x78
 
 #define AUTHENTICATION_RESPONSE_AUTNENTICATION_RESPONSE_PARAMETER_PRESENT (1<<0)
@@ -35,7 +35,7 @@ typedef struct authentication_response_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
-        uint8_t presence;
+    uint8_t presence;
 	AuthenticationResponseParameter authenticationresponseparameter;
 	EAPMessage eapmessage;
 }authentication_response_msg;
