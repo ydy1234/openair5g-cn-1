@@ -13,20 +13,27 @@ int decode_authentication_response( authentication_response_msg *authentication_
 
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, AUTHENTICATION_RESPONSE_MINIMUM_LENGTH, len);
+
+//    uint8_t ieiDecoded = *(buffer+decoded);
+//    printf("ieiDecoded(%x)\n",ieiDecoded);
+
   
   while (len - decoded > 0) {
     //printf("encoding ies left(%d)\n",len-decoded);
     //printf("decoded(%d)\n",decoded);
     uint8_t ieiDecoded = *(buffer+decoded);
-    //printf("ieiDecoded(%x)\n",ieiDecoded);
-    if(ieiDecoded == 0)
+    printf("ieiDecoded(%x)\n",ieiDecoded);
+    if(ieiDecoded != AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_IEI && ieiDecoded != AUTHENTICATION_RESPONSE_EAP_MESSAGE_IEI)
       break;
+
     switch(ieiDecoded){
       case AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_IEI:
+        printf("decoding AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_IEI\n");
         if((decoded_result = decode_authentication_response_parameter (&authentication_response->authenticationresponseparameter, AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;
         else{
           decoded+=decoded_result;
+          printf("decoded(%d)\n",decoded);
           authentication_response->presence |= AUTHENTICATION_RESPONSE_AUTNENTICATION_RESPONSE_PARAMETER_PRESENT;
         }
       break;
@@ -37,7 +44,9 @@ int decode_authentication_response( authentication_response_msg *authentication_
           decoded+=decoded_result;
           authentication_response->presence |= AUTHENTICATION_RESPONSE_EAP_MESSAGE_PRESENT;
         }
+     break;
     }
+
   }
 
 
@@ -52,7 +61,7 @@ int encode_authentication_response( authentication_response_msg *authentication_
     
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, AUTHENTICATION_RESPONSE_MINIMUM_LENGTH, len);
-    
+ 
     if(authentication_response->presence & AUTHENTICATION_RESPONSE_AUTNENTICATION_RESPONSE_PARAMETER_PRESENT 
        == AUTHENTICATION_RESPONSE_AUTNENTICATION_RESPONSE_PARAMETER_PRESENT){
       if((encoded_result = encode_authentication_response_parameter (authentication_response->authenticationresponseparameter, AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_IEI, buffer+encoded,len-encoded))<0)
@@ -60,7 +69,7 @@ int encode_authentication_response( authentication_response_msg *authentication_
       else
         encoded+=encoded_result;
     }
- 
+
     if(authentication_response->presence & AUTHENTICATION_RESPONSE_EAP_MESSAGE_PRESENT 
        == AUTHENTICATION_RESPONSE_EAP_MESSAGE_PRESENT){
       if((encoded_result = encode_eap_message (authentication_response->eapmessage, AUTHENTICATION_RESPONSE_EAP_MESSAGE_IEI, buffer+encoded,len-encoded))<0)
@@ -69,6 +78,6 @@ int encode_authentication_response( authentication_response_msg *authentication_
         encoded+=encoded_result;
     }
 
-
+    printf("encoded encode_authentication_response\n");
     return encoded;
 }
