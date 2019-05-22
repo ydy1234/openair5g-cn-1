@@ -195,7 +195,7 @@ int ngap_amf_decode_pdu(
   dec_ret = uper_decode (NULL, &asn_DEF_NGAP_PDU, (void **)&pdu_p, bdata(raw), blength(raw), 0, 0);
   printf("1.2\n");
   if (dec_ret.code != RC_OK) {
-    OAILOG_ERROR (LOG_S1AP, "Failed to decode PDU\n");
+    //OAILOG_ERROR (LOG_S1AP, "Failed to decode PDU\n");
     return -1;
   }
         

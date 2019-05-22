@@ -9,8 +9,11 @@
 #define S1_MODE_SUPPORTED     1
 #define HANDEROVER_TRANSFER_PDU_SESSION_NOT_SUPPORTED 0
 #define HANDEROVER_TRANSFER_PDU_SESSION_SUPPORTED     1
+#define LPP_IN_N1_MODE_NOT_SUPPORTED 0
+#define LPP_IN_N1_MODE_SUPPORTED 1
 
 typedef struct{
+  bool is_LPP_supported;
   bool is_HO_supported;
   bool is_S1_mode_supported;
 } _5GMMCapability;

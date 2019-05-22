@@ -6,33 +6,28 @@
 #include "TLVDecoder.h"
 #include "_5GSMobileIdentity.h"
 
-int encode__5gs_mobile_identity ( _5GSMobileIdentity _5gsmobileidentity, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
+int encode__5gs_mobile_identity ( _5GSMobileIdentity  _5gsmobileidentity, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
     uint8_t *lenPtr;
     uint32_t encoded = 0;
     int encode_result;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,_5GS_MOBILE_IDENTITY_MINIMUM_LENGTH , len);
     
-
-       if( iei >0  )
-       {
-           *buffer=iei;
-               encoded++;
-       }
-
-
-
     lenPtr = (buffer + encoded);
     encoded++;
     encoded++;
 
+    switch(_5gsmobileidentity.IdentityType){
+      case _5G_GUTI:
+      break;
+      case IMEI:
+      case IMEISV:
+      break;
+      case SUCI:
+      case IMSI:
+      break;
+    }
 
-/*
-    if ((encode_result = encode_bstring (_5gsmobileidentity, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
-        return encode_result;
-    else
-        encoded += encode_result;
-*/
     uint32_t res = encoded - 1 - ((iei > 0) ? 1 : 0);
     *lenPtr =res/(1<<8);
     lenPtr++;

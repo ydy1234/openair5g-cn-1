@@ -8,8 +8,6 @@
 
 #define NO_FOLLOW_ON_REQUEST_PENDING 0
 #define FOLLOW_ON_REQUEST_PENDING    1
-#define SMS_OVER_NAS_NOT_SUPPORTED   0 
-#define SMS_OVER_NAS_SUPPORTED       1
 #define INITIAL_REGISTRATION         0b001
 #define MOBILITY_REGISTRATION_UPDATING 0b010
 #define PERIODIC_REGISTRATION_UPDATING 0b011
@@ -17,10 +15,9 @@
 
 typedef struct{
   bool is_for;
-  bool is_sms_requested;
-  bool registration_type;
+  uint8_t registration_type;
 } _5GSRegistrationType;
 
-int encode__5gs_registration_type ( _5GSRegistrationType _5gsregistrationtype, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
+int encode__5gs_registration_type ( _5GSRegistrationType * _5gsregistrationtype, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 int decode__5gs_registration_type ( _5GSRegistrationType * _5gsregistrationtype, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 

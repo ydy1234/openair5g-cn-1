@@ -16,9 +16,9 @@ typedef struct nasKeySetIdentifier {
   uint8_t  naskeysetidentifier:3;         
 } NASKeySetIdentifier;
 
-//int encode_nas_key_set_identifier ( NASKeySetIdentifier naskeysetidentifier, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
+int encode_nas_key_set_identifier ( NASKeySetIdentifier * naskeysetidentifier, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 int encode_u8_nas_key_set_identifier (NASKeySetIdentifier * naskeysetidentifier) ;
-//int decode_nas_key_set_identifier ( NASKeySetIdentifier * naskeysetidentifier, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
+int decode_nas_key_set_identifier ( NASKeySetIdentifier * naskeysetidentifier, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 int decode_u8_nas_key_set_identifier(NASKeySetIdentifier*naskeysetidentifier, uint8_t iei, uint8_t value, uint32_t len);
 
 #endif
