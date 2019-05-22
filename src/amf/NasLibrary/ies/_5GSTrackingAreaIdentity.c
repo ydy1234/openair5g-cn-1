@@ -31,7 +31,7 @@ int decode__5gs_tracking_area_identity ( _5GSTrackingAreaIdentity * _5gstracking
     int decoded=0;
     uint8_t ielen=0;
     int decode_result;
-    uint8_t mcc_mnc_deocde = 0;
+    uint8_t mcc_mnc_decode = 0;
     uint32_t tac_decode = 0;
 
     if (iei > 0)
@@ -41,14 +41,14 @@ int decode__5gs_tracking_area_identity ( _5GSTrackingAreaIdentity * _5gstracking
     }
 
     DECODE_U8(buffer+decoded, mcc_mnc_decode, decoded);
-    _5gstrackingareaidentity->mcc = 0x0000 | mcc_mnc_deocde;
+    _5gstrackingareaidentity->mcc = 0x0000 | mcc_mnc_decode;
     DECODE_U8(buffer+decoded, mcc_mnc_decode, decoded);
     _5gstrackingareaidentity->mcc = _5gstrackingareaidentity->mcc | ((mcc_mnc_decode&0x0f)<<8);
     _5gstrackingareaidentity->mnc = 0x0000 | ((mcc_mnc_decode&0xf0)<<4);
     DECODE_U8(buffer+decoded, mcc_mnc_decode, decoded);
     _5gstrackingareaidentity->mnc = _5gstrackingareaidentity->mnc | mcc_mnc_decode;
 
-    DECODE_24(buffer+decoded, _5gstrackingareaidentity->tac, decoded);
+    DECODE_U24(buffer+decoded, _5gstrackingareaidentity->tac, decoded);
 
     return decoded;
 }

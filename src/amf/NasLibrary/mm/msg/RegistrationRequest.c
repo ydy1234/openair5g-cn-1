@@ -51,7 +51,7 @@ int decode_registration_request( registration_request_msg *registration_request,
           }
         break;
         case REGISTRATION_REQUEST_5GS_TRACKING_AREA_IDENTITY_IEI:
-          if((decoded_result = decode__5gs_tracking_area_identity (&registration_request->_5gstrackingareaidentity, 0REGISTRATION_REQUEST_5GS_TRACKING_AREA_IDENTITY_IEI, buffer+decoded,len-decoded))<0)
+          if((decoded_result = decode__5gs_tracking_area_identity (&registration_request->_5gstrackingareaidentity, REGISTRATION_REQUEST_5GS_TRACKING_AREA_IDENTITY_IEI, buffer+decoded,len-decoded))<0)
             return decoded_result;
           else{
             decoded+=decoded_result;
