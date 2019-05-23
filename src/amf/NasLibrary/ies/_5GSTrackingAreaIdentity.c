@@ -21,7 +21,7 @@ int encode__5gs_tracking_area_identity ( _5GSTrackingAreaIdentity _5gstrackingar
     ENCODE_U8(buffer+encoded, (uint8_t)(_5gstrackingareaidentity.mcc&0x00ff), encoded);
     ENCODE_U8(buffer+encoded, (uint8_t)((_5gstrackingareaidentity.mcc&0x0f00)>>8) | (uint8_t)((_5gstrackingareaidentity.mnc&0x0f00)>>4), encoded);
     ENCODE_U8(buffer+encoded, (uint8_t)(_5gstrackingareaidentity.mnc&0x00ff), encoded);
-    ENCODE_U24(buffer+encoded, _5gstrackingareaidentity.tac&0x00ffffff, encoded);
+    ENCODE_U32(buffer+encoded, _5gstrackingareaidentity.tac&0x00ffffff, encoded);
 
     return encoded;
 }
@@ -48,7 +48,7 @@ int decode__5gs_tracking_area_identity ( _5GSTrackingAreaIdentity * _5gstracking
     DECODE_U8(buffer+decoded, mcc_mnc_decode, decoded);
     _5gstrackingareaidentity->mnc = _5gstrackingareaidentity->mnc | mcc_mnc_decode;
 
-    DECODE_U24(buffer+decoded, _5gstrackingareaidentity->tac, decoded);
+    DECODE_U32(buffer+decoded, _5gstrackingareaidentity->tac, decoded);
 
     return decoded;
 }
