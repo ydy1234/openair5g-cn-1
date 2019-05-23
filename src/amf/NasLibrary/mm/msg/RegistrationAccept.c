@@ -14,31 +14,41 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, REGISTRATION_ACCEPT_MINIMUM_LENGTH, len);
 
-    if((decoded_result = decode_extended_protocol_discriminator (&registration_accept->extendedprotocoldiscriminator, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
-    if((decoded_result = decode_security_header_type (&registration_accept->securityheadertype, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
-    if((decoded_result = decode_message_type (&registration_accept->messagetype, 0, buffer+decoded,len-decoded))<0)
-        return decoded_result;
-    else
-        decoded+=decoded_result;
-
     if((decoded_result = decode__5gs_registration_result (&registration_accept->_5gsregistrationresult, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
-
+/*
     if((decoded_result = decode__5gs_mobile_identity (&registration_accept->_5gsmobileidentity, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
+*/
+    while(len - decoded >0){
+      uint8_t ieiDecoded = *(buffer+decoded);
+      switch(ieiDecoded){
+        case REGISTRATION_ACCEPT_PLMN_LIST_IEI:
+        if((decoded_result = decode_plmn_list (&registration_accept->plmnlist, REGISTRATION_ACCEPT_PLMN_LIST_IEI, buffer+decoded,len-decoded))<0)
+          return decoded_result;
+        else{
+          decoded+=decoded_result;
+          registration_accept->presence |= REGISTRATION_ACCEPT_PLMN_LIST_PRESENT;
+          }
+        break;
+/*
+        case REGISTRATION_ACCEPT_PLMN_LIST_IEI:
+        if((decoded_result = decode_plmn_list (&registration_accept->plmnlist, REGISTRATION_ACCEPT_PLMN_LIST_IEI, buffer+decoded,len-decoded))<0)
+          return decoded_result;
+        else{
+          decoded+=decoded_result;
+          registration_accept->presence |= REGISTRATION_ACCEPT_PLMN_LIST_PRESENT;
+          }
+        break;
+*/
 
+      }
+    }
+/*
     if((decoded_result = decode_plmn_list (&registration_accept->plmnlist, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
@@ -144,7 +154,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         decoded+=decoded_result;
 
-
+*/
     return decoded;
 }
 
@@ -157,36 +167,25 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, REGISTRATION_ACCEPT_MINIMUM_LENGTH, len);
 
-    if((encoded_result = encode_extended_protocol_discriminator (registration_accept->extendedprotocoldiscriminator, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-
-    if((encoded_result = encode_security_header_type (registration_accept->securityheadertype, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
-
-    if((encoded_result = encode_message_type (registration_accept->messagetype, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
 
     if((encoded_result = encode__5gs_registration_result (registration_accept->_5gsregistrationresult, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;
-
+/*
     if((encoded_result = encode__5gs_mobile_identity (registration_accept->_5gsmobileidentity, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
         encoded+=encoded_result;
-
-    if((encoded_result = encode_plmn_list (registration_accept->plmnlist, 0, buffer+encoded,len-encoded))<0)
+*/
+    if(registration_accept->presence & REGISTRATION_ACCEPT_PLMN_LIST_PRESENT
+       == REGISTRATION_ACCEPT_PLMN_LIST_PRESENT){
+      if((encoded_result = encode_plmn_list (registration_accept->plmnlist, REGISTRATION_ACCEPT_PLMN_LIST_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
-    else
+      else
         encoded+=encoded_result;
-
+    }
+/*
     if((encoded_result = encode__5gs_tracking_area_identity_list (registration_accept->_5gstrackingareaidentitylist, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
@@ -287,6 +286,6 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         encoded+=encoded_result;
 
-
+*/
     return encoded;
 }

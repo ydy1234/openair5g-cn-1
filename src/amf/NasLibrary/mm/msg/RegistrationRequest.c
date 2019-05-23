@@ -31,7 +31,8 @@ int decode_registration_request( registration_request_msg *registration_request,
       uint8_t ieiDecoded = *(buffer+decoded);
       if(ieiDecoded == 0)
         break;
-      switch(ieiDecoded)  {
+
+      switch(ieiDecoded&0xf0){
         case REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_IEI:
           if((decoded_result = decode_nas_key_set_identifier(&registration_request->non_current_native_nas_key_set_identifier,REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_IEI,buffer+decoded,len-decoded))<0)
             return decoded_result;
@@ -40,6 +41,43 @@ int decode_registration_request( registration_request_msg *registration_request,
             registration_request->presence |= REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_PRESENT;
           }
         break;
+        case REGISTRATION_REQUEST_MICO_IDICATION_IEI:
+          if((decoded_result = decode_mico_indication (&registration_request->micoindication, REGISTRATION_REQUEST_MICO_IDICATION_IEI, buffer+decoded,len-decoded))<0)
+            return decoded_result;
+          else{
+            decoded+=decoded_result;
+            registration_request->presence |= REGISTRATION_REQUEST_MICO_IDICATION_PRESENT;
+          }
+        break;
+        case REGISTRATION_REQUEST_PAYLOAD_CONTAINER_TYPE_IEI:
+          if((decoded_result = decode_payload_container_type (&registration_request->payloadcontainer, REGISTRATION_REQUEST_PAYLOAD_CONTAINER_TYPE_IEI, buffer+decoded,len-decoded))<0)
+            return decoded_result;
+          else{
+            decoded+=decoded_result;
+            registration_request->presence |= REGISTRATION_REQUEST_PAYLOAD_CONTAINER_TYPE_PRESENT;
+          }
+        break;
+        case REGISTRATION_REQUEST_NETWORK_SLICING_INDICATION_IEI:
+          if((decoded_result = decode_network_slicing_indication (&registration_request->networkslicingindication, REGISTRATION_REQUEST_NETWORK_SLICING_INDICATION_IEI, buffer+decoded,len-decoded))<0)
+            return decoded_result;
+          else{
+            decoded+=decoded_result;
+            registration_request->presence |= REGISTRATION_REQUEST_NETWORK_SLICING_INDICATION_PRESENT;
+          }
+        break;
+      }
+
+      switch(ieiDecoded)  {
+/*
+        case REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_IEI:
+          if((decoded_result = decode_nas_key_set_identifier(&registration_request->non_current_native_nas_key_set_identifier,REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_IEI,buffer+decoded,len-decoded))<0)
+            return decoded_result;
+          else{
+            decoded+=decoded_result;
+            registration_request->presence |= REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_PRESENT;
+          }
+        break;
+*/
         case REGISTRATION_REQUEST_5GMM_CAPABILITY_IEI:
           if((decoded_result = decode__5gmm_capability (&registration_request->_5gmmcapability, REGISTRATION_REQUEST_5GMM_CAPABILITY_IEI, buffer+decoded,len-decoded))<0)
             return decoded_result;
@@ -88,6 +126,7 @@ int decode_registration_request( registration_request_msg *registration_request,
             registration_request->presence |= REGISTRATION_REQUEST_PDU_SESSION_STATUS_PRESENT;
           }
         break;
+/*
         case REGISTRATION_REQUEST_MICO_IDICATION_IEI:
           if((decoded_result = decode_mico_indication (&registration_request->micoindication, REGISTRATION_REQUEST_MICO_IDICATION_IEI, buffer+decoded,len-decoded))<0)
             return decoded_result;
@@ -96,6 +135,7 @@ int decode_registration_request( registration_request_msg *registration_request,
             registration_request->presence |= REGISTRATION_REQUEST_MICO_IDICATION_PRESENT;
           }
         break;
+*/
         case REGISTRATION_REQUEST_UE_STATUS_IEI:
           if((decoded_result = decode_ue_status (&registration_request->uestatus, REGISTRATION_REQUEST_UE_STATUS_IEI, buffer+decoded,len-decoded))<0)
             return decoded_result;
@@ -136,6 +176,7 @@ int decode_registration_request( registration_request_msg *registration_request,
             registration_request->presence |= REGISTRATION_REQUEST_EPS_NAS_MESSAGE_CONTAINER_PRESENT;
           }
         break;
+/*
         case REGISTRATION_REQUEST_PAYLOAD_CONTAINER_TYPE_IEI:
           if((decoded_result = decode_payload_container_type (&registration_request->payloadcontainer, REGISTRATION_REQUEST_PAYLOAD_CONTAINER_TYPE_IEI, buffer+decoded,len-decoded))<0)
             return decoded_result;
@@ -144,6 +185,7 @@ int decode_registration_request( registration_request_msg *registration_request,
             registration_request->presence |= REGISTRATION_REQUEST_PAYLOAD_CONTAINER_TYPE_PRESENT;
           }
         break;
+*/
         case REGISTRATION_REQUEST_PAYLOAD_CONTAINER_IEI:
           if((decoded_result = decode_payload_container (&registration_request->payloadcontainer, REGISTRATION_REQUEST_PAYLOAD_CONTAINER_IEI, buffer+decoded,len-decoded))<0)
             return decoded_result;
@@ -152,6 +194,7 @@ int decode_registration_request( registration_request_msg *registration_request,
             registration_request->presence |= REGISTRATION_REQUEST_PAYLOAD_CONTAINER_PRESENT;
           }
         break;
+/*
         case REGISTRATION_REQUEST_NETWORK_SLICING_INDICATION_IEI:
           if((decoded_result = decode_network_slicing_indication (&registration_request->networkslicingindication, REGISTRATION_REQUEST_NETWORK_SLICING_INDICATION_IEI, buffer+decoded,len-decoded))<0)
             return decoded_result;
@@ -160,6 +203,7 @@ int decode_registration_request( registration_request_msg *registration_request,
             registration_request->presence |= REGISTRATION_REQUEST_NETWORK_SLICING_INDICATION_PRESENT;
           }
         break;
+*/
         case REGISTRATION_REQUEST_5GS_UPDATE_TYPE_IEI:
           if((decoded_result = decode__5gs_update_type (&registration_request->_5gsupdatetype, REGISTRATION_REQUEST_5GS_UPDATE_TYPE_IEI, buffer+decoded,len-decoded))<0)
             return decoded_result;
@@ -234,7 +278,7 @@ int encode_registration_request( registration_request_msg *registration_request,
 
     if(registration_request->presence & REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_PRESENT
        == REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_PRESENT){
-      if((encoded_result = encode_nas_key_set_identifier(&registration_request->non_current_native_nas_key_set_identifier,REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_PRESENT,buffer+encoded,len-encoded))<0)
+      if((encoded_result = encode_nas_key_set_identifier(&registration_request->non_current_native_nas_key_set_identifier,REGISTRATION_REQUEST_NAS_KEY_SET_IDENTIFIER_IEI,buffer+encoded,len-encoded))<0)
         return encoded_result;
       else
         encoded+=encoded_result;
