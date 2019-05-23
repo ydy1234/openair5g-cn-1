@@ -20,6 +20,7 @@ inline void ASN_DEBUG(const char *fmt, ...);
 #include "Ngap_UnsuccessfulOutcome.h"
 #include "Ngap_ProtocolIE-Field.h"
 #include "Ngap_ProtocolIE-FieldPair.h"
+#include "Ngap_ProtocolIE-ID.h"
 #include "Ngap_ProtocolIE-ContainerPair.h"
 #include "Ngap_ProtocolExtensionField.h"
 #include "Ngap_ProtocolExtensionContainer.h"
@@ -33,7 +34,24 @@ inline void ASN_DEBUG(const char *fmt, ...);
 #include "Ngap_SupportedTAItem.h"
 #include "Ngap_NGSetupRequest.h"
 #include "Ngap_NGSetupFailure.h"
+#include "Ngap_GlobalGNB-ID.h"
+#include "Ngap_SliceSupportItem.h"
 
+
+#define NGAP_FIND_PROTOCOLIE_BY_ID(IE_TYPE, ie, container, IE_ID, mandatory) \
+  do {\
+    IE_TYPE **ptr; \
+    ie = NULL; \
+    for (ptr = container->protocolIEs.list.array; \
+         ptr < &container->protocolIEs.list.array[container->protocolIEs.list.count]; \
+         ptr++) { \
+      if((*ptr)->id == IE_ID) { \
+        ie = *ptr; \
+        break; \
+      } \
+    } \
+    if (mandatory) DevAssert(ie != NULL); \
+  } while(0)
 
 
 typedef int (*ngap_message_decoded_callback)(
