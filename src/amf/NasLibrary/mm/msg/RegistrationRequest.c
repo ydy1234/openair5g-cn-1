@@ -10,17 +10,28 @@ int decode_registration_request( registration_request_msg *registration_request,
 {
     uint32_t decoded = 0;
     int decoded_result = 0;
-
+    printf("decode_registration_request len:%d\n", len);
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
-    CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, REGISTRATION_REQUEST_MINIMUM_LENGTH, len);
+    //CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, REGISTRATION_REQUEST_MINIMUM_LENGTH, len);
 
+    
     if((decoded_result = decode__5gs_registration_type (&registration_request->_5gsregistrationtype, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
+
+    #if 0
+	printf("_5gsregistrationtype is_for:%d,registration_type",
+	registration_request->_5gsregistrationtype.is_for,
+	registration_request->_5gsregistrationtype.registration_type);
+	return  decoded;
+	#endif
+	
+	
     if ((decoded_result = decode_u8_nas_key_set_identifier (&registration_request->naskeysetidentifier, 0, *(buffer + decoded) >> 4, len - decoded)) < 0)
       return decoded_result;
     decoded++;
+	return decoded;
 /*
     if ((decoded_result = decode__5gs_mobile_identity (&registration_request->_5gsmobileidentity, 0, buffer + decoded, len - decoded)) < 0)
       return decoded_result;
@@ -266,8 +277,11 @@ int encode_registration_request( registration_request_msg *registration_request,
     else
         encoded+=encoded_result;
 
+	 
+	 
     *(buffer + encoded) = ((encode_u8_nas_key_set_identifier(&registration_request->naskeysetidentifier) & 0x0f) << 4) | 0x00;
     encoded ++;
+	return encoded;
 //encode mobile identity
 /*
     if((encoded_result = encode__5gs_mobile_identity(&registration_request->_5gsmobileidentity,0,buffer+encoded,len-encoded))<0)

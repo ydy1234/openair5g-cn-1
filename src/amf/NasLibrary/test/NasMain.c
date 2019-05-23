@@ -719,15 +719,215 @@ int auth_result()
      return  0;
 }
 
+int reg_request()
+{
+     printf("REGISTRATION_REQUEST------------ start\n");
+     int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
+	 int bytes = 0;
+   
+	 nas_message_t	nas_msg;
+	 memset (&nas_msg,		 0, sizeof (nas_message_t));
+   
+	 nas_msg.header.extended_protocol_discriminator = FIVEGS_MOBILITY_MANAGEMENT_MESSAGES;
+	 nas_msg.header.security_header_type = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
+	 uint8_t sequencenumber = 0xfe;
+	 //uint32_t mac = 0xffffeeee;
+	 uint32_t mac = 0xffee;
+	 nas_msg.header.sequence_number = sequencenumber;
+	 nas_msg.header.message_authentication_code= mac;
+   
+	 nas_msg.security_protected.header = nas_msg.header;
+   
+	 MM_msg * mm_msg = &nas_msg.plain.mm;
+	 mm_msg->header.extended_protocol_discriminator = FIVEGS_MOBILITY_MANAGEMENT_MESSAGES;
+	 mm_msg->header.security_header_type = SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED_CYPHERED;
+	 mm_msg->header.message_type = REGISTRATION_REQUEST;
+   
+	 memset (&mm_msg->specific_msg.registration_request, 0, sizeof (registration_request_msg));
 
+     mm_msg->specific_msg.registration_request._5gsregistrationtype.is_for = 1;
+	 mm_msg->specific_msg.registration_request._5gsregistrationtype.registration_type = 2;
+
+	 
+	 mm_msg->specific_msg.registration_request.naskeysetidentifier.tsc = 1;
+	 mm_msg->specific_msg.registration_request.naskeysetidentifier.naskeysetidentifier = 0b101;
+     #if 0
+	 mm_msg->specific_msg.registration_request.presence = 0x07;
+	 
+     mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.tsc =  1;
+	 mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.naskeysetidentifier = 2;
+
+
+	 mm_msg->specific_msg.registration_request._5gmmcapability.is_HO_supported =  1;
+	 mm_msg->specific_msg.registration_request._5gmmcapability.is_LPP_supported = 2;
+	 mm_msg->specific_msg.registration_request._5gmmcapability.is_S1_mode_supported = 3;
+	 
+	 mm_msg->specific_msg.registration_request.uesecuritycapability.nea = 1;
+	 mm_msg->specific_msg.registration_request.uesecuritycapability.nia = 2;
+	 
+	 //NSSAI nssai;
+	 mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mcc = 1;
+	 mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mnc = 2;
+	 mm_msg->specific_msg.registration_request._5gstrackingareaidentity.tac = 3;
+	 
+	 mm_msg->specific_msg.registration_request.s1uenetworkcapability.eea = 1;
+	 mm_msg->specific_msg.registration_request.s1uenetworkcapability.eia = 2;
+	 
+	 mm_msg->specific_msg.registration_request.uplinkdatastatus = 0x01;
+	 mm_msg->specific_msg.registration_request.pdusessionstatus = 0x02;
+	 mm_msg->specific_msg.registration_request.micoindication.raai = 0x1;
+	 mm_msg->specific_msg.registration_request.uestatus.n1_mode_reg = 1;
+	 mm_msg->specific_msg.registration_request.uestatus.s1_mode_reg = 2;
+	 
+     //_5GSMobileIdentity AdditionalGUTI;
+	 mm_msg->specific_msg.registration_request.allowedpdusessionstatus =  0x01;
+	 mm_msg->specific_msg.registration_request.uesusagesetting = 0x01;
+	 mm_msg->specific_msg.registration_request._5gsdrxparameters = 0x02;
+
+	 bstring eps = bfromcstralloc(10, "\0");
+	 uint8_t bitStream_eps = 0b00110100;
+	 eps->data = (unsigned char *)(&bitStream_eps);
+	 eps->slen = 1; 
+	 
+	 mm_msg->specific_msg.registration_request.epsnasmessagecontainer = eps;
+	 
+	//LADNIndication ladnindication;
+     mm_msg->specific_msg.registration_request.payloadcontainertype = 0x01;
+
+	 bstring pay = bfromcstralloc(10, "\0");
+	 uint8_t bitStream_pay = 0b00110100;
+	 pay->data = (unsigned char *)(&bitStream_pay);
+	 pay->slen = 1; 
+	 
+	 mm_msg->specific_msg.registration_request.payloadcontainer = pay;
+	 mm_msg->specific_msg.registration_request.networkslicingindication.dcni = 1;
+	 mm_msg->specific_msg.registration_request.networkslicingindication.nssci = 1;
+	 mm_msg->specific_msg.registration_request._5gsupdatetype.ng_ran_rcu = 0x01;
+	 mm_msg->specific_msg.registration_request._5gsupdatetype.sms_requested = 0x02;
+
+	 bstring nas = bfromcstralloc(10, "\0");
+	 uint8_t bitStream_nas = 0b00110100;
+	 nas->data = (unsigned char *)(&bitStream_pay);
+	 nas->slen = 1; 
+	 
+	 mm_msg->specific_msg.registration_request.nasmessagecontainer = nas;
+	 #endif
+	 size += MESSAGE_TYPE_MAXIMUM_LENGTH;
+   
+	 nas_msg.security_protected.plain.mm = *mm_msg;
+   
+	 //complete mm msg content
+	 if(size <= 0){
+	   return -1;
+	 }
+   
+	 //construct security context
+	 fivegmm_security_context_t * security = calloc(1,sizeof(fivegmm_security_context_t));
+	 security->selected_algorithms.encryption = NAS_SECURITY_ALGORITHMS_NEA1;
+	 security->dl_count.overflow = 0xffff;
+	 security->dl_count.seq_num =  0x23;
+	 security->knas_enc[0] = 0x14;
+	 security->selected_algorithms.integrity = NAS_SECURITY_ALGORITHMS_NIA1;
+	 security->knas_int[0] = 0x41;
+	 //complete sercurity context
+   
+	 int length = BUF_LEN;
+	 unsigned char data[BUF_LEN];
+   
+	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
+
+	 #if 0
+	 printf("1 start nas_message_encode \n");
+	 printf("security %p\n",security);
+	 printf("info %p\n",info);
+	 #endif
+
+	 printf("encode-------------------------\n");
+	 printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
+	 nas_msg.header.extended_protocol_discriminator,
+	 nas_msg.header.security_header_type,
+	 nas_msg.header.sequence_number,
+	 nas_msg.header.message_authentication_code);
+
+	 printf("message type:0x%x\n",mm_msg->header.message_type);
+	 printf("_5gsregistrationtype :is_for:0x%x,reg_type:0x%x\n",
+	 mm_msg->specific_msg.registration_request._5gsregistrationtype.is_for,
+	 mm_msg->specific_msg.registration_request._5gsregistrationtype.registration_type);
+	 
+	 printf("naskeysetidentifier: tsc:0x%x,naskeysetidentifier:0x%x\n",
+	 mm_msg->specific_msg.registration_request.naskeysetidentifier.tsc,
+	 mm_msg->specific_msg.registration_request.naskeysetidentifier.naskeysetidentifier);
+	
+	 //bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
+	 bytes = nas_message_encode (data, &nas_msg, sizeof(data)/*don't know the size*/, security);
+
+	
+	 //printf("2 nas_message_encode over\n");
+	
+	 int i = 0;
+
+	 #if 0
+	 for(;i<15;i++)
+	   printf("nas msg byte test bype[%d] = 0x%x\n",i,data[i]);
+	
+	 #endif
+	 info->data = data;
+	 info->slen = bytes;
+	
+   
+   /*************************************************************************************************************************/
+   /*********	  NAS DECODE	 ***********************/
+   /************************************************************************************************************************/
+	 
+	 printf("start nas_message_decode bytes:%d\n", bytes);
+	 bstring plain_msg = bstrcpy(info); 
+	 nas_message_security_header_t header = {0};
+	 //fivegmm_security_context_t  * security = NULL;
+	 nas_message_decode_status_t   decode_status = {0};
+   
+   //  int bytes = nas_message_decrypt((*info)->data,plain_msg->data,&header,blength(*info),security,&decode_status);
+   
+   
+	 nas_message_t	decoded_nas_msg; 
+	 memset (&decoded_nas_msg,		 0, sizeof (nas_message_t));
+   
+	 int decoder_rc = RETURNok;
+	 //printf("calling nas_message_decode-----------\n");
+	 //decoder_rc = nas_message_decode (plain_msg->data, &decoded_nas_msg, 60/*blength(info)*/, security, &decode_status);
+	 decoder_rc = nas_message_decode (data, &decoded_nas_msg, sizeof(data) /*blength(info)*/, security, &decode_status);
+
+
+     printf("decode-------------------------\n");
+     printf("nas header  decode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
+	 decoded_nas_msg.header.extended_protocol_discriminator,
+	 decoded_nas_msg.header.security_header_type,
+	 decoded_nas_msg.header.sequence_number,
+	 decoded_nas_msg.header.message_authentication_code);
+
+	 MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
+    
+	 printf("message type:0x%x\n",decoded_mm_msg->header.message_type);
+	 printf("_5gsregistrationtype :is_for:0x%x,reg_type:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request._5gsregistrationtype.is_for,
+	 decoded_mm_msg->specific_msg.registration_request._5gsregistrationtype.registration_type);
+
+	 printf("naskeysetidentifier: tsc:0x%x,naskeysetidentifier:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.naskeysetidentifier.tsc,
+	 decoded_mm_msg->specific_msg.registration_request.naskeysetidentifier.naskeysetidentifier);
+     printf("REGISTRATION_REQUEST------------ end\n");
+    
+     return 0;
+}
 int main()
 { 
   
-  auth_request();
-  auth_response();
-  auth_failure();
-  auth_reject();
-  auth_result();
+  //auth_request();
+  //auth_response();
+  //auth_failure();
+  //auth_reject();
+  //auth_result();
+
+  reg_request();
   
   return 0;
 }
