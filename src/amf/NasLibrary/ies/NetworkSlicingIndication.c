@@ -15,11 +15,11 @@ int encode_network_slicing_indication ( NetworkSlicingIndication networkslicingi
     if(iei > 0){
       bitStream |= (iei & 0xf0);
     }
- 
+
     bitStream |= ((networkslicingindication.dcni&0x01)<<1);
     bitStream |= ((networkslicingindication.nssci&0x01));
-
     ENCODE_U8(buffer+encoded,bitStream,encoded);
+	
 
     return encoded;
 }
@@ -29,13 +29,22 @@ int decode_network_slicing_indication ( NetworkSlicingIndication * networkslicin
     int decoded=0;
     uint8_t bitStream = 0x0;
 
+	
     DECODE_U8(buffer+decoded,bitStream,decoded);
-
+   
     if(iei != bitStream&0xf0){
       return -1;
     }
-    networkslicingindication->dcni = bitStream&0x02;
+
+    if(iei > 0){
+        bitStream = (bitStream & 0x0f);
+    }
+	
+	
+    //networkslicingindication->dcni = bitStream&0x02;
+    networkslicingindication->dcni = (bitStream &0x02)>>1;
     networkslicingindication->nssci = bitStream&0x01;
+	
     return decoded;
 }
 

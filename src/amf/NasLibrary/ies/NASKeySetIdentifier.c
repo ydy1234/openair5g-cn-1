@@ -13,6 +13,7 @@ encode_nas_key_set_identifier (
   uint8_t * buffer,
   uint32_t len)
 {
+  
   uint8_t                                 encoded = 0;
 
   /*
@@ -22,6 +23,8 @@ encode_nas_key_set_identifier (
   *(buffer + encoded) = 0x00 | (iei & 0xf0) | ((naskeysetidentifier->tsc & 0x1) << 3) | (naskeysetidentifier->naskeysetidentifier & 0x7);
   encoded++;
   return encoded;
+ 
+
 }
 
 int encode_u8_nas_key_set_identifier ( NASKeySetIdentifier * naskeysetidentifier) 
@@ -55,6 +58,7 @@ decode_nas_key_set_identifier (
   naskeysetidentifier->naskeysetidentifier = *(buffer + decoded) & 0x7;
   decoded++;
   return decoded;
+ 
 }
 
 

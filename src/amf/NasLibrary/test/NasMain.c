@@ -74,7 +74,7 @@ int auth_request()
 	 //complete sercurity context
    
 	 int length = BUF_LEN;
-	 unsigned char data[BUF_LEN];
+	 unsigned char data[BUF_LEN] = {'\0'};
    
 	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 
@@ -219,7 +219,7 @@ int auth_response()
 	 //complete sercurity context
    
 	 int length = BUF_LEN;
-	 unsigned char data[BUF_LEN];
+	 unsigned char data[BUF_LEN] = {'\0'};
    
 	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 
@@ -355,7 +355,7 @@ int auth_failure()
 	 //complete sercurity context
    
 	 int length = BUF_LEN;
-	 unsigned char data[BUF_LEN];
+	 unsigned char data[BUF_LEN] = {'\0'};
    
 	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 
@@ -751,39 +751,44 @@ int reg_request()
 	 
 	 mm_msg->specific_msg.registration_request.naskeysetidentifier.tsc = 1;
 	 mm_msg->specific_msg.registration_request.naskeysetidentifier.naskeysetidentifier = 0b101;
-     #if 0
+     
 	 mm_msg->specific_msg.registration_request.presence = 0x07;
 	 
      mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.tsc =  1;
-	 mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.naskeysetidentifier = 2;
+	 mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.naskeysetidentifier = 4;
 
-
+    
 	 mm_msg->specific_msg.registration_request._5gmmcapability.is_HO_supported =  1;
-	 mm_msg->specific_msg.registration_request._5gmmcapability.is_LPP_supported = 2;
-	 mm_msg->specific_msg.registration_request._5gmmcapability.is_S1_mode_supported = 3;
+	 mm_msg->specific_msg.registration_request._5gmmcapability.is_LPP_supported = 0;
+	 mm_msg->specific_msg.registration_request._5gmmcapability.is_S1_mode_supported = 1;
+
 	 
-	 mm_msg->specific_msg.registration_request.uesecuritycapability.nea = 1;
-	 mm_msg->specific_msg.registration_request.uesecuritycapability.nia = 2;
+	 mm_msg->specific_msg.registration_request.uesecuritycapability.nea = 0x11;
+	 mm_msg->specific_msg.registration_request.uesecuritycapability.nia = 0x22;
 	 
 	 //NSSAI nssai;
 	 mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mcc = 1;
 	 mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mnc = 2;
 	 mm_msg->specific_msg.registration_request._5gstrackingareaidentity.tac = 3;
+
 	 
 	 mm_msg->specific_msg.registration_request.s1uenetworkcapability.eea = 1;
 	 mm_msg->specific_msg.registration_request.s1uenetworkcapability.eia = 2;
+
 	 
 	 mm_msg->specific_msg.registration_request.uplinkdatastatus = 0x01;
 	 mm_msg->specific_msg.registration_request.pdusessionstatus = 0x02;
 	 mm_msg->specific_msg.registration_request.micoindication.raai = 0x1;
 	 mm_msg->specific_msg.registration_request.uestatus.n1_mode_reg = 1;
-	 mm_msg->specific_msg.registration_request.uestatus.s1_mode_reg = 2;
+	 mm_msg->specific_msg.registration_request.uestatus.s1_mode_reg = 0;
 	 
      //_5GSMobileIdentity AdditionalGUTI;
 	 mm_msg->specific_msg.registration_request.allowedpdusessionstatus =  0x01;
 	 mm_msg->specific_msg.registration_request.uesusagesetting = 0x01;
 	 mm_msg->specific_msg.registration_request._5gsdrxparameters = 0x02;
 
+     
+	 
 	 bstring eps = bfromcstralloc(10, "\0");
 	 uint8_t bitStream_eps = 0b00110100;
 	 eps->data = (unsigned char *)(&bitStream_eps);
@@ -800,18 +805,20 @@ int reg_request()
 	 pay->slen = 1; 
 	 
 	 mm_msg->specific_msg.registration_request.payloadcontainer = pay;
-	 mm_msg->specific_msg.registration_request.networkslicingindication.dcni = 1;
+	 
+     
+	 mm_msg->specific_msg.registration_request.networkslicingindication.dcni  = 0;
 	 mm_msg->specific_msg.registration_request.networkslicingindication.nssci = 1;
-	 mm_msg->specific_msg.registration_request._5gsupdatetype.ng_ran_rcu = 0x01;
-	 mm_msg->specific_msg.registration_request._5gsupdatetype.sms_requested = 0x02;
+	 mm_msg->specific_msg.registration_request._5gsupdatetype.ng_ran_rcu = 0x22;
+	 mm_msg->specific_msg.registration_request._5gsupdatetype.sms_requested = 0x11;
 
 	 bstring nas = bfromcstralloc(10, "\0");
 	 uint8_t bitStream_nas = 0b00110100;
-	 nas->data = (unsigned char *)(&bitStream_pay);
+	 nas->data = (unsigned char *)(&bitStream_nas);
 	 nas->slen = 1; 
 	 
 	 mm_msg->specific_msg.registration_request.nasmessagecontainer = nas;
-	 #endif
+	
 	 size += MESSAGE_TYPE_MAXIMUM_LENGTH;
    
 	 nas_msg.security_protected.plain.mm = *mm_msg;
@@ -832,7 +839,7 @@ int reg_request()
 	 //complete sercurity context
    
 	 int length = BUF_LEN;
-	 unsigned char data[BUF_LEN];
+	 unsigned char data[BUF_LEN] = {'\0'};
    
 	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 
@@ -857,20 +864,79 @@ int reg_request()
 	 printf("naskeysetidentifier: tsc:0x%x,naskeysetidentifier:0x%x\n",
 	 mm_msg->specific_msg.registration_request.naskeysetidentifier.tsc,
 	 mm_msg->specific_msg.registration_request.naskeysetidentifier.naskeysetidentifier);
+
+	 printf("presence:0x%x\n",mm_msg->specific_msg.registration_request.presence);
+	 printf("non_current_native_nas_key_set_identifier: tsc:0x%x,naskeysetidentifier:0x%x\n",
+	 mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.tsc,
+	 mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.naskeysetidentifier);
+
+	 printf("_5gmmcapability: is_HO_supported:0x%x,is_LPP_supported:0x%x,is_S1_mode_supported:0x%x\n",
+     mm_msg->specific_msg.registration_request._5gmmcapability.is_HO_supported,
+	 mm_msg->specific_msg.registration_request._5gmmcapability.is_LPP_supported,
+	 mm_msg->specific_msg.registration_request._5gmmcapability.is_S1_mode_supported);
+
+     printf("uesecuritycapability nea:0x%x,nia:0x%x\n",
+	 mm_msg->specific_msg.registration_request.uesecuritycapability.nea,
+	 mm_msg->specific_msg.registration_request.uesecuritycapability.nia);
+	 
+	 //NSSAI nssai;
+	 printf("_5gstrackingareaidentity mcc:0x%x, mnc:0x%x,tac:0x%x\n",
+	 mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mcc,
+	 mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mnc,
+	 mm_msg->specific_msg.registration_request._5gstrackingareaidentity.tac);
+
+	 printf("s1uenetworkcapability eea:0x%x, eai:0x%x\n",
+	 mm_msg->specific_msg.registration_request.s1uenetworkcapability.eea,
+	 mm_msg->specific_msg.registration_request.s1uenetworkcapability.eia);
+
+     printf("uplinkdatastatus:0x%x\n",
+	 mm_msg->specific_msg.registration_request.uplinkdatastatus);
+	 printf("pdusessionstatus:0x%x\n",
+	 mm_msg->specific_msg.registration_request.pdusessionstatus);
+	 
+	 printf("micoindication.raai:0x%x\n",
+	 mm_msg->specific_msg.registration_request.micoindication.raai);
+	 
+	 printf("uestatus: n1_mode_reg:0x%x,s1_mode_reg:0x%x\n",
+	 mm_msg->specific_msg.registration_request.uestatus.n1_mode_reg,
+	 mm_msg->specific_msg.registration_request.uestatus.s1_mode_reg);
+	 
+     //_5GSMobileIdentity AdditionalGUTI;
+     printf("allowedpdusessionstatus:0x%x\n",
+	 mm_msg->specific_msg.registration_request.allowedpdusessionstatus);
+	 printf("uesusagesetting:0x%x\n",
+	 mm_msg->specific_msg.registration_request.uesusagesetting);
+	 printf("_5gsdrxparameters:0x%x\n",
+	 mm_msg->specific_msg.registration_request._5gsdrxparameters);
+
+     printf("eapmessage:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_request.epsnasmessagecontainer)->data));
+	//LADNIndication ladnindication;
+     printf("payloadcontainertype:0x%x\n",mm_msg->specific_msg.registration_request.payloadcontainertype);
+	 printf("payloadcontainer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_request.payloadcontainer)->data));
 	
+     printf("networkslicingindication,dcni:0x%x,nssci:0x%x\n",
+     mm_msg->specific_msg.registration_request.networkslicingindication.dcni,
+	 mm_msg->specific_msg.registration_request.networkslicingindication.nssci);
+	 
+	 printf("_5gsupdatetype ng_ran_rcu:0x%x, sms_requested:0x%x\n",
+	 mm_msg->specific_msg.registration_request._5gsupdatetype.ng_ran_rcu,
+	 mm_msg->specific_msg.registration_request._5gsupdatetype.sms_requested);
+
+  
+	 printf("nasmessagecontainer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
 	 //bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	 bytes = nas_message_encode (data, &nas_msg, sizeof(data)/*don't know the size*/, security);
 
 	
 	 //printf("2 nas_message_encode over\n");
-	
-	 int i = 0;
 
+	 
+	 int i  = 10;
 	 #if 0
-	 for(;i<15;i++)
-	   printf("nas msg byte test bype[%d] = 0x%x\n",i,data[i]);
-	
+	 for(; i<40; i++)
+	   printf("i, data[i]: 0x%x\n", i, data[i]);
 	 #endif
+	 
 	 info->data = data;
 	 info->slen = bytes;
 	
@@ -914,18 +980,84 @@ int reg_request()
 	 printf("naskeysetidentifier: tsc:0x%x,naskeysetidentifier:0x%x\n",
 	 decoded_mm_msg->specific_msg.registration_request.naskeysetidentifier.tsc,
 	 decoded_mm_msg->specific_msg.registration_request.naskeysetidentifier.naskeysetidentifier);
-     printf("REGISTRATION_REQUEST------------ end\n");
+
+	 
+	 printf("presence:0x%x\n",mm_msg->specific_msg.registration_request.presence);
+	 printf("non_current_native_nas_key_set_identifier: tsc:0x%x,naskeysetidentifier:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.tsc,
+	 decoded_mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.naskeysetidentifier);
+
+
+	 printf("_5gmmcapability: is_HO_supported:0x%x,is_LPP_supported:0x%x,is_S1_mode_supported:0x%x\n",
+     decoded_mm_msg->specific_msg.registration_request._5gmmcapability.is_HO_supported,
+	 decoded_mm_msg->specific_msg.registration_request._5gmmcapability.is_LPP_supported,
+	 decoded_mm_msg->specific_msg.registration_request._5gmmcapability.is_S1_mode_supported);
+
+
+	 printf("uesecuritycapability nea:0x%x,nia:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.uesecuritycapability.nea,
+	 decoded_mm_msg->specific_msg.registration_request.uesecuritycapability.nia);
+	 
+	 //NSSAI nssai;
+	 printf("_5gstrackingareaidentity mcc:0x%x, mnc:0x%x,tac:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mcc,
+	 decoded_mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mnc,
+
+	 //ENCODE_U24->U32
+	 decoded_mm_msg->specific_msg.registration_request._5gstrackingareaidentity.tac);  
+
+	 printf("s1uenetworkcapability eea:0x%x, eai:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.s1uenetworkcapability.eea,
+	 decoded_mm_msg->specific_msg.registration_request.s1uenetworkcapability.eia);
+
+
+	 printf("uplinkdatastatus:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.uplinkdatastatus);
+	 printf("pdusessionstatus:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.pdusessionstatus);
+	 
+	 printf("micoindication.raai:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.micoindication.raai);
+	 
+	 printf("uestatus: n1_mode_reg:0x%x,s1_mode_reg:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.uestatus.n1_mode_reg,
+	 decoded_mm_msg->specific_msg.registration_request.uestatus.s1_mode_reg);
+	 
+     //_5GSMobileIdentity AdditionalGUTI;
+     printf("allowedpdusessionstatus:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.allowedpdusessionstatus);
+	 printf("uesusagesetting:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request.uesusagesetting);
+	 printf("_5gsdrxparameters:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request._5gsdrxparameters);
+
+     printf("eapmessage:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.registration_request.epsnasmessagecontainer)->data));
+	//LADNIndication ladnindication;
+     printf("payloadcontainertype:0x%x\n",decoded_mm_msg->specific_msg.registration_request.payloadcontainertype);
+	 printf("payloadcontainer:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.registration_request.payloadcontainer)->data));
+
+	 printf("networkslicingindication,dcni:0x%x,nssci:0x%x\n",
+     decoded_mm_msg->specific_msg.registration_request.networkslicingindication.dcni,
+	 decoded_mm_msg->specific_msg.registration_request.networkslicingindication.nssci);
+	 
+	 printf("_5gsupdatetyp,ng_ran_rcu:0x%x, sms_requested:0x%x\n",
+	 decoded_mm_msg->specific_msg.registration_request._5gsupdatetype.ng_ran_rcu,
+	 decoded_mm_msg->specific_msg.registration_request._5gsupdatetype.sms_requested);
+
+	 printf("nasmessagecontainer:0x%x\n",
+	 *(unsigned char *)((decoded_mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
+	 printf("REGISTRATION_REQUEST------------ end\n");
     
      return 0;
 }
 int main()
 { 
   
-  //auth_request();
-  //auth_response();
-  //auth_failure();
-  //auth_reject();
-  //auth_result();
+  auth_request();
+  auth_response();
+  auth_failure();
+  auth_reject();
+  auth_result();
 
   reg_request();
   

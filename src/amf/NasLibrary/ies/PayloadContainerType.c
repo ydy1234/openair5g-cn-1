@@ -15,9 +15,8 @@ int encode_payload_container_type ( PayloadContainerType payloadcontainertype, u
     if(iei>0)
       bitStream |= (iei&0xf0);
     bitStream |= (payloadcontainertype&0x0f);
-
+    
     ENCODE_U8(buffer+encoded,bitStream,encoded);
-
     return encoded;
 }
 
@@ -25,13 +24,14 @@ int decode_payload_container_type ( PayloadContainerType * payloadcontainertype,
 {
     int decoded=0;
     uint8_t bitStream = 0x0;
-
+	
     DECODE_U8(buffer+decoded,bitStream,decoded);
-
+	
     if(iei != (bitStream&0xf0))
       return -1;
     *payloadcontainertype = bitStream & 0x0f;
-
+	
+	
     return decoded;
 }
 
