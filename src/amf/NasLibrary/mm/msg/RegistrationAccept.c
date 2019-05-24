@@ -35,16 +35,16 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           registration_accept->presence |= REGISTRATION_ACCEPT_PLMN_LIST_PRESENT;
           }
         break;
-/*
-        case REGISTRATION_ACCEPT_PLMN_LIST_IEI:
-        if((decoded_result = decode_plmn_list (&registration_accept->plmnlist, REGISTRATION_ACCEPT_PLMN_LIST_IEI, buffer+decoded,len-decoded))<0)
+
+        case REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI:
+        if((decoded_result =  decode__5gs_tracking_area_identity_list(&registration_accept->_5gstrackingareaidentitylist, REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;
         else{
           decoded+=decoded_result;
-          registration_accept->presence |= REGISTRATION_ACCEPT_PLMN_LIST_PRESENT;
+          registration_accept->presence |= REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT;
           }
         break;
-*/
+
 
       }
     }
@@ -185,12 +185,15 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
       else
         encoded+=encoded_result;
     }
-/*
-    if((encoded_result = encode__5gs_tracking_area_identity_list (registration_accept->_5gstrackingareaidentitylist, 0, buffer+encoded,len-encoded))<0)
-        return encoded_result;
-    else
-        encoded+=encoded_result;
 
+    if(registration_accept->presence & REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT
+       == REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT){
+      if((encoded_result = encode__5gs_tracking_area_identity_list (registration_accept->_5gstrackingareaidentitylist, REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI, buffer+encoded,len-encoded))<0)
+        return encoded_result;
+      else
+        encoded+=encoded_result;
+    }
+/*
     if((encoded_result = encode_nssai (registration_accept->nssai, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else
