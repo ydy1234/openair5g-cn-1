@@ -11,5 +11,5 @@ typedef struct {
 typedef PLMN  PLMNList[15];
 
 int encode_plmn_list ( PLMNList plmnlist, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
-int decode_plmn_list ( PLMNList * plmnlist, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
+int decode_plmn_list ( PLMNList plmnlist, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 
