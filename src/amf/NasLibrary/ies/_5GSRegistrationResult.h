@@ -13,7 +13,7 @@
 
 typedef struct{
   bool is_SMS_allowed;
-  uint8_t registration_result_value;
+  uint8_t registration_result_value:3;
 } _5GSRegistrationResult;
 
 int encode__5gs_registration_result ( _5GSRegistrationResult _5gsregistrationresult, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;

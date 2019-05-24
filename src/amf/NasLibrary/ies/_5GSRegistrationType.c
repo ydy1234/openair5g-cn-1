@@ -33,6 +33,7 @@ int decode__5gs_registration_type ( _5GSRegistrationType * _5gsregistrationtype,
     else
       _5gsregistrationtype->is_for = true;
     _5gsregistrationtype->registration_type = registration_type & 0x07;
+    
 
     return decoded;
 }
