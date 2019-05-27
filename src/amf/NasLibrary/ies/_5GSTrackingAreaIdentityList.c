@@ -50,6 +50,7 @@ int encode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList _5gst
         break;
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_CONSECUTIVE_TAC_VALUES:
           octet = 0x00 | ((ptr->numberOfElements)&0x1f) | 0x20;
+        
           ENCODE_U8(buffer+encoded,octet,encoded);
           octet = (uint8_t)((ptr->mcc_mnc->mcc)&0x00ff);
           ENCODE_U8(buffer+encoded,octet,encoded);
@@ -112,12 +113,12 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
     while(len - decoded > 0){
       DECODE_U8(buffer+decoded,octet,decoded);
       _5gstrackingareaidentitylist->listSize += 1;
+	 
       struct PartialTrackingAreaIdentityList * partialTrackingAreaIdentityList = (struct PartialTrackingAreaIdentityList*)calloc(1,sizeof(struct PartialTrackingAreaIdentityList));
 	  switch(octet&0x60){
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_NON_CONSECUTIVE_TAC_VALUES:
           partialTrackingAreaIdentityList->typeOfList = 0x00;
           partialTrackingAreaIdentityList->numberOfElements = octet&0x1f;
-
           DECODE_U8(buffer+decoded,octet,decoded);
           struct MccMnc * mcc_mnc = (struct MccMnc*)calloc(1,sizeof(struct MccMnc));
           mcc_mnc->mcc = 0x0000 | octet;
@@ -149,7 +150,7 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_CONSECUTIVE_TAC_VALUES:
           partialTrackingAreaIdentityList->typeOfList = 0x01;
           partialTrackingAreaIdentityList->numberOfElements = octet&0x1f;
-
+		  
           DECODE_U8(buffer+decoded,octet,decoded);
           struct MccMnc * mcc_mnc2 = (struct MccMnc*)calloc(1,sizeof(struct MccMnc));
           mcc_mnc2->mcc = 0x0000 | octet;
@@ -170,9 +171,8 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
           partialTrackingAreaIdentityList->tai = tai;
         break;
         case LIST_OF_TAIS_BELONGING_TO_DIFFERENT_PLMNS:
-          partialTrackingAreaIdentityList->typeOfList = 0x10;
+          partialTrackingAreaIdentityList->typeOfList = 0x02;
           partialTrackingAreaIdentityList->numberOfElements = octet&0x1f;
-
           elementIndex = 0;
           struct TrackingAreaIdentity * lastTai3 = NULL;
           struct MccMnc * last_mcc_mnc = NULL;

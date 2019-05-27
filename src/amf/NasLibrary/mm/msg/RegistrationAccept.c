@@ -78,7 +78,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
         break;
 
         //后面再测试;
-        #if 0
+       
         case REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI:
         if((decoded_result =  decode__5gs_tracking_area_identity_list(&registration_accept->_5gstrackingareaidentitylist, REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;
@@ -87,8 +87,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           registration_accept->presence |= REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT;
         	}
         break;
-		#endif
-
+		
         case REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_IEI:
         if((decoded_result = decode__5gs_network_feature_support (&registration_accept->_5gsnetworkfeaturesupport, REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;
@@ -193,7 +192,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_5GS_DRX_PARAMETERS_PRESENT;
         }
-		//test need it ;程序不能退出;????????????????????????????
+		//test need it ;while不能退出;????????????????????????????
 		return decoded; 
         break;
       }
@@ -282,9 +281,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
       else
         encoded+=encoded_result;
     }
-
-    
-	#if 0
+	
     if(registration_accept->presence & REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT
        == REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT){
       if((encoded_result = encode__5gs_tracking_area_identity_list (registration_accept->_5gstrackingareaidentitylist, REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI, buffer+encoded,len-encoded))<0)
@@ -292,7 +289,6 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
       else
         encoded+=encoded_result;
     }
-	#endif
 /*
 
     if((encoded_result = encode_nssai (registration_accept->nssai, 0, buffer+encoded,len-encoded))<0)

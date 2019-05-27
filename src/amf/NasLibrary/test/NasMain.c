@@ -8,7 +8,7 @@
 #include "common_types.h"
 #include "common_defs.h"
 //add-test
-#define BUF_LEN 1024
+#define BUF_LEN 512
 int auth_request()
 {
      printf("AUTHENTICATION_REQUEST------------ start\n");
@@ -1098,7 +1098,7 @@ int reg_accept()
 	 
 	 struct PartialTrackingAreaIdentityList partialTrackingAreaIdentityList;
 	 memset(&partialTrackingAreaIdentityList, 0, sizeof(struct PartialTrackingAreaIdentityList));
-     partialTrackingAreaIdentityList.typeOfList = 0x01;
+     partialTrackingAreaIdentityList.typeOfList = 0x1;
 	 partialTrackingAreaIdentityList.numberOfElements = 2;
 	 partialTrackingAreaIdentityList.mcc_mnc = &mm;
 	 
@@ -1286,7 +1286,7 @@ int reg_accept()
 		 
 	 }
 	 
-     #if 0
+     
      printf("_5gstrackingareaidentitylist listsize:0x%x\n", mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.listSize);
 	 
 	 printf("partialTrackingAreaIdentityList typeOfList:0x%x,numberOfElements:0x%x\n",
@@ -1303,7 +1303,7 @@ int reg_accept()
 		 
          tailist = tailist->next; 
      }	
-     #endif
+    
 
 	  printf("_5gsnetworkfeaturesupport,mpsi:0x%x,iwk_n26:0x%x,emf:0x%x,emc:0x%x,ims_VoPS_N3GPP:0x%x,ims_VoPS_3GPP:0x%x,mcsi:0x%x,emcn:0x%x\n",
       mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.mpsi,
@@ -1360,8 +1360,9 @@ int reg_accept()
            decodestai->tac,decodestai->tacContinued);
            decodestai = decodestai->next;
       }
-	  #endif
-
+	
+      #endif
+	  
       printf("t3512, unit:0x%x, timeValue:0x%x\n",
       mm_msg->specific_msg.registration_accept.t3512.unit,
       mm_msg->specific_msg.registration_accept.t3512.timeValue);
@@ -1459,7 +1460,8 @@ int reg_accept()
      }
 	 #endif
 
-	 #if 0
+
+	 
 	 printf("_5gstrackingareaidentitylist listsize:0x%x\n", decoded_mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.listSize);
 
 	 printf("partialTrackingAreaIdentityList typeOfList:0x%x,numberOfElements:0x%x\n",
@@ -1476,9 +1478,7 @@ int reg_accept()
 		
 		tailist1 = tailist1->next; 
 	 }  
-	 #endif
 
-	
 	  printf("_5gsnetworkfeaturesupport,mpsi:0x%x,iwk_n26:0x%x,emf:0x%x,emc:0x%x,ims_VoPS_N3GPP:0x%x,ims_VoPS_3GPP:0x%x,mcsi:0x%x,emcn:0x%x\n",
       decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.mpsi,
       decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.iwk_n26,
@@ -1547,12 +1547,12 @@ int reg_accept()
       //ExtendedEmergencyNumberList extendedemergencynumberlist;
       //SORTransparentContainer sortransparentcontainer;
 
-	
+	  #if 0
       printf("eapmessage:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.registration_accept.eapmessage)->data));
       printf("nssaiinclusionmode:0x%x\n",decoded_mm_msg->specific_msg.registration_accept.nssaiinclusionmode);
       //OperatorDefinedAccessCategoryDefinitions operatordefinedaccesscategorydefinitions;
       printf("_5gsdrxparameters:0x%x\n",decoded_mm_msg->specific_msg.registration_accept._5gsdrxparameters);
-	  
+	  #endif
 	 
 	  printf("REGISTRATION_ACCEPT------------ end\n");
 
