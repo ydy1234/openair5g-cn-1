@@ -19,15 +19,15 @@ int encode__5gsdrx_parameters ( _5GSDRXParameters _5gsdrxparameters, uint8_t iei
 
     lenPtr = (buffer + encoded);
     encoded++;
-
+    
     ENCODE_U8(buffer+encoded,_5gsdrxparameters,encoded);
-
     *lenPtr = encoded - 1 - ((iei > 0) ? 1 : 0);    
     return encoded;
 }
 
 int decode__5gsdrx_parameters ( _5GSDRXParameters * _5gsdrxparameters, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+    
     int decoded=0;
     uint8_t ielen=0;
 
@@ -42,7 +42,6 @@ int decode__5gsdrx_parameters ( _5GSDRXParameters * _5gsdrxparameters, uint8_t i
     CHECK_LENGTH_DECODER (len - decoded, ielen);
 
     DECODE_U8(buffer+decoded,*_5gsdrxparameters,decoded);
-   
     return decoded;
 }
 

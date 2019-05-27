@@ -8,8 +8,6 @@
 
 int encode_plmn_list ( PLMNList plmnlist, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-    printf("encode_plmn_list -------------start\n");
-	
     uint8_t *lenPtr;
     uint32_t encoded = 0;
     uint8_t plmn_index = 0;    

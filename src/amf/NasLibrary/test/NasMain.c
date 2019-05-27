@@ -1168,7 +1168,7 @@ int reg_accept()
      mm_msg->specific_msg.registration_accept.pdusessionreactivationresulterrorcause.element =  &psc1;
           //LADNInformation ladninformation;
      mm_msg->specific_msg.registration_accept.micoindication.raai= true;
-     mm_msg->specific_msg.registration_accept.networkslicingindication.dcni  = 0x01;
+     mm_msg->specific_msg.registration_accept.networkslicingindication.dcni  = 0x00;
      mm_msg->specific_msg.registration_accept.networkslicingindication.nssci = 0x01;
 
      
@@ -1210,8 +1210,8 @@ int reg_accept()
       servicearealist.listSize = 1;
       servicearealist.partialServiceAreaList = &pSAreaList;
       
-      mm_msg->specific_msg.registration_accept.servicearealist  = servicearealist; 
-
+      //mm_msg->specific_msg.registration_accept.servicearealist  = servicearealist; 
+      
    
       mm_msg->specific_msg.registration_accept.t3512.unit = 0x02;
       mm_msg->specific_msg.registration_accept.t3512.timeValue = 0x03;
@@ -1337,10 +1337,11 @@ int reg_accept()
       mm_msg->specific_msg.registration_accept.networkslicingindication.dcni ,
       mm_msg->specific_msg.registration_accept.networkslicingindication.nssci);
 
-      #if 0
-      size =  mm_msg->specific_msg.registration_accept.servicearealist.listsize;
+      
+      size =  mm_msg->specific_msg.registration_accept.servicearealist.listSize;
       printf("servicearealist,listsize:0x%x\n", size);
 
+	  #if 0
       struct PartialServiceAreaList  *decodePsr = mm_msg->specific_msg.registration_accept.servicearealist.partialServiceAreaList;
       printf("servicearealist, partialServiceAreaList,is_allowed:0x%x,typeOfList:0x%x,numberOfElements:0x%x\n",
       decodePsr->is_allowed, decodePsr->typeOfList,decodePsr->numberOfElements);
@@ -1349,35 +1350,36 @@ int reg_accept()
       for(int i = 0; i< size; i++)
       {
            printf("servicearealist, partialServiceAreaList,mcc_mnc,mcc:0x%x,mnc:0x%x\n",
-           decmmc->mcc,decmmc->mac);
+           decmmc->mcc,decmmc->mnc);
            decmmc = decmmc->next;
       }
       struct TrackingAreaIdentity  *decodestai =  decodePsr->tai;
       for(int i = 0; i< size; i++)
       {
            printf("servicearealist, partialServiceAreaList,tai,tac:0x%x,tacContinued:0x%x\n",
-           decodestai->tac,decodestai->decodestai);
+           decodestai->tac,decodestai->tacContinued);
            decodestai = decodestai->next;
       }
+	  #endif
 
       printf("t3512, unit:0x%x, timeValue:0x%x\n",
-          mm_msg->specific_msg.registration_accept.t3512.unit,
+      mm_msg->specific_msg.registration_accept.t3512.unit,
       mm_msg->specific_msg.registration_accept.t3512.timeValue);
       
       printf("non_3gpp_deregistration_timer: 0x%x\n",
           mm_msg->specific_msg.registration_accept.non_3gpp_deregistration_timer);
 
-      printf("t3502:0x%x\n",
-          mm_msg->specific_msg.registration_accept.t3502 =  0x0D;
+      printf("t3502:0x%x\n",mm_msg->specific_msg.registration_accept.t3502);
         //EmergencyNumberList emergencynumberlist;
         //ExtendedEmergencyNumberList extendedemergencynumberlist;
         //SORTransparentContainer sortransparentcontainer;
-         
+
+	 
       printf("eapmessage:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_accept.eapmessage)->data));
       printf("nssaiinclusionmode:0x%x\n",mm_msg->specific_msg.registration_accept.nssaiinclusionmode);
       //OperatorDefinedAccessCategoryDefinitions operatordefinedaccesscategorydefinitions;
       printf("_5gsdrxparameters:0x%x\n",mm_msg->specific_msg.registration_accept._5gsdrxparameters);
-      #endif
+      
 
 	 
      bytes = nas_message_encode (data, &nas_msg, sizeof(data)/*don't know the size*/, security);
@@ -1508,6 +1510,49 @@ int reg_accept()
       printf("networkslicingindication,dcni:0x%x,nssci:0x%x\n",
       decoded_mm_msg->specific_msg.registration_accept.networkslicingindication.dcni ,
       decoded_mm_msg->specific_msg.registration_accept.networkslicingindication.nssci);
+
+      #if 0
+      size =  mm_msg->specific_msg.registration_accept.servicearealist.listsize;
+      printf("servicearealist,listsize:0x%x\n", size);
+
+      struct PartialServiceAreaList  *decodePsr = mm_msg->specific_msg.registration_accept.servicearealist.partialServiceAreaList;
+      printf("servicearealist, partialServiceAreaList,is_allowed:0x%x,typeOfList:0x%x,numberOfElements:0x%x\n",
+      decodePsr->is_allowed, decodePsr->typeOfList,decodePsr->numberOfElements);
+
+      struct MccMnc *decmmc = decodePsr->mcc_mnc;
+      for(int i = 0; i< size; i++)
+      {
+           printf("servicearealist, partialServiceAreaList,mcc_mnc,mcc:0x%x,mnc:0x%x\n",
+           decmmc->mcc,decmmc->mac);
+           decmmc = decmmc->next;
+      }
+      struct TrackingAreaIdentity  *decodestai =  decodePsr->tai;
+      for(int i = 0; i< size; i++)
+      {
+           printf("servicearealist, partialServiceAreaList,tai,tac:0x%x,tacContinued:0x%x\n",
+           decodestai->tac,decodestai->decodestai);
+           decodestai = decodestai->next;
+      }
+      #endif
+	  
+      printf("t3512, unit:0x%x, timeValue:0x%x\n",
+          decoded_mm_msg->specific_msg.registration_accept.t3512.unit,
+      decoded_mm_msg->specific_msg.registration_accept.t3512.timeValue);
+      
+      printf("non_3gpp_deregistration_timer: 0x%x\n",
+          decoded_mm_msg->specific_msg.registration_accept.non_3gpp_deregistration_timer);
+
+      printf("t3502:0x%x\n", decoded_mm_msg->specific_msg.registration_accept.t3502);
+      //EmergencyNumberList emergencynumberlist;
+      //ExtendedEmergencyNumberList extendedemergencynumberlist;
+      //SORTransparentContainer sortransparentcontainer;
+
+	
+      printf("eapmessage:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.registration_accept.eapmessage)->data));
+      printf("nssaiinclusionmode:0x%x\n",decoded_mm_msg->specific_msg.registration_accept.nssaiinclusionmode);
+      //OperatorDefinedAccessCategoryDefinitions operatordefinedaccesscategorydefinitions;
+      printf("_5gsdrxparameters:0x%x\n",decoded_mm_msg->specific_msg.registration_accept._5gsdrxparameters);
+	  
 	 
 	  printf("REGISTRATION_ACCEPT------------ end\n");
 

@@ -27,6 +27,34 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
     
     while(len - decoded >0){
       uint8_t ieiDecoded = *(buffer+decoded);
+	  switch((ieiDecoded&0xf0)){
+	  	case REGISTRATION_ACCEPT_MICO_INDICATION_IEI:
+        if((decoded_result = decode_mico_indication (&registration_accept->micoindication, REGISTRATION_ACCEPT_MICO_INDICATION_IEI, buffer+decoded,len-decoded))<0)
+          return decoded_result;
+        else{
+          decoded+=decoded_result;
+          registration_accept->presence |= REGISTRATION_ACCEPT_MICO_INDICATION_PRESENT;
+          }
+        break;
+        case REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI:
+        if((decoded_result = decode_network_slicing_indication (&registration_accept->networkslicingindication, REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI, buffer+decoded,len-decoded))<0)
+          return decoded_result;
+        else{
+          decoded+=decoded_result;
+          registration_accept->presence |= REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI;
+          }
+        break;
+	    case REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI:
+          if((decoded_result = decode_nssai_inclusion_mode (&registration_accept->nssaiinclusionmode, REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI, buffer+decoded,len-decoded))<0)
+            return decoded_result;
+          else{
+            decoded+=decoded_result;
+            registration_accept->presence |= REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_PRESENT;
+          }
+        break;
+	  }
+	  
+	  #if 0
       switch((ieiDecoded&0xf0)>>4){
         case REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI:
           if((decoded_result = decode_nssai_inclusion_mode (&registration_accept->nssaiinclusionmode, REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI, buffer+decoded,len-decoded))<0)
@@ -35,9 +63,10 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
             decoded+=decoded_result;
             registration_accept->presence |= REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_PRESENT;
           }
+		  return decoded;//0000000000000000000000000000000000000
           break;
       }
-  
+	  #endif
       switch(ieiDecoded){
         case REGISTRATION_ACCEPT_PLMN_LIST_IEI:
         if((decoded_result = decode_plmn_list (registration_accept->plmnlist, REGISTRATION_ACCEPT_PLMN_LIST_IEI, buffer+decoded,len-decoded))<0)
@@ -95,29 +124,22 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_PRESENT;
           }
-		return decoded;//0000000000000000000000000000000000000
+		
         break;
 
+		#if 0
         case REGISTRATION_ACCEPT_MICO_INDICATION_IEI:
         if((decoded_result = decode_mico_indication (&registration_accept->micoindication, REGISTRATION_ACCEPT_MICO_INDICATION_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;
         else{
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_MICO_INDICATION_PRESENT;
-		  
+		  return decoded;//0000000000000000000000000000000000000
           }
         break;
+        #endif
 
-        case REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI:
-        if((decoded_result = decode_network_slicing_indication (&registration_accept->networkslicingindication, REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI, buffer+decoded,len-decoded))<0)
-          return decoded_result;
-        else{
-          decoded+=decoded_result;
-          registration_accept->presence |= REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI;
-          }
-		 
-        break;
- 
+		#if 0
         case REGISTRATION_ACCEPT_SERVICE_AREA_LIST_IEI:
         if((decoded_result = decode_service_area_list (&registration_accept->servicearealist, REGISTRATION_ACCEPT_SERVICE_AREA_LIST_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;
@@ -126,7 +148,8 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           registration_accept->presence |= REGISTRATION_ACCEPT_SERVICE_AREA_LIST_PRESENT;
         }
         break;
-     
+        #endif
+		
         case REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_IEI:
         if((decoded_result = decode_gprs_timer3 (&registration_accept->t3512, REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;
@@ -170,6 +193,8 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_5GS_DRX_PARAMETERS_PRESENT;
         }
+		//test need it ;程序不能退出;????????????????????????????
+		return decoded; 
         break;
       }
     }
@@ -333,6 +358,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
 
+	#if 0
     if(registration_accept->presence & REGISTRATION_ACCEPT_SERVICE_AREA_LIST_PRESENT
        == REGISTRATION_ACCEPT_SERVICE_AREA_LIST_PRESENT){
       if((encoded_result = encode_service_area_list (registration_accept->servicearealist, REGISTRATION_ACCEPT_SERVICE_AREA_LIST_IEI, buffer+encoded,len-encoded))<0)
@@ -340,7 +366,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
       else
         encoded+=encoded_result;
     }
-
+    #endif
     if(registration_accept->presence & REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_PRESENT
        == REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_PRESENT){
       if((encoded_result = encode_gprs_timer3 (registration_accept->t3512, REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_IEI, buffer+encoded,len-encoded))<0)
@@ -387,7 +413,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
       else
         encoded+=encoded_result;
     }
- 
+    
     if(registration_accept->presence & REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_PRESENT
        == REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_PRESENT){
       if((encoded_result = encode_nssai_inclusion_mode (registration_accept->nssaiinclusionmode, REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI, buffer+encoded,len-encoded))<0)
@@ -408,7 +434,5 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
       else
         encoded+=encoded_result;
     }
-
-
     return encoded;
 }
