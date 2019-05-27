@@ -85,7 +85,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_PRESENT;
           }
-		return decoded;//0000000000000000000000000000000000000
+		
         break;
 
         case REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_IEI:
@@ -95,6 +95,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_PRESENT;
           }
+		return decoded;//0000000000000000000000000000000000000
         break;
 
         case REGISTRATION_ACCEPT_MICO_INDICATION_IEI:
@@ -103,6 +104,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
         else{
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_MICO_INDICATION_PRESENT;
+		  
           }
         break;
 
@@ -113,6 +115,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI;
           }
+		 
         break;
  
         case REGISTRATION_ACCEPT_SERVICE_AREA_LIST_IEI:

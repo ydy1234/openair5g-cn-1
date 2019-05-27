@@ -21,9 +21,10 @@ int encode_pdu_session_reactivation_result_error_cause ( PDUSessionReactivationR
     lenPtr = (buffer + encoded);
     encoded++;
     encoded++;
-
     struct PduSessionID_CauseValue * ptr = pdusessionreactivationresulterrorcause.element;
-
+    if(!ptr)
+	   return encoded;
+	ENCODE_U16(buffer+encoded,pdusessionreactivationresulterrorcause.size,encoded);
     for(;elementIndex<pdusessionreactivationresulterrorcause.size;elementIndex++){
       if(!ptr)
         break;
@@ -52,12 +53,19 @@ int decode_pdu_session_reactivation_result_error_cause ( PDUSessionReactivationR
         decoded++;
     }
 
-    DECODE_U16(buffer+decoded,ielen,decoded);
-
+	//encode ´úÂëdecoded;
+	
+    decoded++;
+	decoded++;
+	DECODE_U16(buffer+decoded,ielen,decoded);
+   
+	
     CHECK_LENGTH_DECODER (len - decoded, ielen);
 
+    pdusessionreactivationresulterrorcause->size = ielen;
     struct PduSessionID_CauseValue * lastPtr = NULL;
-    for(;elementIndex<ielen/2;elementIndex++){
+    //for(;elementIndex<ielen/2;elementIndex++){
+    for(;elementIndex<ielen;elementIndex++){
       struct PduSessionID_CauseValue * ptr = (struct PduSessionID_CauseValue * )calloc(1,sizeof(struct PduSessionID_CauseValue));
       DECODE_U8(buffer+decoded,ptr->pduSessionID,decoded);
       DECODE_U8(buffer+decoded,ptr->causeValue,decoded);

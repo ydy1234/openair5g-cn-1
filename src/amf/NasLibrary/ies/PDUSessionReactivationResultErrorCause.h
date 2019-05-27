@@ -14,7 +14,7 @@ struct PduSessionID_CauseValue{
 };
 
 typedef struct {
-  int size;
+  uint16_t size;
   struct PduSessionID_CauseValue * element;
 }PDUSessionReactivationResultErrorCause;
 

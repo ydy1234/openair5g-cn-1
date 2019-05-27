@@ -119,7 +119,7 @@ int auth_request()
    /*********	  NAS DECODE	 ***********************/
    /************************************************************************************************************************/
 	 
-	 printf("start nas_message_decode bytes:%d\n", bytes);
+	 //printf("start nas_message_decode bytes:%d\n", bytes);
 	 bstring plain_msg = bstrcpy(info); 
 	 nas_message_security_header_t header = {0};
 	 //fivegmm_security_context_t  * security = NULL;
@@ -945,7 +945,7 @@ int reg_request()
    /*********	  NAS DECODE	 ***********************/
    /************************************************************************************************************************/
 	 
-	 printf("start nas_message_decode bytes:%d\n", bytes);
+	 //printf("start nas_message_decode bytes:%d\n", bytes);
 	 bstring plain_msg = bstrcpy(info); 
 	 nas_message_security_header_t header = {0};
 	 //fivegmm_security_context_t  * security = NULL;
@@ -1321,22 +1321,23 @@ int reg_accept()
       mm_msg->specific_msg.registration_accept.pdusessionreactivationresult);
 
 
-	  #if 0
+	
       size = mm_msg->specific_msg.registration_accept.pdusessionreactivationresulterrorcause.size ;
       printf("pdusessionreactivationresulterrorcause size:0x%x\n",size);
       struct PduSessionID_CauseValue *pscTmp  = mm_msg->specific_msg.registration_accept.pdusessionreactivationresulterrorcause.element;
       for(int i = 0; i<size; i++)
       {
            printf("pdusessionreactivationresulterrorcause pduSessionID:0x%x,causeValue:0x%x\n", pscTmp->pduSessionID,pscTmp->causeValue);
+		   pscTmp =  pscTmp->next;
       }
       //LADNInformation ladninformation;
-      printf("micoindication: 0x%x\n", mm_msg->specific_msg.registration_accept.micoindication);
+      printf("micoindication,raai: 0x%x\n", mm_msg->specific_msg.registration_accept.micoindication.raai);
 
       printf("networkslicingindication,dcni:0x%x,nssci:0x%x\n",
       mm_msg->specific_msg.registration_accept.networkslicingindication.dcni ,
       mm_msg->specific_msg.registration_accept.networkslicingindication.nssci);
 
-    
+      #if 0
       size =  mm_msg->specific_msg.registration_accept.servicearealist.listsize;
       printf("servicearealist,listsize:0x%x\n", size);
 
@@ -1396,7 +1397,7 @@ int reg_accept()
    /*********	  NAS DECODE	 ***********************/
    /************************************************************************************************************************/
 	 
-	 printf("start nas_message_decode bytes:%d\n", bytes);
+	 //printf("start nas_message_decode bytes:%d\n", bytes);
 	 bstring plain_msg = bstrcpy(info); 
 	 nas_message_security_header_t header = {0};
 	 //fivegmm_security_context_t  * security = NULL;
@@ -1476,7 +1477,6 @@ int reg_accept()
 	 #endif
 
 	
-	 
 	  printf("_5gsnetworkfeaturesupport,mpsi:0x%x,iwk_n26:0x%x,emf:0x%x,emc:0x%x,ims_VoPS_N3GPP:0x%x,ims_VoPS_3GPP:0x%x,mcsi:0x%x,emcn:0x%x\n",
       decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.mpsi,
       decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.iwk_n26,
@@ -1491,6 +1491,23 @@ int reg_accept()
       decoded_mm_msg->specific_msg.registration_accept.pdusessionstatus);
       printf("PDUSessionReactivationResult:0x%x\n",
       decoded_mm_msg->specific_msg.registration_accept.pdusessionreactivationresult);
+
+	  size = decoded_mm_msg->specific_msg.registration_accept.pdusessionreactivationresulterrorcause.size ;
+      printf("pdusessionreactivationresulterrorcause size:0x%x\n",size);
+      struct PduSessionID_CauseValue *pscTmp1  = decoded_mm_msg->specific_msg.registration_accept.pdusessionreactivationresulterrorcause.element;
+      for(int i = 0; i< size; i++)
+      {
+           if(!pscTmp1)
+		        continue;
+           printf("pdusessionreactivationresulterrorcause pduSessionID:0x%x,causeValue:0x%x\n", pscTmp1->pduSessionID,pscTmp1->causeValue);
+		   pscTmp1 = pscTmp1->next;
+      }
+      //LADNInformation ladninformation;
+      printf("micoindication,raai: 0x%x\n", decoded_mm_msg->specific_msg.registration_accept.micoindication.raai);
+
+      printf("networkslicingindication,dcni:0x%x,nssci:0x%x\n",
+      decoded_mm_msg->specific_msg.registration_accept.networkslicingindication.dcni ,
+      decoded_mm_msg->specific_msg.registration_accept.networkslicingindication.nssci);
 	 
 	  printf("REGISTRATION_ACCEPT------------ end\n");
 
