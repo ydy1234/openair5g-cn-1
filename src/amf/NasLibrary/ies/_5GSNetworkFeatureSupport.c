@@ -21,10 +21,12 @@ int encode__5gs_network_feature_support ( _5GSNetworkFeatureSupport _5gsnetworkf
     lenPtr = (buffer + encoded);
     encoded++;
 
-    bitStream |= ((_5gsnetworkfeaturesupport.mpsi&0x01) | (_5gsnetworkfeaturesupport.iwk_n26&0x01) | (_5gsnetworkfeaturesupport.emf&0x03) | (_5gsnetworkfeaturesupport.emc&0x03) | (_5gsnetworkfeaturesupport.ims_VoPS_N3GPP&0x01) | (_5gsnetworkfeaturesupport.ims_VoPS_3GPP&0x01)); 
-    ENCODE_U8(buffer+encoded,bitStream,encoded);
+    //bitStream |= ((_5gsnetworkfeaturesupport.mpsi&0x01) | (_5gsnetworkfeaturesupport.iwk_n26&0x01) | (_5gsnetworkfeaturesupport.emf&0x03) | (_5gsnetworkfeaturesupport.emc&0x03) | (_5gsnetworkfeaturesupport.ims_VoPS_N3GPP&0x01) | (_5gsnetworkfeaturesupport.ims_VoPS_3GPP&0x01)); 
+    bitStream |= (((_5gsnetworkfeaturesupport.mpsi&0x01)<<7) | ((_5gsnetworkfeaturesupport.iwk_n26&0x01)<<6) | ((_5gsnetworkfeaturesupport.emf&0x03)<<4) | ((_5gsnetworkfeaturesupport.emc&0x03)<<2) | ((_5gsnetworkfeaturesupport.ims_VoPS_N3GPP&0x01)<<1) | ((_5gsnetworkfeaturesupport.ims_VoPS_3GPP&0x01)<<0)); 
+	ENCODE_U8(buffer+encoded,bitStream,encoded);
     bitStream = 0x0;
-    bitStream |= (_5gsnetworkfeaturesupport.mcsi&0x01) | (_5gsnetworkfeaturesupport.emcn&0x01);
+    //bitStream |= (_5gsnetworkfeaturesupport.mcsi&0x01) | (_5gsnetworkfeaturesupport.emcn&0x01);
+	bitStream |= ((_5gsnetworkfeaturesupport.mcsi&0x01)<<1) | ((_5gsnetworkfeaturesupport.emcn&0x01)<<0);
     ENCODE_U8(buffer+encoded,bitStream,encoded);
 
     *lenPtr = encoded - 1 - ((iei > 0) ? 1 : 0);    
@@ -47,9 +49,9 @@ int decode__5gs_network_feature_support ( _5GSNetworkFeatureSupport * _5gsnetwor
     decoded++;
     CHECK_LENGTH_DECODER (len - decoded, ielen);
 
-    DECODE_U8(buffer+decoded,bitStream,decoded);
-    _5gsnetworkfeaturesupport->mpsi = ((bitStream&0x80)>>8);
-    _5gsnetworkfeaturesupport->iwk_n26 = ((bitStream&0x40)>>7);
+	DECODE_U8(buffer+decoded,bitStream,decoded);
+    _5gsnetworkfeaturesupport->mpsi = ((bitStream&0x80)>>7);
+    _5gsnetworkfeaturesupport->iwk_n26 = ((bitStream&0x40)>>6);
     _5gsnetworkfeaturesupport->emf = ((bitStream&0x30)>>4);
     _5gsnetworkfeaturesupport->emc = ((bitStream&0x0c)>>2);
     _5gsnetworkfeaturesupport->ims_VoPS_N3GPP = ((bitStream&0x02)>>1);
@@ -57,7 +59,24 @@ int decode__5gs_network_feature_support ( _5GSNetworkFeatureSupport * _5gsnetwor
     DECODE_U8(buffer+decoded,bitStream,decoded);
     _5gsnetworkfeaturesupport->mcsi = ((bitStream&0x02)>>1);
     _5gsnetworkfeaturesupport->emcn = ((bitStream&0x01)>>0);
-            
+
+    #if 0
+    DECODE_U8(buffer+decoded,bitStream,decoded);
+	printf("decode__5gs_network_feature_support,bitStream:0x%x\n", bitStream);
+    //_5gsnetworkfeaturesupport->mpsi = ((bitStream&0x80)>>8);
+    _5gsnetworkfeaturesupport->mpsi = ((bitStream)>>8);
+    _5gsnetworkfeaturesupport->iwk_n26 = ((bitStream&0x40)>>7);
+    _5gsnetworkfeaturesupport->emf = ((bitStream&0x30)>>4);
+    _5gsnetworkfeaturesupport->emc = ((bitStream&0x0c)>>2);
+    _5gsnetworkfeaturesupport->ims_VoPS_N3GPP = ((bitStream&0x02)>>1);
+    _5gsnetworkfeaturesupport->ims_VoPS_3GPP = ((bitStream&0x01)>>0);
+    DECODE_U8(buffer+decoded,bitStream,decoded);
+	printf("decode__5gs_network_feature_support,bitStream:0x%x\n",bitStream);
+    //_5gsnetworkfeaturesupport->mcsi = ((bitStream&0x02)>>1);
+    _5gsnetworkfeaturesupport->mcsi = ((bitStream&0x02)>>1);
+    _5gsnetworkfeaturesupport->emcn = ((bitStream&0x01)>>0);
+    #endif
+	
     return decoded;
 }
 

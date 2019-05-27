@@ -12,7 +12,6 @@ int encode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList _5gst
     uint32_t encoded = 0;
     int listIndex = 0, elementIndex = 0;
     uint8_t octet = 0x0;
-
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,_5GS_TRACKING_AREA_IDENTITY_LIST_MINIMUM_LENGTH , len);
     
     if( iei >0  ){
@@ -35,7 +34,7 @@ int encode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList _5gst
           octet = (uint8_t)((ptr->mcc_mnc->mcc)&0x00ff);
           ENCODE_U8(buffer+encoded,octet,encoded);
           octet = (uint8_t)(((ptr->mcc_mnc->mcc)&0x0f00)>>8) | (uint8_t)(((ptr->mcc_mnc->mnc)&0x0f00)>>4);
-          ENCODE_U8(buffer+encoded,octet,encoded);
+		  ENCODE_U8(buffer+encoded,octet,encoded);
           octet = (uint8_t)((ptr->mcc_mnc->mnc)&0x00ff);
           ENCODE_U8(buffer+encoded,octet,encoded);
 
@@ -97,17 +96,16 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
     uint8_t ielen=0;
     uint8_t octet = 0x0;    
     uint16_t tacContinued = 0;
-
     if (iei > 0)
     {
         CHECK_IEI_DECODER (iei, *buffer);
         decoded++;
     }
-
+   
     ielen = *(buffer + decoded);
     decoded++;
     CHECK_LENGTH_DECODER (len - decoded, ielen);
-
+    
     _5gstrackingareaidentitylist->listSize = 0;
     struct PartialTrackingAreaIdentityList * lastPartialTrackingAreaIdentityList = NULL;
 
@@ -115,7 +113,7 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
       DECODE_U8(buffer+decoded,octet,decoded);
       _5gstrackingareaidentitylist->listSize += 1;
       struct PartialTrackingAreaIdentityList * partialTrackingAreaIdentityList = (struct PartialTrackingAreaIdentityList*)calloc(1,sizeof(struct PartialTrackingAreaIdentityList));
-      switch(octet&0x60){
+	  switch(octet&0x60){
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_NON_CONSECUTIVE_TAC_VALUES:
           partialTrackingAreaIdentityList->typeOfList = 0x00;
           partialTrackingAreaIdentityList->numberOfElements = octet&0x1f;
@@ -135,7 +133,7 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
           struct TrackingAreaIdentity * lastTai = NULL;
           for (;elementIndex<(octet&0x1f);elementIndex++){
             struct TrackingAreaIdentity * tai = (struct TrackingAreaIdentity*)calloc(1,sizeof(struct TrackingAreaIdentity));
-            DECODE_U8(buffer+decoded,octet,decoded);
+			DECODE_U8(buffer+decoded,octet,decoded);
             tai->tac = octet;
             DECODE_U16(buffer+decoded,tacContinued,decoded);
             tai->tacContinued = tacContinued;
@@ -211,9 +209,13 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
         break;
       }
       if(lastPartialTrackingAreaIdentityList)
+      {
         lastPartialTrackingAreaIdentityList->next = partialTrackingAreaIdentityList;
+      }
       else
-        _5gstrackingareaidentitylist->partialTrackingAreaIdentityList = partialTrackingAreaIdentityList;
+      {
+         _5gstrackingareaidentitylist->partialTrackingAreaIdentityList = partialTrackingAreaIdentityList; 
+      }
       lastPartialTrackingAreaIdentityList = partialTrackingAreaIdentityList;
     }
 

@@ -11,27 +11,22 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
     uint32_t decoded = 0;
     int decoded_result = 0;
 
-	printf("decode_registration_accept len:%d\n", len);
-	
-	
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_DECODER (buffer, REGISTRATION_ACCEPT_MINIMUM_LENGTH, len);
-    printf("decode_registration_accept buffer:0x%x\n", *buffer);
     if((decoded_result = decode__5gs_registration_result (&registration_accept->_5gsregistrationresult, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
-
+   
 /*
     if((decoded_result = decode__5gs_mobile_identity (&registration_accept->_5gsmobileidentity, 0, buffer+decoded,len-decoded))<0)
         return decoded_result;
     else
         decoded+=decoded_result;
 */
-
+    
     while(len - decoded >0){
       uint8_t ieiDecoded = *(buffer+decoded);
-
       switch((ieiDecoded&0xf0)>>4){
         case REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI:
           if((decoded_result = decode_nssai_inclusion_mode (&registration_accept->nssaiinclusionmode, REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI, buffer+decoded,len-decoded))<0)
@@ -51,19 +46,19 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_PLMN_LIST_PRESENT;
           }
-
-		  return decoded;
         break;
 
-	     
+        //ºóÃæÔÙ²âÊÔ;
+        #if 0
         case REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI:
         if((decoded_result =  decode__5gs_tracking_area_identity_list(&registration_accept->_5gstrackingareaidentitylist, REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;
         else{
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT;
-          }
+        	}
         break;
+		#endif
 
         case REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_IEI:
         if((decoded_result = decode__5gs_network_feature_support (&registration_accept->_5gsnetworkfeaturesupport, REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_IEI, buffer+decoded,len-decoded))<0)
@@ -90,6 +85,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           decoded+=decoded_result;
           registration_accept->presence |= REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_PRESENT;
           }
+		return decoded;//0000000000000000000000000000000000000
         break;
 
         case REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_IEI:
@@ -260,7 +256,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     }
 
     
-	
+	#if 0
     if(registration_accept->presence & REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT
        == REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT){
       if((encoded_result = encode__5gs_tracking_area_identity_list (registration_accept->_5gstrackingareaidentitylist, REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI, buffer+encoded,len-encoded))<0)
@@ -268,7 +264,9 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
       else
         encoded+=encoded_result;
     }
+	#endif
 /*
+
     if((encoded_result = encode_nssai (registration_accept->nssai, 0, buffer+encoded,len-encoded))<0)
         return encoded_result;
     else

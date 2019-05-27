@@ -1090,21 +1090,152 @@ int reg_accept()
 		 
 	 }
 
-	 #if 0
-	 struct PartialTrackingAreaIdentityList * partialTrackingAreaIdentityList = NULL;
-     partialTrackingAreaIdentityList->typeOfList = 0x01;
-	 partialTrackingAreaIdentityList->numberOfElements = 0;
-	 partialTrackingAreaIdentityList->mcc_mnc = NULL;
-     partialTrackingAreaIdentityList->tai = NULL;
-     partialTrackingAreaIdentityList->next = NULL;
+	 struct MccMnc mm;
+	 memset(&mm, 0, sizeof(struct MccMnc));
+	 mm.mcc = 0x21;
+	 mm.mnc = 0x22;
+	 mm.next= NULL;
+	 
+	 struct PartialTrackingAreaIdentityList partialTrackingAreaIdentityList;
+	 memset(&partialTrackingAreaIdentityList, 0, sizeof(struct PartialTrackingAreaIdentityList));
+     partialTrackingAreaIdentityList.typeOfList = 0x01;
+	 partialTrackingAreaIdentityList.numberOfElements = 2;
+	 partialTrackingAreaIdentityList.mcc_mnc = &mm;
+	 
+	 
+	 struct TrackingAreaIdentity tai1, tai2;
+	 memset(&tai1, 0, sizeof(tai1));
+	 memset(&tai2, 0, sizeof(tai2));
+	 
+	 tai2.tac = 0x21;
+	 tai2.tacContinued = 0x22;
+	 tai2.next = NULL;
+
+	 tai1.tac = 0x11;
+	 tai1.tacContinued = 0x12;
+	 tai1.next = &tai2;
+
+
+     //0b01
+     struct MccMnc smm1, smm2;
+     memset(&smm1, 0, sizeof(smm1));
+     memset(&smm2, 0, sizeof(smm2));
+     smm2.mcc = 0x02,
+     smm2.mnc = 0x02,
+     smm2.next = NULL;
+     smm1.mcc = 0x01,
+     smm1.mnc = 0x01,
+     smm1.next = NULL;
+
+	 
+	 partialTrackingAreaIdentityList.mcc_mnc = &smm1;
+     partialTrackingAreaIdentityList.tai = &tai1;
+	 
+     //partialTrackingAreaIdentityList->next = NULL;
 	 
 	 _5GSTrackingAreaIdentityList  _5gstrackingareaidentitylist;
 
-	 _5gstrackingareaidentitylist.listSize = 3;
-     _5gstrackingareaidentitylist.partialTrackingAreaIdentityList =  partialTrackingAreaIdentityList;
+	 _5gstrackingareaidentitylist.listSize = 1;
+     _5gstrackingareaidentitylist.partialTrackingAreaIdentityList =  &partialTrackingAreaIdentityList;
+     mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist = _5gstrackingareaidentitylist;
+	
 
-	 #endif
+	 mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.mpsi  = 0;
+     mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.iwk_n26 =1;
+     mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.emf = 0;
+     mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.emc  = 1;
+     mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.ims_VoPS_N3GPP  = 0;
+     mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.ims_VoPS_3GPP  = 1;
+     mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.mcsi = 0;
+     mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.emcn = 1;
+
+     mm_msg->specific_msg.registration_accept.pdusessionstatus  = 0x79;
+     mm_msg->specific_msg.registration_accept.pdusessionreactivationresult =0x80;
+
+     struct PduSessionID_CauseValue psc1,psc2;
+     memset(&psc1, '\0',sizeof(struct PduSessionID_CauseValue));
+     memset(&psc2, '\0',sizeof(struct PduSessionID_CauseValue));
+
+     psc2.pduSessionID = 0x02;
+     psc2.causeValue   = 0x02;
+     psc2.next = NULL;
+      
+     psc1.pduSessionID = 0x01;
+     psc1.causeValue   = 0x01;
+     psc1.next = &psc2;
+      
+     mm_msg->specific_msg.registration_accept.pdusessionreactivationresulterrorcause.size = 2;
+     mm_msg->specific_msg.registration_accept.pdusessionreactivationresulterrorcause.element =  &psc1;
+          //LADNInformation ladninformation;
+     mm_msg->specific_msg.registration_accept.micoindication.raai= true;
+     mm_msg->specific_msg.registration_accept.networkslicingindication.dcni  = 0x01;
+     mm_msg->specific_msg.registration_accept.networkslicingindication.nssci = 0x01;
+
+     
+     struct MccMnc smm11, smm12;
+     memset(&smm11, 0, sizeof(smm11));
+     memset(&smm12, 0, sizeof(smm12));
+     smm12.mcc = 0x02,
+     smm12.mnc = 0x02,
+     smm12.next = NULL;
 	 
+     smm11.mcc = 0x01,
+     smm11.mnc = 0x01,
+     smm11.next = &smm12;
+      
+     struct TrackingAreaIdentity stai1, stai2;
+     memset(&stai1, 0, sizeof(stai1));
+     memset(&stai2, 0, sizeof(stai2));
+      
+     stai2.tac = 0x02;
+     stai2.tacContinued = 0x02;
+     stai2.next = NULL;
+      
+     stai1.tac = 0x01;
+     stai1.tacContinued = 0x01;
+     stai1.next = &stai2;
+      
+  
+ 
+      struct PartialServiceAreaList  pSAreaList;
+      memset(&pSAreaList, 0, sizeof(struct PartialServiceAreaList));
+      pSAreaList.is_allowed = 1;
+      pSAreaList.typeOfList = 0x00;
+      pSAreaList.numberOfElements = 2;
+      pSAreaList.mcc_mnc = &smm11;
+      pSAreaList.tai = &stai1;
+      
+      ServiceAreaList servicearealist;
+      memset(&servicearealist, 0, sizeof(ServiceAreaList));
+      servicearealist.listSize = 1;
+      servicearealist.partialServiceAreaList = &pSAreaList;
+      
+      mm_msg->specific_msg.registration_accept.servicearealist  = servicearealist; 
+
+   
+      mm_msg->specific_msg.registration_accept.t3512.unit = 0x02;
+      mm_msg->specific_msg.registration_accept.t3512.timeValue = 0x03;
+
+     
+      mm_msg->specific_msg.registration_accept.non_3gpp_deregistration_timer  = 0x0C;
+
+      mm_msg->specific_msg.registration_accept.t3502  = 0x0D;
+      
+        //EmergencyNumberList emergencynumberlist;
+        //ExtendedEmergencyNumberList extendedemergencynumberlist;
+        //SORTransparentContainer sortransparentcontainer;
+
+     
+      bstring eapmessage = bfromcstralloc(10, "\0");
+      uint8_t bitStream_eapmessage = 0b00110100;
+      eapmessage->data = (unsigned char *)(&bitStream_eapmessage);
+      eapmessage->slen = 1; 
+     
+      mm_msg->specific_msg.registration_accept.eapmessage = eapmessage;
+      mm_msg->specific_msg.registration_accept.nssaiinclusionmode = 0x0E;
+      //OperatorDefinedAccessCategoryDefinitions operatordefinedaccesscategorydefinitions;
+      mm_msg->specific_msg.registration_accept._5gsdrxparameters = 0x0F;
+	
 	 
 	 size += MESSAGE_TYPE_MAXIMUM_LENGTH;
    
@@ -1154,7 +1285,99 @@ int reg_accept()
 		 mm_msg->specific_msg.registration_accept.plmnlist[i].mnc) ;
 		 
 	 }
-	
+	 
+     #if 0
+     printf("_5gstrackingareaidentitylist listsize:0x%x\n", mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.listSize);
+	 
+	 printf("partialTrackingAreaIdentityList typeOfList:0x%x,numberOfElements:0x%x\n",
+	 mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->typeOfList,
+	 mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->numberOfElements);
+
+     
+	 int numberofelements1 = mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->numberOfElements;
+	 struct TrackingAreaIdentity *tailist = mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->tai; 
+	 for(int i  = 0; i<numberofelements1; i++)
+	 {
+	     printf("partialTrackingAreaIdentityList tai tac:0x%x, tacContinued:0x%x\n",
+		 tailist->tac,tailist->tacContinued);
+		 
+         tailist = tailist->next; 
+     }	
+     #endif
+
+	  printf("_5gsnetworkfeaturesupport,mpsi:0x%x,iwk_n26:0x%x,emf:0x%x,emc:0x%x,ims_VoPS_N3GPP:0x%x,ims_VoPS_3GPP:0x%x,mcsi:0x%x,emcn:0x%x\n",
+      mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.mpsi,
+      mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.iwk_n26,
+      mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.emf,
+      mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.emc,
+      mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.ims_VoPS_N3GPP,
+      mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.ims_VoPS_3GPP,
+      mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.mcsi,
+      mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.emcn);
+
+      printf("pdusessionstatus:0x%x\n",
+      mm_msg->specific_msg.registration_accept.pdusessionstatus);
+      printf("pdusessionreactivationresult:0x%x\n",
+      mm_msg->specific_msg.registration_accept.pdusessionreactivationresult);
+
+
+	  #if 0
+      size = mm_msg->specific_msg.registration_accept.pdusessionreactivationresulterrorcause.size ;
+      printf("pdusessionreactivationresulterrorcause size:0x%x\n",size);
+      struct PduSessionID_CauseValue *pscTmp  = mm_msg->specific_msg.registration_accept.pdusessionreactivationresulterrorcause.element;
+      for(int i = 0; i<size; i++)
+      {
+           printf("pdusessionreactivationresulterrorcause pduSessionID:0x%x,causeValue:0x%x\n", pscTmp->pduSessionID,pscTmp->causeValue);
+      }
+      //LADNInformation ladninformation;
+      printf("micoindication: 0x%x\n", mm_msg->specific_msg.registration_accept.micoindication);
+
+      printf("networkslicingindication,dcni:0x%x,nssci:0x%x\n",
+      mm_msg->specific_msg.registration_accept.networkslicingindication.dcni ,
+      mm_msg->specific_msg.registration_accept.networkslicingindication.nssci);
+
+    
+      size =  mm_msg->specific_msg.registration_accept.servicearealist.listsize;
+      printf("servicearealist,listsize:0x%x\n", size);
+
+      struct PartialServiceAreaList  *decodePsr = mm_msg->specific_msg.registration_accept.servicearealist.partialServiceAreaList;
+      printf("servicearealist, partialServiceAreaList,is_allowed:0x%x,typeOfList:0x%x,numberOfElements:0x%x\n",
+      decodePsr->is_allowed, decodePsr->typeOfList,decodePsr->numberOfElements);
+
+      struct MccMnc *decmmc = decodePsr->mcc_mnc;
+      for(int i = 0; i< size; i++)
+      {
+           printf("servicearealist, partialServiceAreaList,mcc_mnc,mcc:0x%x,mnc:0x%x\n",
+           decmmc->mcc,decmmc->mac);
+           decmmc = decmmc->next;
+      }
+      struct TrackingAreaIdentity  *decodestai =  decodePsr->tai;
+      for(int i = 0; i< size; i++)
+      {
+           printf("servicearealist, partialServiceAreaList,tai,tac:0x%x,tacContinued:0x%x\n",
+           decodestai->tac,decodestai->decodestai);
+           decodestai = decodestai->next;
+      }
+
+      printf("t3512, unit:0x%x, timeValue:0x%x\n",
+          mm_msg->specific_msg.registration_accept.t3512.unit,
+      mm_msg->specific_msg.registration_accept.t3512.timeValue);
+      
+      printf("non_3gpp_deregistration_timer: 0x%x\n",
+          mm_msg->specific_msg.registration_accept.non_3gpp_deregistration_timer);
+
+      printf("t3502:0x%x\n",
+          mm_msg->specific_msg.registration_accept.t3502 =  0x0D;
+        //EmergencyNumberList emergencynumberlist;
+        //ExtendedEmergencyNumberList extendedemergencynumberlist;
+        //SORTransparentContainer sortransparentcontainer;
+         
+      printf("eapmessage:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_accept.eapmessage)->data));
+      printf("nssaiinclusionmode:0x%x\n",mm_msg->specific_msg.registration_accept.nssaiinclusionmode);
+      //OperatorDefinedAccessCategoryDefinitions operatordefinedaccesscategorydefinitions;
+      printf("_5gsdrxparameters:0x%x\n",mm_msg->specific_msg.registration_accept._5gsdrxparameters);
+      #endif
+
 	 
      bytes = nas_message_encode (data, &nas_msg, sizeof(data)/*don't know the size*/, security);
 	 
@@ -1216,10 +1439,62 @@ int reg_accept()
 		 decoded_mm_msg->specific_msg.registration_accept.plmnlist[i].mnc) ;
 		 
 	 }
-	 
-	 printf("REGISTRATION_ACCEPT------------ end\n");
 
-     return  0;
+	 //##########  *********************  编码长度问题导致listsize 不正确,详细请看代码;
+	 #if 0
+	 int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5gstrackingareaidentitylist, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
+     {
+          ......
+         
+          while(len - decoded > 0){
+           DECODE_U8(buffer+decoded,octet,decoded);
+           _5gstrackingareaidentitylist->listSize += 1;
+
+          ......
+		   	
+		  return 0;
+     }
+	 #endif
+
+	 #if 0
+	 printf("_5gstrackingareaidentitylist listsize:0x%x\n", decoded_mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.listSize);
+
+	 printf("partialTrackingAreaIdentityList typeOfList:0x%x,numberOfElements:0x%x\n",
+		  decoded_mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->typeOfList,
+		  decoded_mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->numberOfElements);
+	 
+	
+	 int numberofelements = decoded_mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->numberOfElements;
+	 struct TrackingAreaIdentity *tailist1 = decoded_mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->tai; 
+	 for(int i  = 0; i<numberofelements; i++)
+	 {
+		printf("partialTrackingAreaIdentityList tai tac:0x%x, tacContinued:0x%x\n",
+		tailist1->tac,tailist1->tacContinued);
+		
+		tailist1 = tailist1->next; 
+	 }  
+	 #endif
+
+	
+	 
+	  printf("_5gsnetworkfeaturesupport,mpsi:0x%x,iwk_n26:0x%x,emf:0x%x,emc:0x%x,ims_VoPS_N3GPP:0x%x,ims_VoPS_3GPP:0x%x,mcsi:0x%x,emcn:0x%x\n",
+      decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.mpsi,
+      decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.iwk_n26,
+      decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.emf,
+      decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.emc,
+      decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.ims_VoPS_N3GPP,
+      decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.ims_VoPS_3GPP,
+      decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.mcsi,
+      decoded_mm_msg->specific_msg.registration_accept._5gsnetworkfeaturesupport.emcn);
+
+      printf("PDUSessionStatus:0x%x\n",
+      decoded_mm_msg->specific_msg.registration_accept.pdusessionstatus);
+      printf("PDUSessionReactivationResult:0x%x\n",
+      decoded_mm_msg->specific_msg.registration_accept.pdusessionreactivationresult);
+	 
+	  printf("REGISTRATION_ACCEPT------------ end\n");
+
+      return  0;
 }
 int main()
 { 
