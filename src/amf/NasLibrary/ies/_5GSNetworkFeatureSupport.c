@@ -8,6 +8,7 @@
 
 int encode__5gs_network_feature_support ( _5GSNetworkFeatureSupport _5gsnetworkfeaturesupport, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+    printf("encode__5gs_network_feature_support\n");
     uint8_t *lenPtr;
     uint32_t encoded = 0;
     uint8_t bitStream = 0x0;

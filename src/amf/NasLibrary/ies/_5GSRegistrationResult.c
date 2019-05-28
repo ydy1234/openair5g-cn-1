@@ -8,7 +8,7 @@
 
 int encode__5gs_registration_result ( _5GSRegistrationResult _5gsregistrationresult, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-  
+    printf("encode__5gs_registration_result\n");  
     uint8_t *lenPtr;
     uint32_t encoded = 0;
     uint8_t bitStream = 0x0;
@@ -35,6 +35,7 @@ int encode__5gs_registration_result ( _5GSRegistrationResult _5gsregistrationres
 
 int decode__5gs_registration_result ( _5GSRegistrationResult * _5gsregistrationresult, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+    printf("decode__5gs_registration_result\n");
     int decoded=0;
     uint8_t ielen=0;
     uint8_t bitStream = 0x0;

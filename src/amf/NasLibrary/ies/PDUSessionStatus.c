@@ -8,6 +8,7 @@
 
 int encode_pdu_session_status ( PDUSessionStatus pdusessionstatus, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+    printf("encode_pdu_session_status\n");
     uint8_t *lenPtr;
     uint32_t encoded = 0;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,PDU_SESSION_STATUS_MINIMUM_LENGTH , len);

@@ -1080,7 +1080,7 @@ int reg_accept()
 	 mm_msg->specific_msg.registration_accept._5gsregistrationresult.is_SMS_allowed =  1;
 	 mm_msg->specific_msg.registration_accept._5gsregistrationresult.registration_result_value = 0x07;
 
-	 mm_msg->specific_msg.registration_accept.presence = 0x0007;
+	 mm_msg->specific_msg.registration_accept.presence = 0xffff;
 
 
 	 for(int i = 0; i <15; i++)

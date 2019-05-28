@@ -8,6 +8,7 @@
 
 int encode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList _5gstrackingareaidentitylist, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+    printf("encode__5gs_tracking_area_identity_list\n");
     uint8_t *lenPtr;
     uint32_t encoded = 0;
     int listIndex = 0, elementIndex = 0;
@@ -93,6 +94,7 @@ int encode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList _5gst
 
 int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5gstrackingareaidentitylist, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+    printf("decode__5gs_tracking_area_identity_list\n");
     int decoded=0;
     uint8_t ielen=0;
     uint8_t octet = 0x0;    
@@ -111,12 +113,14 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
     struct PartialTrackingAreaIdentityList * lastPartialTrackingAreaIdentityList = NULL;
 
     while(len - decoded > 0){
+      if((*(buffer+decoded)) == 0x0)
+        break;
       DECODE_U8(buffer+decoded,octet,decoded);
       _5gstrackingareaidentitylist->listSize += 1;
 	  printf("octet:0x%x,octet&0x60:0x%x\n", octet, octet&0x60);
 	  sleep(2);
       struct PartialTrackingAreaIdentityList * partialTrackingAreaIdentityList = (struct PartialTrackingAreaIdentityList*)calloc(1,sizeof(struct PartialTrackingAreaIdentityList));
-	  switch(octet&0x60){
+	  switch((octet&0x60)>>5){
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_NON_CONSECUTIVE_TAC_VALUES:
           partialTrackingAreaIdentityList->typeOfList = 0x00;
           partialTrackingAreaIdentityList->numberOfElements = octet&0x1f;
@@ -149,6 +153,7 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
             lastTai->next = NULL;
         break;
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_CONSECUTIVE_TAC_VALUES:
+          printf("case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_CONSECUTIVE_TAC_VALUES\n");
           partialTrackingAreaIdentityList->typeOfList = 0x01;
           partialTrackingAreaIdentityList->numberOfElements = octet&0x1f;
 		  

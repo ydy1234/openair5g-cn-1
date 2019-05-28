@@ -27,6 +27,9 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
     
     while(len - decoded >0){
       uint8_t ieiDecoded = *(buffer+decoded);
+      printf("ieiDecoded(%x)\n",ieiDecoded&0xf0);
+      if(ieiDecoded == 0x0)
+        break;
 	  switch((ieiDecoded&0xf0)){
 	  	case REGISTRATION_ACCEPT_MICO_INDICATION_IEI:
         if((decoded_result = decode_mico_indication (&registration_accept->micoindication, REGISTRATION_ACCEPT_MICO_INDICATION_IEI, buffer+decoded,len-decoded))<0)
@@ -67,6 +70,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           break;
       }
 	  #endif
+      printf("ieiDecoded(%x)\n",ieiDecoded);
       switch(ieiDecoded){
         case REGISTRATION_ACCEPT_PLMN_LIST_IEI:
         if((decoded_result = decode_plmn_list (registration_accept->plmnlist, REGISTRATION_ACCEPT_PLMN_LIST_IEI, buffer+decoded,len-decoded))<0)
@@ -260,7 +264,9 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
 {
     uint32_t encoded = 0;
     int encoded_result = 0;
-    
+   
+    printf("registration_accept->presence(%x)\n",registration_accept->presence);
+ 
     // Check if we got a NULL pointer and if buffer length is >= minimum length expected for the message.
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer, REGISTRATION_ACCEPT_MINIMUM_LENGTH, len);
 
@@ -274,7 +280,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         encoded+=encoded_result;
 */
-    if(registration_accept->presence & REGISTRATION_ACCEPT_PLMN_LIST_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_PLMN_LIST_PRESENT)
        == REGISTRATION_ACCEPT_PLMN_LIST_PRESENT){
       if((encoded_result = encode_plmn_list (registration_accept->plmnlist, REGISTRATION_ACCEPT_PLMN_LIST_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -282,7 +288,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
 	
-    if(registration_accept->presence & REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT)
        == REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT){
       if((encoded_result = encode__5gs_tracking_area_identity_list (registration_accept->_5gstrackingareaidentitylist, REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -301,15 +307,18 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         encoded+=encoded_result;
 */
-    if(registration_accept->presence & REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT
+    printf("registration_accept->presence & REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT(%x)\n",registration_accept->presence & REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT);
+    printf("REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT(%x)\n",REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT);
+    if((registration_accept->presence & REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT)
        == REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT){
+      printf("?????\n");
       if((encoded_result = encode__5gs_network_feature_support (registration_accept->_5gsnetworkfeaturesupport, REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
       else
         encoded+=encoded_result;
     }
 
-    if(registration_accept->presence & REGISTRATION_ACCEPT_PDU_SESSION_STATUS_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_PDU_SESSION_STATUS_PRESENT)
        == REGISTRATION_ACCEPT_PDU_SESSION_STATUS_PRESENT){
       if((encoded_result = encode_pdu_session_status (registration_accept->pdusessionstatus, REGISTRATION_ACCEPT_PDU_SESSION_STATUS_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -317,7 +326,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
     
-    if(registration_accept->presence & REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_PRESENT)
        == REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_PRESENT){
       if((encoded_result = encode_pdu_session_reactivation_result (registration_accept->pdusessionreactivationresult, REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -325,7 +334,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
 
-    if(registration_accept->presence & REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_PRESENT)
        == REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_PRESENT){
       if((encoded_result = encode_pdu_session_reactivation_result_error_cause (registration_accept->pdusessionreactivationresulterrorcause, REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -338,7 +347,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         encoded+=encoded_result;
 */
-    if(registration_accept->presence & REGISTRATION_ACCEPT_MICO_INDICATION_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_MICO_INDICATION_PRESENT)
        == REGISTRATION_ACCEPT_MICO_INDICATION_PRESENT){ 
       if((encoded_result = encode_mico_indication (registration_accept->micoindication, REGISTRATION_ACCEPT_MICO_INDICATION_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -346,7 +355,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
     
-    if(registration_accept->presence & REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_PRESENT)
        == REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_PRESENT){
       if((encoded_result = encode_network_slicing_indication (registration_accept->networkslicingindication, REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -363,7 +372,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
     #endif
-    if(registration_accept->presence & REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_PRESENT)
        == REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_PRESENT){
       if((encoded_result = encode_gprs_timer3 (registration_accept->t3512, REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -371,7 +380,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
 
-    if(registration_accept->presence & REGISTRATION_ACCEPT_GPRS_TIMER2_NON_3GPP_DEREGISTRATION_TIMER_VALUE_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_GPRS_TIMER2_NON_3GPP_DEREGISTRATION_TIMER_VALUE_PRESENT)
        == REGISTRATION_ACCEPT_GPRS_TIMER2_NON_3GPP_DEREGISTRATION_TIMER_VALUE_PRESENT){
       if((encoded_result = encode_gprs_timer2 (registration_accept->non_3gpp_deregistration_timer, REGISTRATION_ACCEPT_GPRS_TIMER2_NON_3GPP_DEREGISTRATION_TIMER_VALUE_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -379,7 +388,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
     
-    if(registration_accept->presence & REGISTRATION_ACCEPT_GPRS_TIMER2_T3502_VALUE_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_GPRS_TIMER2_T3502_VALUE_PRESENT)
        == REGISTRATION_ACCEPT_GPRS_TIMER2_T3502_VALUE_PRESENT){
       if((encoded_result = encode_gprs_timer2 (registration_accept->t3502, REGISTRATION_ACCEPT_GPRS_TIMER2_T3502_VALUE_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -402,7 +411,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         encoded+=encoded_result;
 */
-    if(registration_accept->presence & REGISTRATION_ACCEPT_EAP_MESSAGE_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_EAP_MESSAGE_PRESENT)
        == REGISTRATION_ACCEPT_EAP_MESSAGE_PRESENT){
       if((encoded_result = encode_eap_message (registration_accept->eapmessage, REGISTRATION_ACCEPT_EAP_MESSAGE_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -410,7 +419,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
     
-    if(registration_accept->presence & REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_PRESENT)
        == REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_PRESENT){
       if((encoded_result = encode_nssai_inclusion_mode (registration_accept->nssaiinclusionmode, REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
@@ -423,7 +432,7 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         encoded+=encoded_result;
 */
-    if(registration_accept->presence & REGISTRATION_ACCEPT_5GS_DRX_PARAMETERS_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_5GS_DRX_PARAMETERS_PRESENT)
        == REGISTRATION_ACCEPT_5GS_DRX_PARAMETERS_PRESENT){
       if((encoded_result = encode__5gsdrx_parameters (registration_accept->_5gsdrxparameters, REGISTRATION_ACCEPT_5GS_DRX_PARAMETERS_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
