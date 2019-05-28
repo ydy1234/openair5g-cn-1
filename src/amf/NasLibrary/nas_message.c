@@ -128,13 +128,6 @@ int nas_message_encode (
   //printf("security type %x\n",msg->header.security_header_type);
   int                                     size = _nas_message_header_encode (buffer, &msg->header, length);
   //printf("_nas_message_header_encode, size:%d\n", size);
- 
-  int i = 0;
-  #if 0
-  for(;i<7;i++)
-    printf("in nas_message_encode(after _nas_message_header_encode) :nas msg byte test bype[%d] = 0x%x\n",i,buffer[i]);
-  #endif
-  
   if (size < 0) {
     //OAILOG_FUNC_RETURN (LOG_NAS, TLV_BUFFER_TOO_SHORT);
   } else if (size > 1) {
@@ -143,7 +136,8 @@ int nas_message_encode (
      */
     //printf("encode protected nas msg header 1.2.1\n");
     bytes = _nas_message_protected_encode (buffer + size, &msg->security_protected, length - size, fivegmm_security_context);
-    //printf("_nas_message_protected_encode byptes:%d\n", bytes);
+    
+	//printf("_nas_message_protected_encode byptes:%d\n", bytes);
 
 	#if 0
 	for(i=0;i<11;i++)
@@ -173,6 +167,7 @@ int nas_message_encode (
       /*
        * Set the message authentication code of the NAS message
        */
+
       *(uint32_t *) (buffer + 2*sizeof (uint8_t)) = htonl (mac);
 
       if (fivegmm_security_context) {
@@ -378,9 +373,7 @@ static int _nas_message_header_encode (
       /*
        * Encode the message authentication code
        */
-      //printf("encode mac\n");
-      ENCODE_U32 (buffer + size, header->message_authentication_code, size);
-      //printf("message_authentication_code:0x%x, size = %d\n",header->message_authentication_code, size);
+	  ENCODE_U32 (buffer + size, header->message_authentication_code, size);
 	  /*
        * Encode the sequence number
        */
