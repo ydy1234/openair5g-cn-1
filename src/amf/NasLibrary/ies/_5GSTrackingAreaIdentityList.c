@@ -106,6 +106,7 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
     }
    
     ielen = *(buffer + decoded);
+    printf("_5GSTrackingAreaIdentityList len(%d)\n",ielen);
     decoded++;
     CHECK_LENGTH_DECODER (len - decoded, ielen);
     
@@ -113,8 +114,11 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
     struct PartialTrackingAreaIdentityList * lastPartialTrackingAreaIdentityList = NULL;
 
     while(len - decoded > 0){
-      if((*(buffer+decoded)) == 0x0)
+//      if((*(buffer+decoded)) == 0x0)
+//        break;
+      if((ielen+2) == decoded)
         break;
+      printf("decoded(%d) decode__5gs_tracking_area_identity_list\n",decoded);
       DECODE_U8(buffer+decoded,octet,decoded);
       _5gstrackingareaidentitylist->listSize += 1;
 	  printf("octet:0x%x,octet&0x60:0x%x\n", octet, octet&0x60);
