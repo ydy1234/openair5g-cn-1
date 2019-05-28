@@ -169,7 +169,7 @@ int nas_message_encode (
        */
 
       *(uint32_t *) (buffer + 2*sizeof (uint8_t)) = htonl (mac);
-
+      printf("encoded mac(%x)\n",htonl (mac));
       if (fivegmm_security_context) {
         fivegmm_security_context->dl_count.seq_num += 1;
 
@@ -269,11 +269,13 @@ int nas_message_decode (
           length - offset,
           SECU_DIRECTION_UPLINK,
           fivegmm_security_context);
+      printf("decoded mac(%x)\n",mac);
+      printf("mac in buffer(%x)\n",msg->header.message_authentication_code);
       /*
        * Check NAS message integrity
        */
       if (mac == msg->header.message_authentication_code) {
-        //printf("mac_matched\n");
+        printf("mac_matched!!!!!!!!!!!!!!!!!!!\n");
         status->mac_matched = 1;
       } else {
         //OAILOG_DEBUG (LOG_NAS, "msg->header.message_authentication_code = %04X != computed = %04X\n", msg->header.message_authentication_code, mac);
@@ -688,7 +690,7 @@ static uint32_t _nas_message_get_mac (
        * length in bits
        */
       stream_cipher.blength = length << 3;
-      //nas_stream_encrypt_nia1 (&stream_cipher, mac);
+      nas_stream_encrypt_nia1 (&stream_cipher, mac);
       //OAILOG_DEBUG (LOG_NAS, "NAS_SECURITY_ALGORITHMS_EIA1 returned MAC %x.%x.%x.%x(%u) for length %lu direction %d, count %d\n",
       //    mac[0], mac[1], mac[2], mac[3], *((uint32_t *) & mac), length, direction, count);
       mac32 = (uint32_t *) & mac;

@@ -32,7 +32,7 @@
 
 #include <unordered_map>
 
-#include "amf-services.h"
+//#include "amf-services.h"
 
 ////////////////////////////////////////////////// itti header /////////////////////////////////
 extern "C"{
@@ -111,11 +111,11 @@ void * demo_receiver_thread(__attribute__((unused)) void *args)
 }
 */
 
-
+/*
 using namespace org::openapitools::server::api;
 using namespace std;
 std::unordered_map<std::string,org::openapitools::server::model::UeContext> RecordUEContext;
-
+*/
 int main(
     int argc,
     char * argv[])
@@ -131,16 +131,16 @@ int main(
     //nas_mm_init();
     CHECK_INIT_RETURN (sctp_init());
     CHECK_INIT_RETURN (ngap_amf_init());
-    CHECK_INIT_RETURN (amf_app_init());
+    //CHECK_INIT_RETURN (amf_app_init());
 
 
 
     //TTN (16/05/2019) first activate NGAP->SCTP
 
-    MessageDef                             *message_p;
+    //MessageDef                             *message_p;
     //Activate NGAP and wait for connection from gNB
-    message_p = itti_alloc_new_message (TASK_AMF_MAIN, ACTIVATE_MESSAGE);
-    itti_send_msg_to_task (TASK_NGAP, INSTANCE_DEFAULT, message_p);
+    //message_p = itti_alloc_new_message (TASK_AMF_MAIN, ACTIVATE_MESSAGE);
+    //itti_send_msg_to_task (TASK_NGAP, INSTANCE_DEFAULT, message_p);
 
 
 /*
@@ -194,11 +194,13 @@ int main(
 */
 
     //launch AMF services
+/*
     Pistache::Address amf_service_addr(Pistache::Ipv4::any(), Pistache::Port(5001));
     AMFServicesManager amfServicesManager(amf_service_addr);
     amfServicesManager.init(2);
     amfServicesManager.start();
     amfServicesManager.shutdown();
+*/
     //std::thread amf_services_manager_app(&AMFServicesManager::start, amfServicesManager);
 
     itti_wait_tasks_end();

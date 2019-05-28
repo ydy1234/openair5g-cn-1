@@ -326,7 +326,7 @@ static int sctp_create_new_listener (SctpInit * init_p)
       ip4_addr = (struct sockaddr_in *)&addr[i];
       ip4_addr->sin_family = AF_INET;
       ip4_addr->sin_port = htons (init_p->port);
-      ip4_addr->sin_addr.s_addr = htonl(init_p->ipv4_address[i]);
+      ip4_addr->sin_addr.s_addr = init_p->ipv4_address[i]; //htonl(init_p->ipv4_address[i]);
       char ipv4[INET_ADDRSTRLEN];
       inet_ntop (AF_INET, (void*)&ip4_addr->sin_addr.s_addr, ipv4, INET_ADDRSTRLEN);
       OAILOG_DEBUG (LOG_SCTP, "\t- %s\n", ipv4);

@@ -26,6 +26,9 @@ endif()
 
 message ("NETTLE VERSION_INSTALLED  = ${NETTLE_VERSION}")
 
+pkg_search_module(CRYPTO libcrypto REQUIRED)
+include_directories(${CRYPTO_INCLUDE_DIRS})
+
 string(REGEX REPLACE "([0-9]+).*" "\\1" NETTLE_VERSION_MAJOR ${NETTLE_VERSION})
 string(REGEX REPLACE "[0-9]+\\.([0-9]+).*" "\\1" NETTLE_VERSION_MINOR ${NETTLE_VERSION})
 message ("NETTLE_VERSION_MAJOR = ${NETTLE_VERSION_MAJOR}")
@@ -128,9 +131,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/sm/msg)
 #include_directories("${NGAP_C_DIR}")
 
 file(GLOB NAS_C_CODE
-    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/Security/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/Security/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/test/*.c
+    #${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/test/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/ies/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/mm/msg/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/sm/msg/*.c
@@ -194,14 +197,14 @@ file(GLOB SRCS
     #${OPENAIR5GCN_DIR}/build/amf/build/r15.2/*.c
 )
 
-#add_executable(${PROJECT_NAME} ${OPENAIR5GCN_DIR}/src/amf/AmfMain.cpp ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NGAP_LAYER_SOURCE_CODE} ${NGAP_LIB_SOURCE_CODE} )
-#target_link_libraries(${PROJECT_NAME} pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES} )
+add_executable(${PROJECT_NAME} ${OPENAIR5GCN_DIR}/src/amf/AmfMain.cpp ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NGAP_LAYER_SOURCE_CODE} ${NGAP_LIB_SOURCE_CODE} )
+target_link_libraries(${PROJECT_NAME} pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES} ${CRYPTO_LIBRARIES} m)
 
 #add_executable(ngap ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/example/ngapTestMain.c ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NGAP_C_DIR})
 #target_link_libraries(ngap pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES})
 
-add_executable(nas ${OPENAIR5GCN_DIR}/src/amf/NasLibrary/test/NasMain.c ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NGAP_LAYER_SOURCE_CODE} ${NGAP_LIB_SOURCE_CODE} )
-target_link_libraries(nas pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES} )
+#add_executable(nas ${OPENAIR5GCN_DIR}/src/amf/NasLibrary/test/NasMain.c ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NGAP_LAYER_SOURCE_CODE} ${NGAP_LIB_SOURCE_CODE} )
+#target_link_libraries(nas pistache pthread rt ${LFDS} sctp crypt ${NETTLE_LIBRARIES} ${CRYPTO_LIBRARIES} m)
 
 
 #add_executable(fake_gNB ${OPENAIR5GCN_DIR}/src/amf/test/fake_gNB.c ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_primitives_client.c ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NGAP_LAYER_SOURCE_CODE} ${NGAP_LIB_SOURCE_CODE} )
