@@ -6,7 +6,7 @@
 #include "TLVDecoder.h"
 #include "_5GMMCause.h"
 
-int encode__5gmm_cause ( _5GMMCause * _5gmmcause, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
+int encode__5gmm_cause ( _5GMMCause  _5gmmcause, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
   uint32_t                                encoded = 0;
 
@@ -20,7 +20,7 @@ int encode__5gmm_cause ( _5GMMCause * _5gmmcause, uint8_t iei, uint8_t * buffer,
     encoded++;
   }
 
-  *(buffer + encoded) = *_5gmmcause;
+  *(buffer + encoded) = _5gmmcause;
   encoded++;
   return encoded;
 }

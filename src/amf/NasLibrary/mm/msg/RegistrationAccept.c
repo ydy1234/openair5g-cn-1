@@ -27,7 +27,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
     
     while(len - decoded >0){
       uint8_t ieiDecoded = *(buffer+decoded);
-      printf("ieiDecoded(%x)\n",ieiDecoded&0xf0);
+      //printf("ieiDecoded(%x)\n",ieiDecoded&0xf0);
       if(ieiDecoded == 0x0)
         break;
 	  switch((ieiDecoded&0xf0)){
@@ -70,7 +70,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           break;
       }
 	  #endif
-      printf("ieiDecoded(%x)\n",ieiDecoded);
+      //printf("ieiDecoded(%x)\n",ieiDecoded);
       switch(ieiDecoded){
         case REGISTRATION_ACCEPT_PLMN_LIST_IEI:
         if((decoded_result = decode_plmn_list (registration_accept->plmnlist, REGISTRATION_ACCEPT_PLMN_LIST_IEI, buffer+decoded,len-decoded))<0)
@@ -81,8 +81,6 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           }
         break;
 
-        //ºóÃæÔÙ²âÊÔ;
-       
         case REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI:
         if((decoded_result =  decode__5gs_tracking_area_identity_list(&registration_accept->_5gstrackingareaidentitylist, REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;

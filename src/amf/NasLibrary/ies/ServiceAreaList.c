@@ -151,7 +151,7 @@ int decode_service_area_list ( ServiceAreaList * servicearealist, uint8_t iei, u
         partialServiceAreaList->is_allowed = true;
       switch((octet&0x60)>>5){
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_NON_CONSECUTIVE_TAC_VALUES:
-          printf("LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_NON_CONSECUTIVE_TAC_VALUES\n");
+          //printf("LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_NON_CONSECUTIVE_TAC_VALUES\n");
           partialServiceAreaList->typeOfList = 0x00;
           partialServiceAreaList->numberOfElements = octet&0x1f;
 
