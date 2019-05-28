@@ -1080,7 +1080,7 @@ int reg_accept()
 	 mm_msg->specific_msg.registration_accept._5gsregistrationresult.is_SMS_allowed =  1;
 	 mm_msg->specific_msg.registration_accept._5gsregistrationresult.registration_result_value = 0x07;
 
-	 mm_msg->specific_msg.registration_accept.presence = 0x07;
+	 mm_msg->specific_msg.registration_accept.presence = 0x0007;
 
 
 	 for(int i = 0; i <15; i++)
@@ -1098,7 +1098,7 @@ int reg_accept()
 	 
 	 struct PartialTrackingAreaIdentityList partialTrackingAreaIdentityList;
 	 memset(&partialTrackingAreaIdentityList, 0, sizeof(struct PartialTrackingAreaIdentityList));
-     partialTrackingAreaIdentityList.typeOfList = 0x1;
+         partialTrackingAreaIdentityList.typeOfList = 0x1;
 	 partialTrackingAreaIdentityList.numberOfElements = 2;
 	 partialTrackingAreaIdentityList.mcc_mnc = &mm;
 	 
@@ -1113,7 +1113,8 @@ int reg_accept()
 
 	 tai1.tac = 0x11;
 	 tai1.tacContinued = 0x12;
-	 tai1.next = &tai2;
+	 //tai1.next = &tai2;
+         tai1.next = NULL;
 
 
      //0b01
@@ -1127,8 +1128,7 @@ int reg_accept()
      smm1.mnc = 0x01,
      smm1.next = NULL;
 
-	 
-	 partialTrackingAreaIdentityList.mcc_mnc = &smm1;
+     partialTrackingAreaIdentityList.mcc_mnc = &smm1;
      partialTrackingAreaIdentityList.tai = &tai1;
 	 
      //partialTrackingAreaIdentityList->next = NULL;

@@ -10,27 +10,23 @@ int encode_additional_5g_security_information ( Additional5GSecurityInformation 
 {
     uint8_t *lenPtr;
     uint32_t encoded = 0;
-    int encode_result;
+    uint8_t bitStream = 0x0;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,ADDITIONAL_5G_SECURITY_INFORMATION_MINIMUM_LENGTH , len);
     
-
-       if( iei >0  )
-       {
-           *buffer=iei;
-               encoded++;
-       }
-
-
+    if( iei >0  ){
+      *buffer=iei;
+      encoded++;
+    }
 
     lenPtr = (buffer + encoded);
     encoded++;
 
+    if(additional5gsecurityinformation.rinmr)
+      bitStream |= 0x02;
+    if(additional5gsecurityinformation.hdp)
+      bitStream |= 0x01;
 
-
-    if ((encode_result = encode_bstring (additional5gsecurityinformation, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
-        return encode_result;
-    else
-        encoded += encode_result;
+    ENCODE_U8(buffer+encoded,bitStream,encoded);
 
     *lenPtr = encoded - 1 - ((iei > 0) ? 1 : 0);    
     return encoded;
@@ -38,9 +34,9 @@ int encode_additional_5g_security_information ( Additional5GSecurityInformation 
 
 int decode_additional_5g_security_information ( Additional5GSecurityInformation * additional5gsecurityinformation, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-	int decoded=0;
-	uint8_t ielen=0;
-	int decode_result;
+    int decoded=0;
+    uint8_t ielen=0;
+    uint8_t bitStream = 0x0;
 
     if (iei > 0)
     {
@@ -48,16 +44,21 @@ int decode_additional_5g_security_information ( Additional5GSecurityInformation 
         decoded++;
     }
 
-
     ielen = *(buffer + decoded);
     decoded++;
     CHECK_LENGTH_DECODER (len - decoded, ielen);
 
-
-    if((decode_result = decode_bstring (additional5gsecurityinformation, ielen, buffer + decoded, len - decoded)) < 0)
-        return decode_result;
+    DECODE_U8(buffer+decoded,bitStream,decoded);
+    if(bitStream&0x02)
+      additional5gsecurityinformation->rinmr = true;
     else
-        decoded += decode_result;
-            return decoded;
+      additional5gsecurityinformation->rinmr = false;
+
+    if(bitStream&0x01)
+      additional5gsecurityinformation->hdp = true;
+    else
+      additional5gsecurityinformation->rinmr = false;
+
+    return decoded;
 }
 

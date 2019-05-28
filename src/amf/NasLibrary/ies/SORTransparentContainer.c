@@ -8,6 +8,7 @@
 
 int encode_sor_transparent_container ( SORTransparentContainer sortransparentcontainer, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+/*
     uint8_t *lenPtr;
     uint32_t encoded = 0;
     int encode_result;
@@ -39,10 +40,12 @@ int encode_sor_transparent_container ( SORTransparentContainer sortransparentcon
     *lenPtr = res%(1<<8);
 
     return encoded;
+*/
 }
 
 int decode_sor_transparent_container ( SORTransparentContainer * sortransparentcontainer, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+/*
 	int decoded=0;
 	uint8_t ielen=0;
 	int decode_result;
@@ -66,5 +69,6 @@ int decode_sor_transparent_container ( SORTransparentContainer * sortransparentc
     else
         decoded += decode_result;
             return decoded;
+*/
 }
 

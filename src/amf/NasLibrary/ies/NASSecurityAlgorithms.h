@@ -24,7 +24,10 @@
 #define NAS_SECURITY_ALGORITHMS_NIA6 0b0110
 #define NAS_SECURITY_ALGORITHMS_NIA7 0b0111
 
-typedef bstring NASSecurityAlgorithms;
+typedef struct{
+  uint8_t typeOfCipheringAlgorithm:4;
+  uint8_t typeOfIntegrityProtectionAlgorithm:4;
+} NASSecurityAlgorithms;
 
 int encode_nas_security_algorithms ( NASSecurityAlgorithms nassecurityalgorithms, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 int decode_nas_security_algorithms ( NASSecurityAlgorithms * nassecurityalgorithms, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
