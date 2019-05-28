@@ -193,7 +193,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           registration_accept->presence |= REGISTRATION_ACCEPT_5GS_DRX_PARAMETERS_PRESENT;
         }
 		//test need it ;while²»ÄÜÍË³ö;????????????????????????????
-		return decoded; 
+		//return decoded; 
         break;
       }
     }

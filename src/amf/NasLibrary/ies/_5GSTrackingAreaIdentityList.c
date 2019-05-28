@@ -113,7 +113,8 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
     while(len - decoded > 0){
       DECODE_U8(buffer+decoded,octet,decoded);
       _5gstrackingareaidentitylist->listSize += 1;
-	 
+	  printf("octet:0x%x,octet&0x60:0x%x\n", octet, octet&0x60);
+	  sleep(2);
       struct PartialTrackingAreaIdentityList * partialTrackingAreaIdentityList = (struct PartialTrackingAreaIdentityList*)calloc(1,sizeof(struct PartialTrackingAreaIdentityList));
 	  switch(octet&0x60){
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_NON_CONSECUTIVE_TAC_VALUES:

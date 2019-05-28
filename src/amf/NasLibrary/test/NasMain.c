@@ -107,7 +107,7 @@ int auth_request()
 	 int i = 0;
 	 
 	 #if 0
-	 for(;i<30;i++)
+	 for(;i<20;i++)
 	   printf("nas msg byte test bype[%d] = 0x%x\n",i,data[i]);
 	 #endif
 	 
@@ -1090,17 +1090,19 @@ int reg_accept()
 		 
 	 }
 
+     #if 0
 	 struct MccMnc mm;
 	 memset(&mm, 0, sizeof(struct MccMnc));
 	 mm.mcc = 0x21;
 	 mm.mnc = 0x22;
 	 mm.next= NULL;
+	 #endif
 	 
 	 struct PartialTrackingAreaIdentityList partialTrackingAreaIdentityList;
 	 memset(&partialTrackingAreaIdentityList, 0, sizeof(struct PartialTrackingAreaIdentityList));
-         partialTrackingAreaIdentityList.typeOfList = 0x1;
-	 partialTrackingAreaIdentityList.numberOfElements = 2;
-	 partialTrackingAreaIdentityList.mcc_mnc = &mm;
+     partialTrackingAreaIdentityList.typeOfList = 0x1;
+	 partialTrackingAreaIdentityList.numberOfElements = 1;
+	 //partialTrackingAreaIdentityList.mcc_mnc = &mm;
 	 
 	 
 	 struct TrackingAreaIdentity tai1, tai2;
@@ -1113,8 +1115,7 @@ int reg_accept()
 
 	 tai1.tac = 0x11;
 	 tai1.tacContinued = 0x12;
-	 //tai1.next = &tai2;
-         tai1.next = NULL;
+	 tai1.next = NULL;
 
 
      //0b01
@@ -1130,8 +1131,7 @@ int reg_accept()
 
      partialTrackingAreaIdentityList.mcc_mnc = &smm1;
      partialTrackingAreaIdentityList.tai = &tai1;
-	 
-     //partialTrackingAreaIdentityList->next = NULL;
+	 partialTrackingAreaIdentityList.next = NULL;
 	 
 	 _5GSTrackingAreaIdentityList  _5gstrackingareaidentitylist;
 
@@ -1295,13 +1295,24 @@ int reg_accept()
 
      
 	 int numberofelements1 = mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->numberOfElements;
+     struct MccMnc *smmcc = mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->mcc_mnc;
+	 for(int i  = 0; i<numberofelements1; i++)
+	 {
+	     printf("partialTrackingAreaIdentityList MccMnc mcc:0x%x, mnc:0x%x\n",
+		 smmcc->mcc,smmcc->mnc);
+
+		 if(smmcc->next)
+           smmcc = smmcc->next; 
+     }
+   
 	 struct TrackingAreaIdentity *tailist = mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->tai; 
 	 for(int i  = 0; i<numberofelements1; i++)
 	 {
 	     printf("partialTrackingAreaIdentityList tai tac:0x%x, tacContinued:0x%x\n",
 		 tailist->tac,tailist->tacContinued);
-		 
-         tailist = tailist->next; 
+
+		 if(tailist->next)
+           tailist = tailist->next; 
      }	
     
 
@@ -1470,13 +1481,22 @@ int reg_accept()
 	 
 	
 	 int numberofelements = decoded_mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->numberOfElements;
+     struct MccMnc *smmcc1 = decoded_mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->mcc_mnc;
+	 for(int i  = 0; i<numberofelements1; i++)
+	 {
+	     printf("partialTrackingAreaIdentityList MccMnc mcc:0x%x, mnc:0x%x\n",
+		 smmcc1->mcc,smmcc1->mnc);
+
+		 if(smmcc1->next)
+             smmcc1 = smmcc1->next; 
+     }
 	 struct TrackingAreaIdentity *tailist1 = decoded_mm_msg->specific_msg.registration_accept._5gstrackingareaidentitylist.partialTrackingAreaIdentityList->tai; 
 	 for(int i  = 0; i<numberofelements; i++)
 	 {
 		printf("partialTrackingAreaIdentityList tai tac:0x%x, tacContinued:0x%x\n",
 		tailist1->tac,tailist1->tacContinued);
-		
-		tailist1 = tailist1->next; 
+		if(tailist1->next)
+		    tailist1 = tailist1->next; 
 	 }  
 
 	  printf("_5gsnetworkfeaturesupport,mpsi:0x%x,iwk_n26:0x%x,emf:0x%x,emc:0x%x,ims_VoPS_N3GPP:0x%x,ims_VoPS_3GPP:0x%x,mcsi:0x%x,emcn:0x%x\n",
@@ -1567,7 +1587,6 @@ int main()
   auth_reject();
   auth_result();
   #endif
-  
   //reg_request();
  
   reg_accept();
