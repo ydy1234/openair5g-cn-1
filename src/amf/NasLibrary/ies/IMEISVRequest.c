@@ -11,7 +11,7 @@ int encode_imeisv_request ( IMEISVRequest imeisvrequest, uint8_t iei, uint8_t * 
     uint32_t encoded = 0;
     uint8_t bitStream = 0x0;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,IMEISV_REQUEST_MINIMUM_LENGTH , len);
-   
+    
     bitStream = ((iei&0x0f)<<4) | imeisvrequest;
     ENCODE_U8(buffer+encoded,bitStream,encoded);
 
@@ -27,7 +27,7 @@ int decode_imeisv_request ( IMEISVRequest * imeisvrequest, uint8_t iei, uint8_t 
     if(iei != (bitStream&0xf0>>4))
       return -1;
     *imeisvrequest = bitStream&0x07;
-
+    
     return decoded;
 }
 

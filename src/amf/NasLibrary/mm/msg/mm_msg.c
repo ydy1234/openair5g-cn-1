@@ -59,7 +59,7 @@ fivegmm_msg_encode (
     //OAILOG_FUNC_RETURN (LOG_NAS_EMM, header_result);
     return header_result;
   }
-
+  
   buffer += header_result;
   len -= header_result;
   switch (msg->header.message_type) { //need more msg encode
@@ -98,6 +98,15 @@ fivegmm_msg_encode (
 	  break;
 	  case IDENTITY_RESPONSE:
 	  	  encode_result = encode_identity_response(&msg->specific_msg.identity_response, buffer, len);
+	  break;
+	  case SECURITY_MODE_COMMAND:
+	  	  encode_result = encode_security_mode_command(&msg->specific_msg.security_mode_command, buffer, len);
+	  break;
+	  case SECURITY_MODE_COMPLETE:
+	  	  encode_result = encode_security_mode_complete(&msg->specific_msg.security_mode_complete, buffer, len);
+	  break;
+	  case SECURITY_MODE_REJECT:
+	  	  encode_result = encode_security_mode_reject(&msg->specific_msg.security_mode_reject, buffer, len);
 	  break;
 	  
   }
@@ -227,6 +236,15 @@ mm_msg_decode (
 	  break;
 	  case IDENTITY_RESPONSE:
 	  	  decode_result = decode_identity_response(&msg->specific_msg.identity_response, buffer, len);
+	  break;
+	  case SECURITY_MODE_COMMAND:
+	  	  decode_result = decode_security_mode_command(&msg->specific_msg.security_mode_command, buffer, len);
+	  break;
+	  case SECURITY_MODE_COMPLETE:
+	  	  decode_result = decode_security_mode_complete(&msg->specific_msg.security_mode_complete, buffer, len);
+	  break;
+	  case SECURITY_MODE_REJECT:
+	  	  decode_result = decode_security_mode_reject(&msg->specific_msg.security_mode_reject, buffer, len);
 	  break;
   }
   if (decode_result < 0) {
