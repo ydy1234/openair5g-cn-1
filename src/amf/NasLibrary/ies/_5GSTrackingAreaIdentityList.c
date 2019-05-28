@@ -183,10 +183,12 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
         case LIST_OF_TAIS_BELONGING_TO_DIFFERENT_PLMNS:
           partialTrackingAreaIdentityList->typeOfList = 0x02;
           partialTrackingAreaIdentityList->numberOfElements = octet&0x1f;
+          printf("LIST_OF_TAIS_BELONGING_TO_DIFFERENT_PLMNS numberOfElements(%d)\n",octet&0x1f);
           elementIndex = 0;
           struct TrackingAreaIdentity * lastTai3 = NULL;
           struct MccMnc * last_mcc_mnc = NULL;
-          for (;elementIndex<(octet&0x1f);elementIndex++){
+          for (;elementIndex<partialTrackingAreaIdentityList->numberOfElements;elementIndex++){
+            printf("LIST_OF_TAIS_BELONGING_TO_DIFFERENT_PLMNS elementIndex(%d)\n",elementIndex);
             DECODE_U8(buffer+decoded,octet,decoded);
             struct MccMnc * mcc_mnc = (struct MccMnc*)calloc(1,sizeof(struct MccMnc));
             mcc_mnc->mcc = 0x0000 | octet;
@@ -216,6 +218,7 @@ int decode__5gs_tracking_area_identity_list ( _5GSTrackingAreaIdentityList * _5g
             last_mcc_mnc->next = NULL;
           if(lastTai3)
             lastTai3->next = NULL;
+        printf("LIST_OF_TAIS_BELONGING_TO_DIFFERENT_PLMNS decoded(%d)\n",decoded);
         break;
       }
       if(lastPartialTrackingAreaIdentityList)

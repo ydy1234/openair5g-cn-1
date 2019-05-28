@@ -44,7 +44,7 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           return decoded_result;
         else{
           decoded+=decoded_result;
-          registration_accept->presence |= REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI;
+          registration_accept->presence |= REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_PRESENT;
           }
         break;
 	    case REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI:
