@@ -142,7 +142,6 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
         break;
         #endif
 
-		#if 0
         case REGISTRATION_ACCEPT_SERVICE_AREA_LIST_IEI:
         if((decoded_result = decode_service_area_list (&registration_accept->servicearealist, REGISTRATION_ACCEPT_SERVICE_AREA_LIST_IEI, buffer+decoded,len-decoded))<0)
           return decoded_result;
@@ -151,7 +150,6 @@ int decode_registration_accept( registration_accept_msg *registration_accept, ui
           registration_accept->presence |= REGISTRATION_ACCEPT_SERVICE_AREA_LIST_PRESENT;
         }
         break;
-        #endif
 		
         case REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_IEI:
         if((decoded_result = decode_gprs_timer3 (&registration_accept->t3512, REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_IEI, buffer+decoded,len-decoded))<0)
@@ -307,8 +305,6 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
     else
         encoded+=encoded_result;
 */
-    printf("registration_accept->presence & REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT(%x)\n",registration_accept->presence & REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT);
-    printf("REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT(%x)\n",REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT);
     if((registration_accept->presence & REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT)
        == REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT){
       printf("?????\n");
@@ -363,15 +359,13 @@ int encode_registration_accept( registration_accept_msg *registration_accept, ui
         encoded+=encoded_result;
     }
 
-	#if 0
-    if(registration_accept->presence & REGISTRATION_ACCEPT_SERVICE_AREA_LIST_PRESENT
+    if((registration_accept->presence & REGISTRATION_ACCEPT_SERVICE_AREA_LIST_PRESENT)
        == REGISTRATION_ACCEPT_SERVICE_AREA_LIST_PRESENT){
       if((encoded_result = encode_service_area_list (registration_accept->servicearealist, REGISTRATION_ACCEPT_SERVICE_AREA_LIST_IEI, buffer+encoded,len-encoded))<0)
         return encoded_result;
       else
         encoded+=encoded_result;
     }
-    #endif
     if((registration_accept->presence & REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_PRESENT)
        == REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_PRESENT){
       if((encoded_result = encode_gprs_timer3 (registration_accept->t3512, REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_IEI, buffer+encoded,len-encoded))<0)

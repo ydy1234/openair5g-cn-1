@@ -116,6 +116,7 @@ int encode_service_area_list ( ServiceAreaList servicearealist, uint8_t iei, uin
 
 int decode_service_area_list ( ServiceAreaList * servicearealist, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+    printf("decode_service_area_list\n");
     int decoded=0;
     uint8_t ielen=0;
     uint8_t octet = 0x0;
@@ -128,6 +129,7 @@ int decode_service_area_list ( ServiceAreaList * servicearealist, uint8_t iei, u
     }
 
     ielen = *(buffer + decoded);
+    printf("decode_service_area_list ielen(%d)\n",ielen);
     decoded++;
     CHECK_LENGTH_DECODER (len - decoded, ielen);
 
@@ -135,16 +137,21 @@ int decode_service_area_list ( ServiceAreaList * servicearealist, uint8_t iei, u
     struct PartialServiceAreaList * lastPartialServiceAreaList = NULL;
 
     while(len - decoded > 0){
+      if((ielen+2)==decoded)
+        break;
+      //printf("decoded(%d) decode_service_area_list\n",decoded);
       DECODE_U8(buffer+decoded,octet,decoded);
       servicearealist->listSize += 1;
+      //printf("octet:0x%x,octet&0x60:0x%x\n", octet, octet&0x60);
       struct PartialServiceAreaList * partialServiceAreaList = (struct PartialServiceAreaList*)calloc(1,sizeof(struct PartialServiceAreaList));
       
       if(((octet&0x80)>>8) == 0x01)
         partialServiceAreaList->is_allowed = true;
       else
         partialServiceAreaList->is_allowed = true;
-      switch(octet&0x60){
+      switch((octet&0x60)>>5){
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_NON_CONSECUTIVE_TAC_VALUES:
+          printf("LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_NON_CONSECUTIVE_TAC_VALUES\n");
           partialServiceAreaList->typeOfList = 0x00;
           partialServiceAreaList->numberOfElements = octet&0x1f;
 
@@ -161,7 +168,7 @@ int decode_service_area_list ( ServiceAreaList * servicearealist, uint8_t iei, u
 
           int elementIndex = 0;
           struct TrackingAreaIdentity * lastTai = NULL;
-          for (;elementIndex<(octet&0x1f);elementIndex++){
+          for (;elementIndex<partialServiceAreaList->numberOfElements;elementIndex++){
             struct TrackingAreaIdentity * tai = (struct TrackingAreaIdentity*)calloc(1,sizeof(struct TrackingAreaIdentity));
             DECODE_U8(buffer+decoded,octet,decoded);
             tai->tac = octet;
@@ -177,6 +184,7 @@ int decode_service_area_list ( ServiceAreaList * servicearealist, uint8_t iei, u
             lastTai->next = NULL;
         break;
         case LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_CONSECUTIVE_TAC_VALUES:
+          printf("LIST_OF_TACS_BELONGING_TO_ONE_PLMN_WITH_CONSECUTIVE_TAC_VALUES\n");
           partialServiceAreaList->typeOfList = 0x01;
           partialServiceAreaList->numberOfElements = octet&0x1f;
 
@@ -206,7 +214,7 @@ int decode_service_area_list ( ServiceAreaList * servicearealist, uint8_t iei, u
           elementIndex = 0;
           struct TrackingAreaIdentity * lastTai3 = NULL;
           struct MccMnc * last_mcc_mnc = NULL;
-          for (;elementIndex<(octet&0x1f);elementIndex++){
+          for (;elementIndex<partialServiceAreaList->numberOfElements;elementIndex++){
             DECODE_U8(buffer+decoded,octet,decoded);
             struct MccMnc * mcc_mnc = (struct MccMnc*)calloc(1,sizeof(struct MccMnc));
             mcc_mnc->mcc = 0x0000 | octet;

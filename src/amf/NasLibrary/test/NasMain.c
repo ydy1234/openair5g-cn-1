@@ -1181,7 +1181,7 @@ int reg_accept()
 	 
      smm11.mcc = 0x01,
      smm11.mnc = 0x01,
-     smm11.next = &smm12;
+     smm11.next = NULL;
       
      struct TrackingAreaIdentity stai1, stai2;
      memset(&stai1, 0, sizeof(stai1));
@@ -1351,8 +1351,7 @@ int reg_accept()
       
       size =  mm_msg->specific_msg.registration_accept.servicearealist.listSize;
       printf("servicearealist,listsize:0x%x\n", size);
-
-	  #if 0
+   #if 0
       struct PartialServiceAreaList  *decodePsr = mm_msg->specific_msg.registration_accept.servicearealist.partialServiceAreaList;
       printf("servicearealist, partialServiceAreaList,is_allowed:0x%x,typeOfList:0x%x,numberOfElements:0x%x\n",
       decodePsr->is_allowed, decodePsr->typeOfList,decodePsr->numberOfElements);
@@ -1371,9 +1370,8 @@ int reg_accept()
            decodestai->tac,decodestai->tacContinued);
            decodestai = decodestai->next;
       }
-	
-      #endif
-	  
+#endif	
+  
       printf("t3512, unit:0x%x, timeValue:0x%x\n",
       mm_msg->specific_msg.registration_accept.t3512.unit,
       mm_msg->specific_msg.registration_accept.t3512.timeValue);
@@ -1531,8 +1529,7 @@ int reg_accept()
       decoded_mm_msg->specific_msg.registration_accept.networkslicingindication.dcni ,
       decoded_mm_msg->specific_msg.registration_accept.networkslicingindication.nssci);
 
-      #if 0
-      size =  mm_msg->specific_msg.registration_accept.servicearealist.listsize;
+      size =  mm_msg->specific_msg.registration_accept.servicearealist.listSize;
       printf("servicearealist,listsize:0x%x\n", size);
 
       struct PartialServiceAreaList  *decodePsr = mm_msg->specific_msg.registration_accept.servicearealist.partialServiceAreaList;
@@ -1543,17 +1540,16 @@ int reg_accept()
       for(int i = 0; i< size; i++)
       {
            printf("servicearealist, partialServiceAreaList,mcc_mnc,mcc:0x%x,mnc:0x%x\n",
-           decmmc->mcc,decmmc->mac);
+           decmmc->mcc,decmmc->mnc);
            decmmc = decmmc->next;
       }
       struct TrackingAreaIdentity  *decodestai =  decodePsr->tai;
       for(int i = 0; i< size; i++)
       {
            printf("servicearealist, partialServiceAreaList,tai,tac:0x%x,tacContinued:0x%x\n",
-           decodestai->tac,decodestai->decodestai);
+           decodestai->tac,decodestai->tacContinued);
            decodestai = decodestai->next;
       }
-      #endif
 	  
       printf("t3512, unit:0x%x, timeValue:0x%x\n",
           decoded_mm_msg->specific_msg.registration_accept.t3512.unit,
