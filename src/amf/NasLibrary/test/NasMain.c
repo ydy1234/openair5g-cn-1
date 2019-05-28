@@ -1998,7 +1998,7 @@ int security_mode_command()
 		 
 	 mm_msg->specific_msg.security_mode_command.uesecuritycapability.nea = 0x05;
 	 mm_msg->specific_msg.security_mode_command.uesecuritycapability.nia = 0x06;
-     mm_msg->specific_msg.security_mode_command.presence = 0x07;
+     mm_msg->specific_msg.security_mode_command.presence = 0x1f;
 
 	 mm_msg->specific_msg.security_mode_command.imeisvrequest = 0x09;
 	 mm_msg->specific_msg.security_mode_command.epsnassecurityalgorithms.typeOfCipheringAlgoithm = 0x01;
@@ -2434,8 +2434,8 @@ int main()
   identity_response();
   #endif
   
-  //security_mode_command();
+  security_mode_command();
   //security_mode_complete();
-  security_mode_reject();
+  //security_mode_reject();
   return 0;
 }

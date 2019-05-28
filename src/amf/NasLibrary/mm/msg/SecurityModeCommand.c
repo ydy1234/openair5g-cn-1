@@ -41,6 +41,8 @@ int decode_security_mode_command( security_mode_command_msg *security_mode_comma
 	
     while(len-decoded>0){
       uint8_t ieiDecoded = *(buffer+decoded);
+      if(!ieiDecoded)
+        break;
 	  printf("ieiDecoded:0x%x,ieiDecoded&0xf0:0x%x\n", ieiDecoded,ieiDecoded&0xf0);
 	  sleep(1);
 	 
@@ -51,8 +53,8 @@ int decode_security_mode_command( security_mode_command_msg *security_mode_comma
           else{
             decoded+=decoded_result;
             security_mode_command->presence |= SECURITY_MODE_COMMAND_IMEISV_REQUEST_PRESENT;
+            printf("decoded imeisvrequest\n");
           }
-		  return decoded;
         break;  
       }
 
