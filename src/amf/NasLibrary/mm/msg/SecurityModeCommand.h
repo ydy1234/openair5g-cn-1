@@ -77,7 +77,7 @@ typedef struct security_mode_command_msg_tag{
 	Additional5GSecurityInformation additional5gsecurityinformation;
 	EAPMessage eapmessage;
 	ABBA abba;
-	S1UESecurityCapability s1uesecuritycapability;
+	//S1UESecurityCapability s1uesecuritycapability;
 }security_mode_command_msg;
 
 
