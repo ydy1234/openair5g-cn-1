@@ -29,23 +29,12 @@ int decode_security_mode_command( security_mode_command_msg *security_mode_comma
     else
         decoded+=decoded_result;
 
-    printf("nassecurityalgorithms,typeOfCipheringAlgorithm:0x%x,typeOfIntegrityProtectionAlgorithm:0x%x\n",
-	    security_mode_command->nassecurityalgorithms.typeOfCipheringAlgorithm,
-		security_mode_command->nassecurityalgorithms.typeOfIntegrityProtectionAlgorithm );
-	 printf("naskeysetidentifier,tsc:0x%x,naskeysetidentifier:0x%x\n",
-		security_mode_command->naskeysetidentifier.tsc,
-		security_mode_command->naskeysetidentifier.naskeysetidentifier);
-	 printf("uesecuritycapability.nea:0x%x,nia:0x%x\n",		
-		security_mode_command->uesecuritycapability.nea,
-		security_mode_command->uesecuritycapability.nia);
-	
+  
     while(len-decoded>0){
       uint8_t ieiDecoded = *(buffer+decoded);
       if(!ieiDecoded)
         break;
-	  printf("ieiDecoded:0x%x,ieiDecoded&0xf0:0x%x\n", ieiDecoded,ieiDecoded&0xf0);
-	  sleep(1);
-	 
+	  
       switch(ieiDecoded&0xf0){
         case SECURITY_MODE_COMMAND_IMEISV_REQUEST_IEI:
           if((decoded_result = decode_imeisv_request (&security_mode_command->imeisvrequest, SECURITY_MODE_COMMAND_IMEISV_REQUEST_IEI, buffer+decoded,len-decoded))<0)
@@ -53,7 +42,6 @@ int decode_security_mode_command( security_mode_command_msg *security_mode_comma
           else{
             decoded+=decoded_result;
             security_mode_command->presence |= SECURITY_MODE_COMMAND_IMEISV_REQUEST_PRESENT;
-            printf("decoded imeisvrequest\n");
           }
         break;  
       }

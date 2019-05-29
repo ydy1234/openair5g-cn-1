@@ -35,13 +35,10 @@ int encode_eap_message ( EAPMessage eapmessage, uint8_t iei, uint8_t * buffer, u
         encoded += encode_result;
 
     uint32_t res = encoded - 2 - ((iei > 0) ? 1 : 0);
-    printf("eap message length (%d)\n",res);
     *lenPtr =res/(1<<8);
-    printf("eap message length 1(%x)\n",*lenPtr);
     lenPtr++;
     *lenPtr = res%(1<<8);
-    printf("eap message length 2(%x)\n",*lenPtr);
-
+    
     return encoded;
 }
 
