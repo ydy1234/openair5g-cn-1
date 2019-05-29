@@ -115,13 +115,24 @@ send_NGAP_SetupRequest()
 
 	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
 
-
+        Ngap_NGAP_PDU_t  decoded_pdu;
+        Ngap_NGAP_PDU_t * ppdu = &decoded_pdu;
+        asn_dec_rval_t rc = asn_decode(NULL,ATS_ALIGNED_CANONICAL_PER,&asn_DEF_Ngap_NGAP_PDU,(void**)&ppdu,buffer_p,length);
+        printf("decode result(%d)\n",rc);
+        printf("decoded message present(%d)\n",decoded_pdu.present);
+        switch(decoded_pdu.present){
+          case Ngap_NGAP_PDU_PR_initiatingMessage:
+            printf("precedureCode(%d)\n",decoded_pdu.choice.initiatingMessage->procedureCode);
+            printf("message type(%d)\n",decoded_pdu.choice.initiatingMessage->value.present);
+        } 
+/*
 	 MessagesIds message_id = MESSAGES_ID_MAX;
      Ngap_NGAP_PDU_t decoded_pdu = {0};
      printf("1\n");
 	 bstring b = blk2bstr(buffer_p, length);
 	 
      ngap_amf_decode_pdu(&decoded_pdu,b, &message_id);
+*/
     #if 0
 	//connect to sctp and send message to AMF
 	sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
@@ -196,11 +207,11 @@ int main(
 	//send_NGAP_SetupFailure();
 	//test NGAP
 	//test gNB
-
+/*
 	while (1) {
 		sleep (1);
 	}
 
 	return (0);
-
+*/
 }

@@ -27,7 +27,7 @@ ngap_amf_encode_pdu (
   DevAssert (length != NULL);
   //ATS_UNALIGNED_CANONICAL_PER
   //ATS_ALIGNED_CANONICAL_PER
-  res = asn_encode_to_new_buffer(NULL, ATS_UNALIGNED_CANONICAL_PER, &asn_DEF_Ngap_NGAP_PDU, pdu);
+  res = asn_encode_to_new_buffer(NULL, ATS_ALIGNED_CANONICAL_PER, &asn_DEF_Ngap_NGAP_PDU, pdu);
   if (res.result.encoded > 0) {
     *buffer = res.buffer;
     *length = res.result.encoded;
