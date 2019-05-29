@@ -21,58 +21,59 @@ static const char * const ng_gnb_state_str [] = {"NGAP_INIT", "NGAP_RESETTING", 
 
 ngap_message_decoded_callback   messages_callback[][3] = {
     {0,0,0}, /*AMFConfigurationUpdate*/
-//    {0,0,0}, /*AMFStatusIndication*/
-//    {0,0,0}, /*CellTrafficTrace*/
-//    {0,0,0}, /*DeactivateTrace*/
-//    {0,0,0}, /*DownlinkNASTransport*/
-//    {0,0,0}, /*DownlinkNonUEAssociatedNRPPaTransport*/
-//    {0,0,0}, /*DownlinkRANConfigurationTransfer*/
-//    {0,0,0}, /*DownlinkRANStatusTransfer*/
-//    {0,0,0}, /*DownlinkUEAssociatedNRPPaTransport*/
-//    {ngap_amf_handle_error_indication,0,0}, /*ErrorIndication*/
-//    {0,0,0}, /*HandoverCancel*/
-//    {0,0,0}, /*HandoverNotification*/
-//    {0,0,0}, /*HandoverPreparation*/
-//    {0,0,0}, /*HandoverResourceAllocation*/
+    {0,0,0}, /*AMFStatusIndication*/
+    {0,0,0}, /*CellTrafficTrace*/
+    {0,0,0}, /*DeactivateTrace*/
+    {0,0,0}, /*DownlinkNASTransport*/
+    {0,0,0}, /*DownlinkNonUEAssociatedNRPPaTransport*/
+    {0,0,0}, /*DownlinkRANConfigurationTransfer*/
+    {0,0,0}, /*DownlinkRANStatusTransfer*/
+    {0,0,0}, /*DownlinkUEAssociatedNRPPaTransport*/
+    {0,0,0},/*{ngap_amf_handle_error_indication,0,0},*/ /*ErrorIndication*/
+    {0,0,0}, /*HandoverCancel*/
+    {0,0,0}, /*HandoverNotification*/
+    {0,0,0}, /*HandoverPreparation*/
+    {0,0,0}, /*HandoverResourceAllocation*/
+    {0,0,0},
 //    {
 //     0,ngap_amf_handle_initial_context_setup_response,
 //     ngap_amf_handle_initial_context_setup_failure}, /*InitialContextSetup*/
-    {ngap_amf_handle_initial_ue_message,0,0}, /*InitialUEMessage*/
-//    {0,0,0}, /*LocationReportingControl*/
-//    {0,0,0}, /*LocationReportingFailureIndication*/
-//    {0,0,0}, /*LocationReport
-//    {0,0,0}, /*NASNonDeliveryIndication*/
-//    {0,0,0}, /*NGReset*/
+   {ngap_amf_handle_initial_ue_message,0,0}, /*InitialUEMessage*/
+    {0,0,0}, /*LocationReportingControl*/
+    {0,0,0}, /*LocationReportingFailureIndication*/
+    {0,0,0}, /*LocationReport*/
+    {0,0,0}, /*NASNonDeliveryIndication*/
+    {0,0,0}, /*NGReset*/
     {ngap_amf_handle_ng_setup_request,0,0}, /*NGSetup*/
-//    {0,0,0}, /*OverloadStart*/
-//    {0,0,0}, /*OverloadStop*/
-//    {0,0,0}, /*Paging*/
-//    {ngap_amf_handle_path_switch_request,0,0}, /*PathSwitchRequest*/
-//    {0,0,0}, /*PDUSessionResourceModify*/
-//    {0,0,0}, /*PDUSessionResourceModifyIndication*/
-//   {0,0,0}, /*PDUSessionResourceRelease*/
-//    {0,0,0}, /*PDUSessionResourceSetup*/
-//    {0,0,0}, /*PDUSessionResourceNotify*/
-//    {0,0,0}, /*PrivateMessage*/
-//    {0,0,0}, /*PWSCancel*/
-//    {0,0,0}, /*PWSFailureIndication*/
-//    {0,0,0}, /*PWSRestartIndication*/
-//    {0,0,0}, /*RANConfigurationUpdate*/
-//    {0,0,0}, /*RerouteNASRequest*/
-//    {0,0,0}, /*RRCInactiveTransitionReport*/
-//    {0,0,0}, /*TraceFailureIndication*/
-//    {0,0,0}, /*TraceStart*/
-//    {0,0,0}, /*UEContextModification*/
-//    {0,ngap_amf_handle_ue_context_release_complete,0}, /*UEContextRelease*/
-//    {ngap_amf_handle_ue_context_release_request,0,0}, /*UEContextReleaseRequest*/
-//    {0,0,0}, /*UERadioCapabilityCheck*/
-//    {ngap_amf_handle_ue_radio_cap_indication,0,0}, /*UERadioCapabilityInfoIndication*/
-//    {0,0,0}, /*UETNLABindingRelease*/
-//    {ngap_amf_handle_uplink_nas_transport,0,0}, /*UplinkNASTransport*/
-//    {0,0,0}, /*UplinkNonUEAssociatedNRPPaTransport*/
-//    {0,0,0}, /*UplinkRANConfigurationTransfer*/
-//    {0,0,0}, /*UplinkRANStatusTransfer*/
-//    {0,0,0}, /*UplinkUEAssociatedNRPPaTransport*/
+    {0,0,0}, /*OverloadStart*/
+    {0,0,0}, /*OverloadStop*/
+    {0,0,0}, /*Paging*/
+    {0,0,0},/*{ngap_amf_handle_path_switch_request,0,0},*/ /*PathSwitchRequest*/
+    {0,0,0}, /*PDUSessionResourceModify*/
+    {0,0,0}, /*PDUSessionResourceModifyIndication*/
+    {0,0,0}, /*PDUSessionResourceRelease*/
+    {0,0,0}, /*PDUSessionResourceSetup*/
+    {0,0,0}, /*PDUSessionResourceNotify*/
+    {0,0,0}, /*PrivateMessage*/
+    {0,0,0}, /*PWSCancel*/
+    {0,0,0}, /*PWSFailureIndication*/
+    {0,0,0}, /*PWSRestartIndication*/
+    {0,0,0}, /*RANConfigurationUpdate*/
+    {0,0,0}, /*RerouteNASRequest*/
+    {0,0,0}, /*RRCInactiveTransitionReport*/
+    {0,0,0}, /*TraceFailureIndication*/
+    {0,0,0}, /*TraceStart*/
+    {0,0,0}, /*UEContextModification*/
+    {0,0,0},/*{0,ngap_amf_handle_ue_context_release_complete,0},*/ /*UEContextRelease*/
+    {0,0,0},/*{ngap_amf_handle_ue_context_release_request,0,0},*/ /*UEContextReleaseRequest*/
+    {0,0,0}, /*UERadioCapabilityCheck*/
+    {0,0,0},/*{ngap_amf_handle_ue_radio_cap_indication,0,0},*/ /*UERadioCapabilityInfoIndication*/
+    {0,0,0}, /*UETNLABindingRelease*/
+    {0,0,0},/*{ngap_amf_handle_uplink_nas_transport,0,0},*/ /*UplinkNASTransport*/
+    {0,0,0}, /*UplinkNonUEAssociatedNRPPaTransport*/
+    {0,0,0}, /*UplinkRANConfigurationTransfer*/
+    {0,0,0}, /*UplinkRANStatusTransfer*/
+    {0,0,0}, /*UplinkUEAssociatedNRPPaTransport*/
     {0,0,0} /*WriteReplaceWarning*/
 };
 
@@ -93,7 +94,7 @@ ngap_amf_handle_message(
     OAILOG_DEBUG (LOG_S1AP, "[SCTP %d] Either procedureCode %d or direction %d exceed expected\n", assoc_id, (int)message->procedureCode, (int)message->direction);
     return -1;  
   }             
-        
+      
   if (messages_callback[message->procedureCode][message->direction - 1] == NULL) {
     OAILOG_DEBUG (LOG_S1AP, "[SCTP %d] No handler for procedureCode %d in %s\n", assoc_id, (int)message->procedureCode, ngap_direction2String[(int)message->direction]);
     return -2;

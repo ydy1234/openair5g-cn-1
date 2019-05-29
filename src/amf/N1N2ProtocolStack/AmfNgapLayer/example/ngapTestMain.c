@@ -7,6 +7,8 @@
 #include "TimeToWait.h"
 #include "bstrlib.h"
 #include "intertask_interface_types.h"
+#include "sctp_primitives_client.h"
+
 /*
 int
 ngap_amf_set_cause (
@@ -47,13 +49,19 @@ ngap_amf_set_cause (
 */
 int main()
 {
+  int assoc[1];
+  sctp_data_t * sctp_data_p = NULL;
+  char *local_ip_addr[] = {"10.112.100.100"};
+  char remote_ip_addr[] = "10.112.100.100";
+
+  uint8_t * buffer_p = NULL;
+
   ngap_message message = {0};
   NGSetupFailureIEs_t * ng_setup_failure_p = NULL;
   const Cause_PR cause_type = Cause_PR_transport;
   const long cause_value = CauseProtocol_unspecified;
   const long time_to_wait = TimeToWait_v20s;
 
-  uint8_t * buffer_p = NULL;
   uint32_t length = 0;
 
   ng_setup_failure_p = &message.msg.ngSetupFailureIEs;
@@ -66,6 +74,12 @@ int main()
   if (ngap_amf_encode_pdu (&message, &buffer_p, &length) < 0) {
     printf("encode ngap pdu error\n");
   }
+
+  sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
+  if (sctp_data_p == NULL)  exit(1);
+  assoc[0] = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p);
+  sctp_send_msg (sctp_data_p, 60, 0, buffer_p,length);
+
   bstring b = blk2bstr(buffer_p, length);
   
   MessagesIds message_id = MESSAGES_ID_MAX;
