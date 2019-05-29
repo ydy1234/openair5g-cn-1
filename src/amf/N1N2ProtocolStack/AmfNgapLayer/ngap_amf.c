@@ -31,7 +31,18 @@ static int ngap_send_init_sctp(void)
   message_p->ittiMsg.sctpInit.ipv4 = 1;
   message_p->ittiMsg.sctpInit.ipv6 = 0;
   message_p->ittiMsg.sctpInit.nb_ipv4_addr = 1;
-  message_p->ittiMsg.sctpInit.ipv4_address[0] = 0; //1684303882;//1546416138;//117506058;
+  int intAddress = 0;
+  bstring address = NULL;
+  bstring mask = NULL;
+  bstring cidr = NULL;
+  cidr = bfromcstr ("10.112.100.100/16");
+  struct bstrList *list = bsplit (cidr, '/');
+  AssertFatal(2 == list->qty, "Bad CIDR address %s", bdata(cidr));
+  address = list->entry[0];
+  mask    = list->entry[1];
+  printf("address(%s);mask(%s)\n",address->data,mask->data);
+  IPV4_STR_ADDR_TO_INT_NWBO (bdata(address), intAddress, "BAD IP ADDRESS FORMAT FOR S1-MME !\n");
+  message_p->ittiMsg.sctpInit.ipv4_address[0] = intAddress; //1684303882;//1546416138;//117506058;
   message_p->ittiMsg.sctpInit.nb_ipv6_addr = 0;
   message_p->ittiMsg.sctpInit.ipv6_address[0] = "0:0:0:0:0:0:0:1";
   return itti_send_msg_to_task (TASK_SCTP, INSTANCE_DEFAULT, message_p);
@@ -116,12 +127,12 @@ ngap_amf_init(void)
       OAILOG_ERROR (LOG_S1AP, "Error while creating NGAP task\n");
       return RETURNerror;
     }
-/*
+    OAILOG_DEBUG (LOG_S1AP, "Create TASK NGAP\n");
     if (ngap_send_init_sctp () < 0) {
       OAILOG_ERROR (LOG_S1AP, "Error while sendind SCTP_INIT_MSG to SCTP \n");
       return RETURNerror;
     }
-*/
+
     OAILOG_DEBUG (LOG_S1AP, "Initializing NGAP interface: DONE\n");
     return RETURNok;
 }

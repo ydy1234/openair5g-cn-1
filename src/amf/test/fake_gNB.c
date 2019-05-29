@@ -27,8 +27,8 @@ send_NGAP_SetupRequest()
 
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
-	char *local_ip_addr[] = {"127.0.0.1"};
-	char remote_ip_addr[] = "127.0.0.1";
+	char *local_ip_addr[] = {"10.112.100.100"};
+	char remote_ip_addr[] = "10.112.100.100";
 
 	uint8_t                                *buffer;
 	uint32_t                                len;

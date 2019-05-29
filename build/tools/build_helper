@@ -222,6 +222,7 @@ check_install_amf_software()
     PACKAGE_LIST="\
       ca-cacert
       cmake \
+      libgcrypt11-dev \
       g++ \
       gcc \
       git \
@@ -234,6 +235,8 @@ check_install_amf_software()
 
     OPTION="$OPTION --no-install-recommends -q"
     $SUDO apt-get install $OPTION $PACKAGE_LIST
+
+    $SUDO apt-get install -y nettle-dev nettle-bin
 
     install_pistache_from_source $1
     install_json_from_source $1

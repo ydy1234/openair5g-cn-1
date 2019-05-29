@@ -16,7 +16,6 @@ int decode_authentication_reject( authentication_reject_msg *authentication_reje
 
     while(len-decoded>0){
       uint8_t ieiDecoded = *(buffer+decoded);
-      printf("ieiDecoded(%x)\n",ieiDecoded);
       if(ieiDecoded == 0)
         break;
       switch(ieiDecoded){

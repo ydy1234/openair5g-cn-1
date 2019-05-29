@@ -46,6 +46,24 @@
 		S1_UE_SECURITY_CAPABILITY_MAXIMUM_LENGTH + \
 0)
 
+
+#define SECURITY_MODE_COMMAND_IMEISV_REQUEST_IEI 0xE0
+#define SECURITY_MODE_COMMAND_IMEISV_REQUEST_PRESENT (1<<0)
+#define SECURITY_MODE_COMMAND_EPS_NAS_SECURITY_ALGORITHMS_IEI 0x57
+#define SECURITY_MODE_COMMAND_EPS_NAS_SECURITY_ALGORITHMS_PRESENT (1<<1)
+#define SECURITY_MODE_COMMAND_ADDITIONAL_5G_SECURITY_INFORMATION_IEI 0x36
+#define SECURITY_MODE_COMMAND_ADDITIONAL_5G_SECURITY_INFORMATION_PRESENT (1<<2)
+#define SECURITY_MODE_COMMAND_EAP_MESSAGE_IEI 0x78
+#define SECURITY_MODE_COMMAND_EAP_MESSAGE_PRESENT (1<<3)
+#define SECURITY_MODE_COMMAND_ABBA_IEI 0x38
+#define SECURITY_MODE_COMMAND_ABBA_PRESENT (1<<4)
+#define SECURITY_MODE_COMMAND_S1_UE_SECURITY_CAPABILITY_IEI 0x19
+#define SECURITY_MODE_COMMAND_S1_UE_SECURITY_CAPABILITY_PRESENT (1<<5)
+
+
+
+
+
 typedef struct security_mode_command_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
@@ -53,12 +71,13 @@ typedef struct security_mode_command_msg_tag{
 	NASSecurityAlgorithms nassecurityalgorithms;
 	NASKeySetIdentifier naskeysetidentifier;
 	UESecurityCapability uesecuritycapability;
+        uint8_t presence;
 	IMEISVRequest imeisvrequest;
 	EPSNASSecurityAlgorithms epsnassecurityalgorithms;
 	Additional5GSecurityInformation additional5gsecurityinformation;
 	EAPMessage eapmessage;
 	ABBA abba;
-	S1UESecurityCapability s1uesecuritycapability;
+	//S1UESecurityCapability s1uesecuritycapability;
 }security_mode_command_msg;
 
 

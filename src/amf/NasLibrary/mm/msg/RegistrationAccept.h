@@ -88,33 +88,111 @@
 		_5GSDRX_PARAMETERS_MAXIMUM_LENGTH + \
 0)
 
+
+#define REGISTRATION_ACCEPT_5GS_MOBILE_IDENTITY_IEI 0x77
+#define REGISTRATION_ACCEPT_5GS_MOBILE_IDENTITY_PRESENT (uint32_t)(1<<0)
+
+#define REGISTRATION_ACCEPT_PLMN_LIST_IEI 0x4A
+#define REGISTRATION_ACCEPT_PLMN_LIST_PRESENT (uint32_t)(1<<1)
+
+#define REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_IEI 0x54
+#define REGISTRATION_ACCEPT_5GS_TRACKING_AREA_IDENTITY_LIST_PRESENT (uint32_t)(1<<2)
+
+#define REGISTRATION_ACCEPT_ALLOWED_NSSAI_IEI 0x15
+#define REGISTRATION_ACCEPT_ALLOWED_NSSAI_PRESENT (uint32_t)(1<<3)
+
+#define REGISTRATION_ACCEPT_REJECTED_NSSAI_IEI 0x11
+#define REGISTRATION_ACCEPT_REJECTED_NSSAI_PRESENT (uint32_t)(1<<4)
+
+#define REGISTRATION_ACCEPT_CONFIGURED_NSSAI_IEI 0x31
+#define REGISTRATION_ACCEPT_CONFIGURED_NSSAI_PRESENT (uint32_t)(1<<5)
+
+#define REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_IEI 0x21
+#define REGISTRATION_ACCEPT_5GS_NETWORK_FEATURE_SUPPORT_PRESENT (uint32_t)(1<<6)
+
+#define REGISTRATION_ACCEPT_PDU_SESSION_STATUS_IEI 0x50
+#define REGISTRATION_ACCEPT_PDU_SESSION_STATUS_PRESENT (uint32_t)(1<<7)
+
+#define REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_IEI 0x26
+#define REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_PRESENT (uint32_t)(1<<8)
+
+#define REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_IEI 0x72
+#define REGISTRATION_ACCEPT_PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_PRESENT (uint32_t)(1<<9)
+
+#define REGISTRATION_ACCEPT_LADN_INFORMATION_IEI 0x79
+#define REGISTRATION_ACCEPT_LADN_INFORMATION_PRESENT (uint32_t)(1<<10)
+
+#define REGISTRATION_ACCEPT_MICO_INDICATION_IEI 0xB0
+#define REGISTRATION_ACCEPT_MICO_INDICATION_PRESENT (uint32_t)(1<<11)
+
+#define REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_IEI 0x90
+#define REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_PRESENT (uint32_t)(1<<12)
+
+#define REGISTRATION_ACCEPT_SERVICE_AREA_LIST_IEI 0x27
+#define REGISTRATION_ACCEPT_SERVICE_AREA_LIST_PRESENT (uint32_t)(1<<13)
+
+#define REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_IEI 0x5E
+#define REGISTRATION_ACCEPT_GPRS_TIMER3_T3512_VALUE_PRESENT (uint32_t)(1<<14)
+
+#define REGISTRATION_ACCEPT_GPRS_TIMER2_NON_3GPP_DEREGISTRATION_TIMER_VALUE_IEI 0x5D
+#define REGISTRATION_ACCEPT_GPRS_TIMER2_NON_3GPP_DEREGISTRATION_TIMER_VALUE_PRESENT (uint32_t)(1<<15)
+
+#define REGISTRATION_ACCEPT_GPRS_TIMER2_T3502_VALUE_IEI 0x16
+#define REGISTRATION_ACCEPT_GPRS_TIMER2_T3502_VALUE_PRESENT (uint32_t)(1<<16)
+
+#define REGISTRATION_ACCEPT_EMERGENCY_NUMBER_LIST_IEI 0x34
+#define REGISTRATION_ACCEPT_EMERGENCY_NUMBER_LIST_PRESENT (uint32_t)(1<<17)
+
+#define REGISTRATION_ACCEPT_EXTENDED_EMERGENCY_NUMBER_LIST_IEI 0x7A
+#define REGISTRATION_ACCEPT_EXTENDED_EMERGENCY_NUMBER_LIST_PRESENT (uint32_t)(1<<18)
+
+#define REGISTRATION_ACCEPT_SOR_TRANSPARENT_CONTAINER_IEI 0x73
+#define REGISTRATION_ACCEPT_SOR_TRANSPARENT_CONTAINER_PRESENT (uint32_t)(1<<19)
+
+#define REGISTRATION_ACCEPT_EAP_MESSAGE_IEI 0x78
+#define REGISTRATION_ACCEPT_EAP_MESSAGE_PRESENT (uint32_t)(1<<20)
+
+#define REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_IEI 0xA0
+#define REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_PRESENT (uint32_t)(1<<21)
+
+#define REGISTRATION_ACCEPT_OPERATOR_DEFINED_ACCESS_CATEGORY_DEFINITIONS_IEI 0x76
+#define REGISTRATION_ACCEPT_OPERATOR_DEFINED_ACCESS_CATEGORY_DEFINITIONS_PRESENT (uint32_t)(1<<22)
+
+#define REGISTRATION_ACCEPT_5GS_DRX_PARAMETERS_IEI 0x51
+#define REGISTRATION_ACCEPT_5GS_DRX_PARAMETERS_PRESENT (uint32_t)(1<<23)
+
+
 typedef struct registration_accept_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
 	_5GSRegistrationResult _5gsregistrationresult;
-	_5GSMobileIdentity _5gsmobileidentity;
+        uint32_t presence;
+	//_5GSMobileIdentity _5gsmobileidentity;
 	PLMNList plmnlist;
 	_5GSTrackingAreaIdentityList _5gstrackingareaidentitylist;
-	NSSAI nssai;
-	RejectedNSSAI rejectednssai;
+	//NSSAI allowednssai;
+	//RejectedNSSAI rejectednssai;
+        //NSSAI configurednssai;
 	_5GSNetworkFeatureSupport _5gsnetworkfeaturesupport;
 	PDUSessionStatus pdusessionstatus;
 	PDUSessionReactivationResult pdusessionreactivationresult;
 	PDUSessionReactivationResultErrorCause pdusessionreactivationresulterrorcause;
-	LADNInformation ladninformation;
+	//LADNInformation ladninformation;
 	MICOIndication micoindication;
 	NetworkSlicingIndication networkslicingindication;
 	ServiceAreaList servicearealist;
-	GPRSTimer3 gprstimer3;
-	GPRSTimer2 gprstimer2;
-	EmergencyNumberList emergencynumberlist;
-	ExtendedEmergencyNumberList extendedemergencynumberlist;
-	SORTransparentContainer sortransparentcontainer;
+	GPRSTimer3 t3512;
+	GPRSTimer2 non_3gpp_deregistration_timer;
+	GPRSTimer2 t3502;
+	//EmergencyNumberList emergencynumberlist;
+	//ExtendedEmergencyNumberList extendedemergencynumberlist;
+	//SORTransparentContainer sortransparentcontainer;
 	EAPMessage eapmessage;
 	NSSAIInclusionMode nssaiinclusionmode;
-	OperatorDefinedAccessCategoryDefinitions operatordefinedaccesscategorydefinitions;
+	//OperatorDefinedAccessCategoryDefinitions operatordefinedaccesscategorydefinitions;
 	_5GSDRXParameters _5gsdrxparameters;
+        //Non_3GPP_NW_Provided_Policies non_3gpp_nw_policies;
 }registration_accept_msg;
 
 

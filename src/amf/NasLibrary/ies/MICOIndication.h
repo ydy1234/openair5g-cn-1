@@ -9,7 +9,6 @@
 #define MICO_INDICATION_MAXIMUM_LENGTH 1
 
 typedef struct{
-  #define MICO_INDICATION_IEI x0B0 
   bool raai;//registration area allocation indication
 } MICOIndication;
 

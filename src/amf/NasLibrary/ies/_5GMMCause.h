@@ -6,6 +6,6 @@
 
 typedef uint8_t _5GMMCause;
 
-int encode__5gmm_cause ( _5GMMCause * _5gmmcause, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
+int encode__5gmm_cause ( _5GMMCause  _5gmmcause, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 int decode__5gmm_cause ( _5GMMCause * _5gmmcause, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 
