@@ -24,8 +24,10 @@ send_NGAP_SetupRequest()
 
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
-	char *local_ip_addr[] = {"127.0.0.1"};
-	char remote_ip_addr[] = "127.0.0.1";
+	char *local_ip_addr[] = {"192.168.2.122"};
+	char remote_ip_addr[] = "192.168.2.122";
+	//char *local_ip_addr[] = {"127.0.0.1"};
+	//char remote_ip_addr[] = "127.0.0.1";
 
 	Ngap_NGAP_PDU_t pdu;
 
@@ -36,7 +38,7 @@ send_NGAP_SetupRequest()
 	Ngap_NGSetupRequestIEs_t *ngapSetupRequestIEs;
 
 	memset(&pdu, 0, sizeof(pdu));
-
+    
 	//for NGSetupRequest
 	pdu.present = Ngap_NGAP_PDU_PR_initiatingMessage;
 	pdu.choice.initiatingMessage = calloc(1, sizeof(Ngap_InitiatingMessage_t));
@@ -113,12 +115,20 @@ send_NGAP_SetupRequest()
 
 	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
 
+
+	 MessagesIds message_id = MESSAGES_ID_MAX;
+     Ngap_NGAP_PDU_t decoded_pdu = {0};
+     printf("1\n");
+	 bstring b = blk2bstr(buffer_p, length);
+	 
+     ngap_amf_decode_pdu(&decoded_pdu,b, &message_id);
+    #if 0
 	//connect to sctp and send message to AMF
 	sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
 	if (sctp_data_p == NULL)  exit(1);
 	assoc[0] = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p);
 	sctp_send_msg (sctp_data_p, 60, 0, buffer_p,length);
-
+    #endif
 
 }
 

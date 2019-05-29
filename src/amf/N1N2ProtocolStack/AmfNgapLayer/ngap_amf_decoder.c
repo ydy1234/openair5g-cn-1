@@ -218,7 +218,37 @@ int ngap_amf_decode_pdu(
 		Ngap_NGAP_PDU_t *pdu,
   const_bstring const raw,
   MessagesIds *message_id) {
-	/*
+
+  Ngap_NGAP_PDU_t                     *pdu_p = &pdu;
+  asn_dec_rval_t                       dec_ret = {(RC_OK)};
+  DevAssert (raw != NULL);
+  memset ((void *)pdu_p, 0, sizeof (Ngap_NGAP_PDU_t));
+  dec_ret = uper_decode (NULL, &asn_DEF_Ngap_NGAP_PDU, (void **)&pdu_p, bdata(raw), blength(raw), 0, 0);
+  if (dec_ret.code != RC_OK) {
+    //OAILOG_ERROR (LOG_S1AP, "Failed to decode PDU\n");
+    printf("Failed to decode PDU\n");
+    return -1;
+  }
+  //message->direction = pdu_p->present;
+  switch (pdu_p->present) {
+    case Ngap_NGAP_PDU_PR_initiatingMessage:
+	  printf("Ngap_NGAP_PDU_PR_initiatingMessage \n");
+      return ngap_amf_decode_initiating (pdu_p, &pdu_p->choice.initiatingMessage, message_id);
+      
+    case Ngap_NGAP_PDU_PR_successfulOutcome:
+      return ngap_amf_decode_successful_outcome (pdu_p, &pdu_p->choice.successfulOutcome, message_id);
+
+    case Ngap_NGAP_PDU_PR_unsuccessfulOutcome:
+      return ngap_amf_decode_unsuccessful_outcome (pdu_p, &pdu_p->choice.unsuccessfulOutcome, message_id);
+        
+    default:
+	   printf("Unknown message outcome (%d) or not implemented\n", (int)pdu_p->present);
+      //OAILOG_ERROR (LOG_S1AP, "Unknown message outcome (%d) or not implemented", (int)pdu_p->present);
+      break;
+  }
+  ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, pdu);
+
+  /*
   NGAP_PDU_t                              pdu = {(NGAP_PDU_PR_NOTHING)};
   NGAP_PDU_t                             *pdu_p = &pdu;
   asn_dec_rval_t                          dec_ret = {(RC_OK)};
@@ -249,8 +279,8 @@ int ngap_amf_decode_pdu(
       break;
   }
   ASN_STRUCT_FREE(asn_DEF_NGAP_PDU, pdu_p);
-
-*/  return -1;
+  */
+  return -1;
 
 }
 
