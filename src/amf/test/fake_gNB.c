@@ -95,7 +95,7 @@ send_NGAP_SetupRequest()
     OCTET_STRING_fromBuf(&sliceSupportItem->s_NSSAI.sST, (const char*)sST, 1);
     OCTET_STRING_fromBuf(sliceSupportItem->s_NSSAI.sD, (const char*)sD, 3);
     broadcastPLMNItem = (Ngap_BroadcastPLMNItem_t *)calloc (1, sizeof(broadcastPLMNItem));
-   // memset (&broadcastPLMNItem, 0, sizeof(Ngap_BroadcastPLMNItem_t));
+    //memset (&broadcastPLMNItem, 0, sizeof(Ngap_BroadcastPLMNItem_t));
 
     OCTET_STRING_fromBuf(&broadcastPLMNItem->pLMNIdentity, (const char*)plmn, 3);
     ASN_SEQUENCE_ADD (&broadcastPLMNItem->tAISliceSupportList.list, &sliceSupportItem);

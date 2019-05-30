@@ -348,7 +348,7 @@ typedef struct Ngap_ProtocolIE_Container_124P40 {
 	asn_struct_ctx_t _asn_ctx;
 } Ngap_ProtocolIE_Container_124P40_t;
 typedef struct Ngap_ProtocolIE_Container_124P41 {
-	A_SEQUENCE_OF(struct Ngap_NGSetupRequestIEs) list;
+	A_SEQUENCE_OF(struct Ngap_NGSetupRequest_t) list;
 	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;

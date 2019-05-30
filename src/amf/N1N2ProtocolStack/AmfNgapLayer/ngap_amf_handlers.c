@@ -207,19 +207,80 @@ ngap_amf_handle_ng_setup_request(
     //OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
     Ngap_NGSetupRequestIEs_t * ngSetupRequest_p = NULL;
+	Ngap_NGSetupRequestIEs_t * ngSetupRequestIEs_p = NULL;
     gnb_description_t   * gnb_association = NULL;
     uint32_t              gnb_id = 0;
     char                 *gnb_name = NULL;
-    int				  gnb_name_size = 0;
+    int				      gnb_name_size = 0;
     int                   ta_ret = 0;
     uint32_t              max_gnb_connected = 0;
-
+    int i = 0;
     Ngap_NGSetupRequest_t                  *container = NULL;
     Ngap_NGSetupRequestIEs_t               *ie = NULL;
     Ngap_NGSetupRequestIEs_t               *ie_gnb_name = NULL;
 
     printf("ngap_amf_handle_ng_setup_request\n");
     DevAssert (pdu != NULL);
+	
+    container = &pdu->choice.initiatingMessage->value.choice.NGSetupRequest;
+	
+	//ngSetupRequestIEs_p = pdu->choice.initiatingMessage->value.choice.NGSetupRequest.protocolIEs;
+	
+	 for (i = 0; i < container->protocolIEs.list.count; i++)
+	 {
+        Ngap_NGSetupRequestIEs_t *setupRequestIes_p;
+        setupRequestIes_p = container->protocolIEs.list.array[i];
+		if(!setupRequestIes_p)
+			continue;
+		switch(setupRequestIes_p->id)
+	    {
+            case Ngap_ProtocolIE_ID_id_GlobalRANNodeID:
+				printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID\n");
+				Ngap_GlobalRANNodeID_t *ngap_GlobalRANNodeID = NULL;
+	            ngap_GlobalRANNodeID = &setupRequestIes_p->value.choice.GlobalRANNodeID;
+				if(!ngap_GlobalRANNodeID)
+				    break;
+				switch(ngap_GlobalRANNodeID->present)
+				{
+				    case Ngap_GlobalRANNodeID_PR_NOTHING:
+						 printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID nothing------------\n");
+					break;
+				    case Ngap_GlobalRANNodeID_PR_globalGNB_ID:
+						 ngap_GlobalRANNodeID->choice.globalGNB_ID->pLMNIdentity; 
+					break;
+	                case Ngap_GlobalRANNodeID_PR_globalNgENB_ID:
+						
+					break;
+	                case Ngap_GlobalRANNodeID_PR_globalN3IWF_ID:
+						
+					break;
+	                case Ngap_GlobalRANNodeID_PR_choice_Extensions:
+						
+					break;
+					default:
+						printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID,unknown protocol IE id(%d)\n",ngap_GlobalRANNodeID->present);
+                    break;
+				}	
+			break;
+            case Ngap_ProtocolIE_ID_id_RANNodeName:
+				printf("Ngap_ProtocolIE_ID_id_RANNodeName\n");
+            break;
+            case Ngap_ProtocolIE_ID_id_SupportedTAList:
+				printf("Ngap_ProtocolIE_ID_id_SupportedTAList\n");
+			break;
+            case Ngap_ProtocolIE_ID_id_DefaultPagingDRX:
+				printf("Ngap_ProtocolIE_ID_id_DefaultPagingDRX\n");
+			break;
+            default:
+		   	    printf("Unknown protocol IE id (%d) for message ngsetup_request_ies\n", (int)setupRequestIes_p->id);
+		    break;
+		}
+	 }
+	 return 0;
+	//printf("id:%d\n",ngSetupRequestIEs_p->id);
+	//printf("criticality:%d\n",ngSetupRequestIEs_p->criticality);
+	//printf("value.present:%d\n",ngSetupRequestIEs_p->value.present);
+	
 /*
     container = &pdu->choice.initiatingMessage->value.choice.NGSetupRequest;
 
