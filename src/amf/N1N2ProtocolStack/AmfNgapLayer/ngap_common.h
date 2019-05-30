@@ -57,7 +57,7 @@ inline void ASN_DEBUG(const char *fmt, ...);
 typedef int (*ngap_message_decoded_callback)(
     const sctp_assoc_id_t             assoc_id,
     const sctp_stream_id_t            stream,
-    struct ngap_message_s *message_p,
+    //struct ngap_message_s *message_p,
 	Ngap_NGAP_PDU_t                   *pdu
 );
 

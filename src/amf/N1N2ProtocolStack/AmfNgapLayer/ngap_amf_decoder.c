@@ -190,7 +190,7 @@ ngap_amf_decode_unsuccessful_outcome(
           printf("1.4\n");
           ret = ngap_decode_ngsetupfailureies(&message->msg.ngSetupFailureIEs,&unSuccessfulOutcome_p->value);
           //ngap_xer_print_ngsetupfailure(ngap_xer__print2fp,message_string,message);
-          //*message_id = NGAP_INITIAL_CONTEXT_SETUP_FAILURE_LOG;
+          *//*message_id = NGAP_INITIAL_CONTEXT_SETUP_FAILURE_LOG;
         }
         break;
       default:{
@@ -228,8 +228,8 @@ int ngap_amf_decode_pdu(
        printf("asn_decode failed\n");
 	   return -1; 
     }
-    printf("decoded message present(%d)\n",decoded_pdu->present);
-
+//    printf("decoded message present(%d)\n",decoded_pdu->present);
+/*
     switch (decoded_pdu->present) {
         case Ngap_NGAP_PDU_PR_initiatingMessage:
 	        printf("Ngap_NGAP_PDU_PR_initiatingMessage \n");
@@ -249,7 +249,7 @@ int ngap_amf_decode_pdu(
 	    break;
      }
      ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, pdu);
-
+*/
   /*
   NGAP_PDU_t                              pdu = {(NGAP_PDU_PR_NOTHING)};
   NGAP_PDU_t                             *pdu_p = &pdu;

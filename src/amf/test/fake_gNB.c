@@ -135,7 +135,9 @@ send_NGAP_SetupRequest()
 	 bstring b = blk2bstr(buffer_p, length);
 	 
      ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
-
+     ngap_amf_handle_message(0,0,&decoded_pdu);
+     //printf("decoded_pdu precedureCode(%d)\n",decoded_pdu.choice.initiatingMessage->procedureCode);
+     printf("over\n");
     #if 0
 	//connect to sctp and send message to AMF
 	sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
