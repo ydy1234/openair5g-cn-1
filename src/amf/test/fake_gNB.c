@@ -12,6 +12,9 @@
 #include "assertions.h"
 #include "intertask_interface_init.h"
 #include "sctp_primitives_server.h"
+#include "Ngap_CriticalityDiagnostics-IE-Item.h"
+#include "Ngap_CriticalityDiagnostics-IE-List.h"
+
 #include "ngap_amf.h"
 #include "amf_app.h"
 #include "log.h"
@@ -160,7 +163,8 @@ send_NGAP_SetupRequest()
 void
 send_NGAP_SetupFailure()
 {
-
+    printf("NGAP_SetupFailure-------------encode\n");
+	
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
 	char *local_ip_addr[] = {"127.0.0.1"};
@@ -169,7 +173,8 @@ send_NGAP_SetupFailure()
 	uint8_t * buffer_p = NULL;
 	uint32_t length = 0;
 
-	Ngap_NGSetupFailure_t                       *ngapSetupFailure;
+	Ngap_NGSetupFailure_t                       *ngapSetupFailure = NULL;
+	Ngap_NGSetupFailureIEs_t                    *ngapSetupFailureIEs = NULL;
 	memset(&pdu, 0, sizeof(pdu));
 
 	//for NGSetupFailure
@@ -179,15 +184,73 @@ send_NGAP_SetupFailure()
 	pdu.choice.unsuccessfulOutcome->criticality = Ngap_Criticality_reject;
 	pdu.choice.unsuccessfulOutcome->value.present = Ngap_UnsuccessfulOutcome__value_PR_NGSetupFailure;
 	ngapSetupFailure = &pdu.choice.unsuccessfulOutcome->value.choice.NGSetupFailure;
+
+    
+	printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);
+	printf("procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);	  
+
+    //cause: radioNetwork
+    ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
+	ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_Cause; 
+	ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_Cause;
+    ngapSetupFailureIEs->value.choice.Cause.present =  Ngap_Cause_PR_radioNetwork;
+	ngapSetupFailureIEs->value.choice.Cause.choice.radioNetwork = 0x80;
+    ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
+	printf("radioNetwork:0x%x\n", ngapSetupFailureIEs->value.choice.Cause.choice.radioNetwork);
+
+
+	//timetowait
+	ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
+	ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_TimeToWait; 
+	ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_TimeToWait;
+    ngapSetupFailureIEs->value.choice.TimeToWait =  0x81;
+    ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
+
+	printf("TimeToWait:0x%x\n", ngapSetupFailureIEs->value.choice.TimeToWait);
+
+    //CriticalityDiagnostics
+    
+    
+    ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
+	ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_CriticalityDiagnostics; 
+	ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_CriticalityDiagnostics;
+
+    Ngap_CriticalityDiagnostics_t	 criticalityDiagnostics;
+	memset(&criticalityDiagnostics, 0, sizeof(Ngap_CriticalityDiagnostics_t));
+	
+	Ngap_ProcedureCode_t  *procedureCode = calloc(1, sizeof(Ngap_ProcedureCode_t));
+	*procedureCode = 0x81;
+    criticalityDiagnostics.procedureCode  = procedureCode;
+
+	Ngap_TriggeringMessage_t  *triggeringMessage = calloc(1, sizeof(Ngap_TriggeringMessage_t));
+	*triggeringMessage = 0x82;
+    criticalityDiagnostics.triggeringMessage = triggeringMessage;
+
+	Ngap_Criticality_t  *procedureCriticality = calloc(1, sizeof(Ngap_Criticality_t));
+	*procedureCriticality = 0x83;
+	criticalityDiagnostics.procedureCriticality = procedureCriticality;
+
+    Ngap_CriticalityDiagnostics_IE_Item_t  *criticalityDiagnosticsIEs = calloc(1, sizeof(Ngap_CriticalityDiagnostics_IE_Item_t));
+	criticalityDiagnosticsIEs->iECriticality = 0x85;
+	criticalityDiagnosticsIEs->iE_ID = 0x86;
+	criticalityDiagnosticsIEs->typeOfError = 0x86;
+
+    ASN_SEQUENCE_ADD(&criticalityDiagnostics.iEsCriticalityDiagnostics->list, &criticalityDiagnosticsIEs);
+	ngapSetupFailureIEs->value.choice.CriticalityDiagnostics =  criticalityDiagnostics;
+	ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
+	
+  
+   
+	
 	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
 
-
+    #if  0
 	//connect to sctp and send message to AMF
 	sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
 	if (sctp_data_p == NULL)  exit(1);
 	assoc[0] = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p);
 	sctp_send_msg (sctp_data_p, 60, 0, buffer_p,length);
-
+    #endif
 
 }
 int main(
@@ -215,8 +278,7 @@ int main(
 
 	//Test NGAP messages
 	send_NGAP_SetupRequest();
-
-	//send_NGAP_SetupFailure();
+	send_NGAP_SetupFailure();
 	//test NGAP
 	//test gNB
 /*
