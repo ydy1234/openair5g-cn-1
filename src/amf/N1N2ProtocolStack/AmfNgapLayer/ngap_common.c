@@ -35,7 +35,7 @@ ngap_generate_unsuccessfull_outcome (
   ASN_STRUCT_FREE_CONTENTS_ONLY (*td, sptr);
 
   if ((encoded = uper_encode_to_new_buffer (&asn_DEF_NGAP_PDU, 0, &pdu, (void **)buffer)) < 0) {
-    OAILOG_ERROR (LOG_S1AP, "Encoding of %s failed\n", td->name);
+    OAILOG_ERROR (LOG_NGAP, "Encoding of %s failed\n", td->name);
     return -1;
   }
 
@@ -71,7 +71,7 @@ ngap_generate_initiating_message (
   ASN_STRUCT_FREE_CONTENTS_ONLY (*td, sptr);
 
   if ((encoded = uper_encode_to_new_buffer (&asn_DEF_NGAP_PDU, 0, &pdu, (void **)buffer)) < 0) {
-    OAILOG_ERROR (LOG_S1AP, "Encoding of %s failed\n", td->name);
+    OAILOG_ERROR (LOG_NGAP, "Encoding of %s failed\n", td->name);
     return -1;
   }
 
@@ -99,7 +99,7 @@ ngap_new_ie (
   buff->criticality = criticality;
   
   if (ANY_fromType (&buff->value, type, sptr) < 0) {
-    OAILOG_ERROR (LOG_S1AP, "Encoding of %s failed\n", type->name);
+    OAILOG_ERROR (LOG_NGAP, "Encoding of %s failed\n", type->name);
     free_wrapper ((void**) &buff);
     return NULL;
   }

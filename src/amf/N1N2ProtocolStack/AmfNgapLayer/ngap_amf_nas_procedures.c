@@ -28,17 +28,17 @@ ngap_amf_handle_initial_ue_message (
   gnb_description_t         *gnb_ref = NULL;
   ran_ue_ngap_id_t           ran_ue_ngap_id = 0;
 
-  OAILOG_FUNC_IN(LOG_S1AP);
+  OAILOG_FUNC_IN(LOG_NGAP);
 
   initialUEMessage_p = &message->msg.initialUEMessage_IEs;
-  OAILOG_INFO (LOG_S1AP, "Received S1AP INITIAL_UE_MESSAGE RAN_UE_NGAP_ID " RAN_UE_NGAP_ID_FMT "\n", (ran_ue_ngap_id_t)initialUEMessage_p->ran_ue_ngap_id);
+  OAILOG_INFO (LOG_NGAP, "Received S1AP INITIAL_UE_MESSAGE RAN_UE_NGAP_ID " RAN_UE_NGAP_ID_FMT "\n", (ran_ue_ngap_id_t)initialUEMessage_p->ran_ue_ngap_id);
 
   if((gnb_ref = ngap_is_gnb_assoc_id_in_list(assoc_id)) == NULL){
-    OAILOG_ERROR (LOG_S1AP, "Unknown gNB on assoc_id %d\n", assoc_id);
-    OAILOG_FUNC_RETURN (LOG_S1AP, RETURNerror);
+    OAILOG_ERROR (LOG_NGAP, "Unknown gNB on assoc_id %d\n", assoc_id);
+    OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
   }
   ran_ue_ngap_id = (ran_ue_ngap_id_t)(initialUEMessage_p->ran_ue_ngap_id & 0x00ffffff);
-  OAILOG_INFO (LOG_S1AP, "New Initial UE message received with RAN UE NGAP ID: " RAN_UE_NGAP_ID_FMT "\n", ran_ue_ngap_id);
+  OAILOG_INFO (LOG_NGAP, "New Initial UE message received with RAN UE NGAP ID: " RAN_UE_NGAP_ID_FMT "\n", ran_ue_ngap_id);
 
   ue_ref = ngap_is_ue_gnb_id_in_list (gnb_ref, ran_ue_ngap_id);
   if(ue_ref == NULL){
@@ -47,8 +47,8 @@ ngap_amf_handle_initial_ue_message (
     cgi_t                                  cgi = {.plmn = {0}, .cell_identity = {0}};
 
     if((ue_ref = ngap_new_ue(assoc_id,ran_ue_ngap_id)) == NULL){
-      OAILOG_ERROR (LOG_S1AP, "NGAP:Initial UE Message- Failed to allocate NGAP UE Context, ran_ue_ngap_id:" RAN_UE_NGAP_ID_FMT "\n", ran_ue_ngap_id);
-      OAILOG_FUNC_RETURN (LOG_S1AP, RETURNerror);
+      OAILOG_ERROR (LOG_NGAP, "NGAP:Initial UE Message- Failed to allocate NGAP UE Context, ran_ue_ngap_id:" RAN_UE_NGAP_ID_FMT "\n", ran_ue_ngap_id);
+      OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
     }
     ue_ref->ng_ue_state = NGAP_UE_WAITING_CSR;
     ue_ref->ran_ue_ngap_id = ran_ue_ngap_id;

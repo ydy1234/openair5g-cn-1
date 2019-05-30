@@ -91,12 +91,12 @@ ngap_amf_handle_message(
     struct ngap_message_s *message){
   
   if ((message->procedureCode > (sizeof (messages_callback) / (3 * sizeof (ngap_message_decoded_callback)))) || (message->direction > NGAP_PDU_PR_unsuccessfulOutcome)) {
-    OAILOG_DEBUG (LOG_S1AP, "[SCTP %d] Either procedureCode %d or direction %d exceed expected\n", assoc_id, (int)message->procedureCode, (int)message->direction);
+    OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] Either procedureCode %d or direction %d exceed expected\n", assoc_id, (int)message->procedureCode, (int)message->direction);
     return -1;  
   }             
       
   if (messages_callback[message->procedureCode][message->direction - 1] == NULL) {
-    OAILOG_DEBUG (LOG_S1AP, "[SCTP %d] No handler for procedureCode %d in %s\n", assoc_id, (int)message->procedureCode, ngap_direction2String[(int)message->direction]);
+    OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] No handler for procedureCode %d in %s\n", assoc_id, (int)message->procedureCode, ngap_direction2String[(int)message->direction]);
     return -2;
   }     
       
@@ -156,7 +156,7 @@ ngap_amf_generate_ng_setup_failure (
   NGSetupFailureIEs_t                    *ng_setup_failure_p = NULL;
   int                                     rc = RETURNok;
 
-  OAILOG_FUNC_IN (LOG_S1AP);
+  OAILOG_FUNC_IN (LOG_NGAP);
   ng_setup_failure_p = &message.msg.ngSetupFailureIEs;
   message.procedureCode = Ngap_ProcedureCode_id_NGSetup;
   message.direction = NGAP_PDU_PR_unsuccessfulOutcome;
@@ -171,13 +171,13 @@ ngap_amf_generate_ng_setup_failure (
   }
 
   if (ngap_amf_encode_pdu (&message, &buffer_p, &length) < 0) {
-    OAILOG_ERROR (LOG_S1AP, "Failed to encode ng setup failure\n");
-    OAILOG_FUNC_RETURN (LOG_S1AP, RETURNerror);
+    OAILOG_ERROR (LOG_NGAP, "Failed to encode ng setup failure\n");
+    OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
   }
 
   bstring b = blk2bstr(buffer_p, length);
   rc =  ngap_amf_itti_send_sctp_request (&b, assoc_id, 0, INVALID_AMF_UE_NGAP_ID);
-  OAILOG_FUNC_RETURN (LOG_S1AP, rc);
+  OAILOG_FUNC_RETURN (LOG_NGAP, rc);
 }
 
 
@@ -197,33 +197,33 @@ ngap_amf_handle_ng_setup_request(
     int                   ta_ret = 0;
     uint32_t              max_gnb_connected = 0;
 
-    OAILOG_FUNC_IN(LOG_S1AP); 
+    OAILOG_FUNC_IN(LOG_NGAP); 
 
     DevAssert(message != NULL);
     ngSetupRequest_p = &message->msg.ngSetupRequestIEs;
 
     if (stream != 0) {
-      OAILOG_ERROR (LOG_S1AP, "Received new ng setup request on stream != 0\n");
+      OAILOG_ERROR (LOG_NGAP, "Received new ng setup request on stream != 0\n");
       rc = ngap_amf_generate_ng_setup_failure(assoc_id,Cause_PR_protocol,CauseProtocol_unspecified,-1);
-      OAILOG_FUNC_RETURN (LOG_S1AP, rc);
+      OAILOG_FUNC_RETURN (LOG_NGAP, rc);
     }
 
     if ((gnb_association = ngap_is_gnb_assoc_id_in_list(assoc_id)) == NULL) {
-      OAILOG_ERROR(LOG_S1AP, "Ignoring ng setup from unknown assoc %u", assoc_id);
-      OAILOG_FUNC_RETURN (LOG_S1AP, RETURNok);
+      OAILOG_ERROR(LOG_NGAP, "Ignoring ng setup from unknown assoc %u", assoc_id);
+      OAILOG_FUNC_RETURN (LOG_NGAP, RETURNok);
     }
 
     if (gnb_association->ng_state == NGAP_RESETING || gnb_association->ng_state == NGAP_SHUTDOWN) {
-      OAILOG_WARNING(LOG_S1AP, "Ignoring s1setup from eNB in state %s on assoc id %u",
+      OAILOG_WARNING(LOG_NGAP, "Ignoring s1setup from eNB in state %s on assoc id %u",
       ng_gnb_state_str[gnb_association->ng_state], assoc_id);
       rc = ngap_amf_generate_ng_setup_failure(assoc_id,Cause_PR_transport,
                                             CauseTransport_transport_resource_unavailable,
                                             TimeToWait_v20s);
-      OAILOG_FUNC_RETURN (LOG_S1AP, rc);
+      OAILOG_FUNC_RETURN (LOG_NGAP, rc);
     }
 
     log_queue_item_t *context = NULL;         
-    OAILOG_MESSAGE_START (OAILOG_LEVEL_DEBUG, LOG_S1AP, (&context), "New ng setup request incoming from ");
+    OAILOG_MESSAGE_START (OAILOG_LEVEL_DEBUG, LOG_NGAP, (&context), "New ng setup request incoming from ");
 
     if (ngSetupRequest_p->presenceMask & NGSETUPREQUESTIES_RANNODENAME_PRESENT) {
       OAILOG_MESSAGE_ADD (context, "%*s ", ngSetupRequest_p->ranNodeName.size, ngSetupRequest_p->ranNodeName.buf);
@@ -243,27 +243,27 @@ ngap_amf_handle_ng_setup_request(
     max_gnb_connected = 16;
 
     if(nb_gnb_associated == max_gnb_connected){
-      OAILOG_ERROR (LOG_S1AP, "There is too much eNB connected to MME, rejecting the association\n");
-      OAILOG_DEBUG (LOG_S1AP, "Connected = %d, maximum allowed = %d\n", nb_gnb_associated, max_gnb_connected);
+      OAILOG_ERROR (LOG_NGAP, "There is too much eNB connected to MME, rejecting the association\n");
+      OAILOG_DEBUG (LOG_NGAP, "Connected = %d, maximum allowed = %d\n", nb_gnb_associated, max_gnb_connected);
       rc = ngap_amf_generate_ng_setup_failure(assoc_id,
                                             Cause_PR_misc,
                                             CauseMisc_control_processing_overload,
                                             TimeToWait_v20s);
-      OAILOG_FUNC_RETURN (LOG_S1AP, rc);
+      OAILOG_FUNC_RETURN (LOG_NGAP, rc);
     }
 
     ta_ret = ngap_amf_compare_ta_lists(&ngSetupRequest_p->supportedTAList);
     
     if (ta_ret != TA_LIST_RET_OK) {
-      OAILOG_ERROR (LOG_S1AP, "No Common PLMN with gNB, generate_ng_setup_failure\n");
+      OAILOG_ERROR (LOG_NGAP, "No Common PLMN with gNB, generate_ng_setup_failure\n");
       rc = ngap_amf_generate_ng_setup_failure(assoc_id,
                                               Cause_PR_misc,
                                               CauseMisc_unknown_PLMN,
                                               TimeToWait_v20s);
-      OAILOG_FUNC_RETURN (LOG_S1AP, rc);
+      OAILOG_FUNC_RETURN (LOG_NGAP, rc);
     }
     
-    OAILOG_DEBUG (LOG_S1AP, "Adding gNB to the list of served gNBs\n");
+    OAILOG_DEBUG (LOG_NGAP, "Adding gNB to the list of served gNBs\n");
 
     gnb_association->gnb_id = gnb_id;
     gnb_association->default_paging_drx = ngSetupRequest_p->defaultPagingDRX;
@@ -278,7 +278,7 @@ ngap_amf_handle_ng_setup_request(
     if (rc == RETURNok) {
       //update_amf_app_stats_connected_gnb_add();
     }
-    OAILOG_FUNC_RETURN (LOG_S1AP, rc);
+    OAILOG_FUNC_RETURN (LOG_NGAP, rc);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -296,7 +296,7 @@ ngap_generate_ng_setup_response(
   uint32_t  length = 0;
   int rc = RETURNok;
 /*
-  OAILOG_FUNC_IN(LOG_S1AP);
+  OAILOG_FUNC_IN(LOG_NGAP);
   DevAssert(gnb_association != NULL);
   servedGUAMIList = calloc(1,sizeof (*servedGUAMIList));
   Item = calloc(1,sizeof(*Item));
@@ -337,27 +337,27 @@ ngap_handle_new_association (
   sctp_new_peer_t * sctp_new_peer_p)
 {
   gnb_description_t                      *gnb_association = NULL;
-  OAILOG_FUNC_IN (LOG_S1AP);
+  OAILOG_FUNC_IN (LOG_NGAP);
   DevAssert (sctp_new_peer_p != NULL);
 
   if ((gnb_association = ngap_is_gnb_assoc_id_in_list (sctp_new_peer_p->assoc_id)) == NULL) {
-    OAILOG_DEBUG (LOG_S1AP, "Create eNB context for assoc_id: %d\n", sctp_new_peer_p->assoc_id);
+    OAILOG_DEBUG (LOG_NGAP, "Create eNB context for assoc_id: %d\n", sctp_new_peer_p->assoc_id);
     gnb_association = ngap_new_gnb ();
     if (gnb_association == NULL) {
-      OAILOG_ERROR (LOG_S1AP, "Failed to allocate gNB context for assoc_id: %d\n", sctp_new_peer_p->assoc_id);
-      OAILOG_FUNC_RETURN(LOG_S1AP, RETURNerror);
+      OAILOG_ERROR (LOG_NGAP, "Failed to allocate gNB context for assoc_id: %d\n", sctp_new_peer_p->assoc_id);
+      OAILOG_FUNC_RETURN(LOG_NGAP, RETURNerror);
     }
     gnb_association->sctp_assoc_id = sctp_new_peer_p->assoc_id;
     hashtable_rc_t  hash_rc = hashtable_ts_insert (&g_ngap_gnb_coll, (const hash_key_t)gnb_association->sctp_assoc_id, (void *)gnb_association);
     if (HASH_TABLE_OK != hash_rc) {
-      OAILOG_FUNC_RETURN (LOG_S1AP, RETURNerror);
+      OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
     }
   } else if ((gnb_association->ng_state == NGAP_SHUTDOWN) || (gnb_association->ng_state == NGAP_RESETING)) {
-    OAILOG_WARNING(LOG_S1AP, "Received new association request on an association that is being %s, ignoring",
+    OAILOG_WARNING(LOG_NGAP, "Received new association request on an association that is being %s, ignoring",
                    ng_gnb_state_str[gnb_association->ng_state]);
-    OAILOG_FUNC_RETURN(LOG_S1AP, RETURNerror);
+    OAILOG_FUNC_RETURN(LOG_NGAP, RETURNerror);
   } else {
-    OAILOG_DEBUG (LOG_S1AP, "eNB context already exists for assoc_id: %d, update it\n", sctp_new_peer_p->assoc_id);
+    OAILOG_DEBUG (LOG_NGAP, "eNB context already exists for assoc_id: %d, update it\n", sctp_new_peer_p->assoc_id);
   }
 
   gnb_association->sctp_assoc_id = sctp_new_peer_p->assoc_id;
@@ -365,7 +365,7 @@ ngap_handle_new_association (
   gnb_association->outstreams = (sctp_stream_id_t) sctp_new_peer_p->outstreams;
   gnb_association->next_sctp_stream = 1;
   gnb_association->ng_state = NGAP_INIT;
-  OAILOG_FUNC_RETURN (LOG_S1AP, RETURNok);
+  OAILOG_FUNC_RETURN (LOG_NGAP, RETURNok);
 
 }
 
@@ -374,9 +374,9 @@ ngap_handle_new_association (
 int
 ngap_amf_handle_error_ind_message (const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream, struct ngap_message_s *message)
 {
-  OAILOG_FUNC_IN (LOG_S1AP);
-  OAILOG_DEBUG (LOG_S1AP, "*****ERROR IND is not supported*****\n");
-  OAILOG_FUNC_RETURN (LOG_S1AP, RETURNok);
+  OAILOG_FUNC_IN (LOG_NGAP);
+  OAILOG_DEBUG (LOG_NGAP, "*****ERROR IND is not supported*****\n");
+  OAILOG_FUNC_RETURN (LOG_NGAP, RETURNok);
 }
 */
 /*

@@ -24,7 +24,7 @@ ngap_amf_compare_plmn (
   TBCD_TO_MCC_MNC (plmn, mcc, mnc, mnc_len);
 /*
   for (i = 0; i < 1; i++) {
-    //OAILOG_TRACE (LOG_S1AP, "Comparing plmn_mcc %d/%d, plmn_mnc %d/%d plmn_mnc_len %d/%d\n",
+    //OAILOG_TRACE (LOG_NGAP, "Comparing plmn_mcc %d/%d, plmn_mnc %d/%d plmn_mnc_len %d/%d\n",
     //    208, mcc, 93, mnc, mme_config.served_tai.plmn_mnc_len[i], mnc_len);
 
     if ((mme_config.served_tai.plmn_mcc[i] == mcc) &&
@@ -72,7 +72,7 @@ ngap_amf_compare_tac (
   OCTET_STRING_TO_TAC (tac, tac_value);
 
   for (i = 0; i < 1; i++) {
-    OAILOG_TRACE (LOG_S1AP, "Comparing config tac %d, received tac = %d\n", 1, tac_value);
+    OAILOG_TRACE (LOG_NGAP, "Comparing config tac %d, received tac = %d\n", 1, tac_value);
 
     if (1 == tac_value)
       return TA_LIST_AT_LEAST_ONE_MATCH;

@@ -125,14 +125,15 @@ int main(
     char * pid_file_name;
     pid_file_name = get_exe_absolute_path("/var/run");
 */
-    CHECK_INIT_RETURN (OAILOG_INIT (LOG_SPGW_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
+    CHECK_INIT_RETURN (OAILOG_INIT (MAX_LOG_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
+    //log_init(LOG_SPGW_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS);
     CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,NULL,NULL));
     //CHECK_INIT_RETURN (nas_mm_init());
     //nas_mm_init();
     CHECK_INIT_RETURN (sctp_init());
     CHECK_INIT_RETURN (ngap_amf_init());
     //CHECK_INIT_RETURN (amf_app_init());
-
+    OAILOG_DEBUG(LOG_NGAP,"NGAP\n");
 
 
     //TTN (16/05/2019) first activate NGAP->SCTP

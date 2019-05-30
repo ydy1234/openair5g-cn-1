@@ -21,7 +21,7 @@ ngap_amf_decode_initiating (
     char *message_string = NULL;
     size_t message_string_size;
 
-    OAILOG_FUNC_IN (LOG_S1AP);
+    OAILOG_FUNC_IN (LOG_NGAP);
     
     DevAssert (initiating_p != NULL);
     message_string = calloc (10000, sizeof (char));
@@ -67,22 +67,22 @@ ngap_amf_decode_initiating (
         }
         break;
       case Ngap_ProcedureCode_id_ErrorIndication:{
-          OAILOG_ERROR (LOG_S1AP, "Error Indication is received. Ignoring it. Procedure code = %d\n", (int)initiating_p->procedureCode);
+          OAILOG_ERROR (LOG_NGAP, "Error Indication is received. Ignoring it. Procedure code = %d\n", (int)initiating_p->procedureCode);
           ret = ngap_decode_errorindicationies(&message->msg.errorIndicationIEs,&initiating_p->value);
           if(ret!=-1){
             ret = free_errorindication(&message->msg.errorIndicationIEs);
           }
-          OAILOG_FUNC_RETURN (LOG_S1AP, ret);
+          OAILOG_FUNC_RETURN (LOG_NGAP, ret);
         }
         break;
       case Ngap_ProcedureCode_id_NGReset:{
-          OAILOG_ERROR (LOG_S1AP, "RESET is received. Ignoring it. Procedure code = %d\n", (int)initiating_p->procedureCode);
-          OAILOG_FUNC_RETURN (LOG_S1AP, ret);
+          OAILOG_ERROR (LOG_NGAP, "RESET is received. Ignoring it. Procedure code = %d\n", (int)initiating_p->procedureCode);
+          OAILOG_FUNC_RETURN (LOG_NGAP, ret);
         }
         break;
       default :{
-          OAILOG_ERROR (LOG_S1AP, "Unknown procedure ID (%d) for initiating message\n", (int)initiating_p->procedureCode);
-          OAILOG_FUNC_RETURN (LOG_S1AP, ret);
+          OAILOG_ERROR (LOG_NGAP, "Unknown procedure ID (%d) for initiating message\n", (int)initiating_p->procedureCode);
+          OAILOG_FUNC_RETURN (LOG_NGAP, ret);
         }
         break;
     }
@@ -102,7 +102,7 @@ ngap_amf_decode_successful_outcome(
     char *message_string = NULL;
     size_t message_string_size;
                 
-    OAILOG_FUNC_IN (LOG_S1AP);
+    OAILOG_FUNC_IN (LOG_NGAP);
                 
     DevAssert (successfulOutcome_p != NULL);
     message_string = calloc(10000,sizeof(char));
@@ -124,7 +124,7 @@ ngap_amf_decode_successful_outcome(
         }
         break;
       default:{
-          OAILOG_ERROR (LOG_S1AP, "Unknown procedure ID (%ld) for successfull outcome message\n", successfullOutcome_p->procedureCode);
+          OAILOG_ERROR (LOG_NGAP, "Unknown procedure ID (%ld) for successfull outcome message\n", successfulOutcome_p->procedureCode);
         }
         break;
     }
@@ -140,7 +140,7 @@ ngap_amf_decode_unsuccessful_outcome(
     char *message_string = NULL;
     size_t message_string_size;
 
-    //OAILOG_FUNC_IN (LOG_S1AP);
+    //OAILOG_FUNC_IN (LOG_NGAP);
 
     DevAssert (unSuccessfulOutcome_p != NULL);
     message_string = calloc(10000,sizeof(char));
@@ -163,7 +163,7 @@ ngap_amf_decode_unsuccessful_outcome(
         }
         break;
       default:{
-          //OAILOG_ERROR (LOG_S1AP, "Unknown procedure ID (%d) for unsuccessfull outcome message\n", (int)unSuccessfulOutcome_p->procedureCode);
+          //OAILOG_ERROR (LOG_NGAP, "Unknown procedure ID (%d) for unsuccessfull outcome message\n", (int)unSuccessfulOutcome_p->procedureCode);
         }
         break;
     }
@@ -195,7 +195,7 @@ int ngap_amf_decode_pdu(
   dec_ret = uper_decode (NULL, &asn_DEF_NGAP_PDU, (void **)&pdu_p, bdata(raw), blength(raw), 0, 0);
   printf("1.2\n");
   if (dec_ret.code != RC_OK) {
-    OAILOG_ERROR (LOG_S1AP, "Failed to decode PDU\n");
+    OAILOG_ERROR (LOG_NGAP, "Failed to decode PDU\n");
     return -1;
   }
         
@@ -212,7 +212,7 @@ int ngap_amf_decode_pdu(
       return ngap_amf_decode_unsuccessful_outcome (message, &pdu_p->choice.unsuccessfulOutcome, message_id);
         
     default:
-      //OAILOG_ERROR (LOG_S1AP, "Unknown message outcome (%d) or not implemented", (int)pdu_p->present);
+      //OAILOG_ERROR (LOG_NGAP, "Unknown message outcome (%d) or not implemented", (int)pdu_p->present);
       break;
   }
   ASN_STRUCT_FREE(asn_DEF_NGAP_PDU, pdu_p);
