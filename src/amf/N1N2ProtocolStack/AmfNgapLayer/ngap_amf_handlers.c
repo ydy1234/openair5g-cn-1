@@ -101,7 +101,7 @@ ngap_amf_handle_message(
       break;
   }
 
-  printf("ngap_amf_handle_message procedureCode(%d);present(%d)\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);
+  printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);
   if ((procedureCode > (sizeof (messages_callback) / (3 * sizeof (ngap_message_decoded_callback)))) || (present > Ngap_NGAP_PDU_PR_unsuccessfulOutcome)) {
     //OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] Either procedureCode %d or direction %d exceed expected\n", assoc_id, (int)pdu->choice.initiatingMessage->procedureCode, (int)pdu->present);
     return -1;  
@@ -111,7 +111,7 @@ ngap_amf_handle_message(
     //OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] No handler for procedureCode %d in %s\n", assoc_id, (int)pdu->choice.initiatingMessage->procedureCode, ngap_direction2String[(int)pdu->present]);
     return -2;
   }     
-  printf("procedureCode(%d);present(%d)\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);    
+  printf("procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);    
   return (*messages_callback[procedureCode][present - 1]) (assoc_id, stream, pdu);
  
 }
@@ -228,14 +228,14 @@ ngap_amf_handle_ng_setup_request(
 	
 	 for (i = 0; i < container->protocolIEs.list.count; i++)
 	 {
-        Ngap_NGSetupRequestIEs_t *setupRequestIes_p;
+        Ngap_NGSetupRequestIEs_t *setupRequestIes_p = NULL;
         setupRequestIes_p = container->protocolIEs.list.array[i];
 		if(!setupRequestIes_p)
 			continue;
 		switch(setupRequestIes_p->id)
 	    {
             case Ngap_ProtocolIE_ID_id_GlobalRANNodeID:
-				printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID\n");
+			{
 				Ngap_GlobalRANNodeID_t *ngap_GlobalRANNodeID = NULL;
 	            ngap_GlobalRANNodeID = &setupRequestIes_p->value.choice.GlobalRANNodeID;
 				if(!ngap_GlobalRANNodeID)
@@ -243,10 +243,28 @@ ngap_amf_handle_ng_setup_request(
 				switch(ngap_GlobalRANNodeID->present)
 				{
 				    case Ngap_GlobalRANNodeID_PR_NOTHING:
+					{
 						 printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID nothing------------\n");
+				    }
 					break;
 				    case Ngap_GlobalRANNodeID_PR_globalGNB_ID:
-						 ngap_GlobalRANNodeID->choice.globalGNB_ID->pLMNIdentity; 
+
+						 switch(ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.present)
+						 {
+                            case Ngap_GNB_ID_PR_NOTHING:	/* No components present */
+							break;
+	                        case Ngap_GNB_ID_PR_gNB_ID:
+							{
+	                            unsigned long  size = ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.size;
+						        uint8_t gNB_ID[size];
+								memcpy(gNB_ID, ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.buf, size);
+								printf("gNB_ID: 0x%x,0x%x,0x%x,0x%x\n",gNB_ID[0],gNB_ID[1],gNB_ID[2],gNB_ID[3]);
+	                        }
+							break;
+							
+	                        case Ngap_GNB_ID_PR_choice_Extensions:
+							break;
+						 } 
 					break;
 	                case Ngap_GlobalRANNodeID_PR_globalNgENB_ID:
 						
@@ -258,21 +276,32 @@ ngap_amf_handle_ng_setup_request(
 						
 					break;
 					default:
+					{
 						printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID,unknown protocol IE id(%d)\n",ngap_GlobalRANNodeID->present);
+					}		
                     break;
-				}	
+				}
+			}
 			break;
             case Ngap_ProtocolIE_ID_id_RANNodeName:
-				printf("Ngap_ProtocolIE_ID_id_RANNodeName\n");
+			{
+				printf("len:%d,RANNodeName:%s\n",setupRequestIes_p->value.choice.RANNodeName.size, setupRequestIes_p->value.choice.RANNodeName.buf);
+            }		
             break;
             case Ngap_ProtocolIE_ID_id_SupportedTAList:
+            {
 				printf("Ngap_ProtocolIE_ID_id_SupportedTAList\n");
+            }
 			break;
             case Ngap_ProtocolIE_ID_id_DefaultPagingDRX:
-				printf("Ngap_ProtocolIE_ID_id_DefaultPagingDRX\n");
+			{
+		        printf("PagingDRX:%ld\n",setupRequestIes_p->value.choice.PagingDRX);
+            }
 			break;
             default:
+			{
 		   	    printf("Unknown protocol IE id (%d) for message ngsetup_request_ies\n", (int)setupRequestIes_p->id);
+            }
 		    break;
 		}
 	 }

@@ -2,7 +2,8 @@
 #include <stdlib.h>
 
 
-
+#include <stdlib.h>
+#include <stdio.h>
 #include "bstrlib.h"
 #include "intertask_interface_types.h"
 #include "ngap_amf_encoder.h"
@@ -21,7 +22,7 @@
 void
 send_NGAP_SetupRequest()
 {
-
+    printf("NGAP_SetupRequest-------------encode\n");
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
 	char *local_ip_addr[] = {"192.168.2.122"};
@@ -47,6 +48,9 @@ send_NGAP_SetupRequest()
 	pdu.choice.initiatingMessage->value.present = Ngap_InitiatingMessage__value_PR_NGSetupRequest;
 	ngapSetupRequest = &(pdu.choice.initiatingMessage->value.choice.NGSetupRequest);
 
+    printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);
+    printf("procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);    
+
 	ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
 	ngapSetupRequestIEs->id = Ngap_ProtocolIE_ID_id_GlobalRANNodeID;
 	ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
@@ -66,7 +70,7 @@ send_NGAP_SetupRequest()
 	ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.size = 4;
 	memcpy(ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.buf, gNB_ID, 4);
 	ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
-
+    printf("gNB_ID: 0x%x,0x%x,0x%x,0x%x\n",gNB_ID[0],gNB_ID[1],gNB_ID[2],gNB_ID[3]);
 
 	//RANNodeName
 	ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
@@ -75,6 +79,7 @@ send_NGAP_SetupRequest()
 	ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_RANNodeName;
 	OCTET_STRING_fromBuf (&ngapSetupRequestIEs->value.choice.RANNodeName, "gNB1 Eurecom", strlen ("gNB1 Eurecom"));
 	ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
+	printf("len:%d,RANNodeName:%s\n",ngapSetupRequestIEs->value.choice.RANNodeName.size, ngapSetupRequestIEs->value.choice.RANNodeName.buf);
 
 	//supportedTAList
     ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
@@ -112,7 +117,8 @@ send_NGAP_SetupRequest()
 	ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_PagingDRX;
 	ngapSetupRequestIEs->value.choice.PagingDRX = Ngap_PagingDRX_v256;
 	ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
-
+    printf("PagingDRX:%ld\n",ngapSetupRequestIEs->value.choice.PagingDRX);
+	
 	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
 
    #if 0
@@ -134,6 +140,7 @@ send_NGAP_SetupRequest()
      
 	 bstring b = blk2bstr(buffer_p, length);
 	 
+	 printf("NGAP_SetupRequest-------------decode\n");
      ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
      ngap_amf_handle_message(0,0,&decoded_pdu);
      //printf("decoded_pdu precedureCode(%d)\n",decoded_pdu.choice.initiatingMessage->procedureCode);
