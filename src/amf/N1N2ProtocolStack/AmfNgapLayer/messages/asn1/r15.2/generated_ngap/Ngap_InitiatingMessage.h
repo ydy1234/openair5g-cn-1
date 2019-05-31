@@ -173,6 +173,7 @@ typedef struct Ngap_InitiatingMessage {
 			Ngap_InitialContextSetupRequest_t	 InitialContextSetupRequest;
 			Ngap_NGReset_t	 NGReset;
 			Ngap_NGSetupRequest_t	 NGSetupRequest;
+			Ngap_NGSetupFailure_t	 NGSetupFailure;
 			Ngap_PathSwitchRequest_t	 PathSwitchRequest;
 			Ngap_PDUSessionResourceModifyRequest_t	 PDUSessionResourceModifyRequest;
 			Ngap_PDUSessionResourceModifyIndication_t	 PDUSessionResourceModifyIndication;

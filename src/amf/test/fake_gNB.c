@@ -14,6 +14,8 @@
 #include "sctp_primitives_server.h"
 #include "Ngap_CriticalityDiagnostics-IE-Item.h"
 #include "Ngap_CriticalityDiagnostics-IE-List.h"
+#include "Ngap_ProtocolIE-Field.h"
+#include "Ngap_UserLocationInformationEUTRA.h"
 
 #include "ngap_amf.h"
 #include "amf_app.h"
@@ -25,7 +27,7 @@
 void
 send_NGAP_SetupRequest()
 {
-    printf("NGAP_SetupRequest-------------encode\n");
+    printf("\n\nNGAP_SetupRequest-------------encode\n");
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
 	char *local_ip_addr[] = {"192.168.2.122"};
@@ -158,12 +160,10 @@ send_NGAP_SetupRequest()
 
 }
 
-
-
 void
 send_NGAP_SetupFailure()
 {
-    printf("NGAP_SetupFailure-------------encode\n");
+    printf("\n\nNGAP_SetupFailure-------------encode\n");
 	
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
@@ -198,7 +198,7 @@ send_NGAP_SetupFailure()
     ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
 	printf("radioNetwork:0x%x\n", ngapSetupFailureIEs->value.choice.Cause.choice.radioNetwork);
 
-
+   
 	//timetowait
 	ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
 	ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_TimeToWait; 
@@ -208,41 +208,47 @@ send_NGAP_SetupFailure()
 
 	printf("TimeToWait:0x%x\n", ngapSetupFailureIEs->value.choice.TimeToWait);
 
+	
     //CriticalityDiagnostics
-    
-    
     ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
 	ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_CriticalityDiagnostics; 
 	ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_CriticalityDiagnostics;
 
-    Ngap_CriticalityDiagnostics_t	 criticalityDiagnostics;
-	memset(&criticalityDiagnostics, 0, sizeof(Ngap_CriticalityDiagnostics_t));
+    //Ngap_CriticalityDiagnostics_t	 criticalityDiagnostics;
+	//memset(&criticalityDiagnostics, 0, sizeof(Ngap_CriticalityDiagnostics_t));
 	
 	Ngap_ProcedureCode_t  *procedureCode = calloc(1, sizeof(Ngap_ProcedureCode_t));
 	*procedureCode = 0x81;
-    criticalityDiagnostics.procedureCode  = procedureCode;
+    ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.procedureCode  = procedureCode;
 
 	Ngap_TriggeringMessage_t  *triggeringMessage = calloc(1, sizeof(Ngap_TriggeringMessage_t));
 	*triggeringMessage = 0x82;
-    criticalityDiagnostics.triggeringMessage = triggeringMessage;
+    ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.triggeringMessage = triggeringMessage;
 
 	Ngap_Criticality_t  *procedureCriticality = calloc(1, sizeof(Ngap_Criticality_t));
 	*procedureCriticality = 0x83;
-	criticalityDiagnostics.procedureCriticality = procedureCriticality;
+	ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.procedureCriticality = procedureCriticality;
 
     Ngap_CriticalityDiagnostics_IE_Item_t  *criticalityDiagnosticsIEs = calloc(1, sizeof(Ngap_CriticalityDiagnostics_IE_Item_t));
 	criticalityDiagnosticsIEs->iECriticality = 0x85;
 	criticalityDiagnosticsIEs->iE_ID = 0x86;
 	criticalityDiagnosticsIEs->typeOfError = 0x86;
 
-    ASN_SEQUENCE_ADD(&criticalityDiagnostics.iEsCriticalityDiagnostics->list, &criticalityDiagnosticsIEs);
-	ngapSetupFailureIEs->value.choice.CriticalityDiagnostics =  criticalityDiagnostics;
+    ASN_SEQUENCE_ADD(&ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.iEsCriticalityDiagnostics->list, &criticalityDiagnosticsIEs);
 	ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
-	
-  
-   
+
+
 	
 	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
+	
+	MessagesIds message_id = MESSAGES_ID_MAX;
+    Ngap_NGAP_PDU_t decoded_pdu = {0};
+     
+	bstring b = blk2bstr(buffer_p, length);
+	 
+	printf("NGAP_SetupFailure-------------decode, length:%d\n", length);
+    ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+    ngap_amf_handle_message(0,0,&decoded_pdu);
 
     #if  0
 	//connect to sctp and send message to AMF
@@ -253,6 +259,197 @@ send_NGAP_SetupFailure()
     #endif
 
 }
+
+int send_NGAP_Initial_UE_Message()
+{
+    printf("\n\nNGAP_Initial_UE_Message-------------encode\n");
+		
+	int assoc[1];
+	sctp_data_t * sctp_data_p = NULL;
+	char *local_ip_addr[] = {"127.0.0.1"};
+	char remote_ip_addr[] = "127.0.0.1";
+	Ngap_NGAP_PDU_t 						pdu;
+	uint8_t * buffer_p = NULL;
+	uint32_t length = 0;
+
+	Ngap_InitialUEMessage_t						*ngapInitialUeMsg= NULL;
+	Ngap_InitialUEMessage_IEs_t					*ngapInitialUeMsgIEs = NULL;
+	memset(&pdu, 0, sizeof(pdu));
+	
+	//for NGSetupFailure
+	pdu.present = Ngap_NGAP_PDU_PR_initiatingMessage;
+	pdu.choice.initiatingMessage = calloc(1, sizeof(Ngap_InitiatingMessage_t));
+	pdu.choice.initiatingMessage->procedureCode = Ngap_ProcedureCode_id_InitialUEMessage;
+	pdu.choice.initiatingMessage->criticality = Ngap_Criticality_reject;
+	pdu.choice.initiatingMessage->value.present = Ngap_InitiatingMessage__value_PR_InitialUEMessage;
+	ngapInitialUeMsg = &pdu.choice.initiatingMessage->value.choice.InitialUEMessage;
+	
+	printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);
+	printf("procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);	  
+
+	ngapInitialUeMsgIEs = calloc(1, sizeof(Ngap_InitialUEMessage_IEs_t));
+	ngapInitialUeMsgIEs->id = Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID; 
+	ngapInitialUeMsgIEs->value.present = Ngap_InitialUEMessage_IEs__value_PR_RAN_UE_NGAP_ID;
+	ngapInitialUeMsgIEs->value.choice.RAN_UE_NGAP_ID = 0x80;
+    ASN_SEQUENCE_ADD(&ngapInitialUeMsg->protocolIEs, ngapInitialUeMsgIEs);
+	printf("RAN_UE_NGAP_ID:0x%x\n", ngapInitialUeMsgIEs->value.choice.RAN_UE_NGAP_ID);
+
+	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
+
+	MessagesIds message_id = MESSAGES_ID_MAX;
+    Ngap_NGAP_PDU_t decoded_pdu = {0};
+     
+	bstring b = blk2bstr(buffer_p, length);
+	 
+	printf("NGAP_Initial_UE_Message-------------decode\n");
+	
+    ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+    ngap_amf_handle_message(0,0,&decoded_pdu);
+	
+    return  0;
+}
+int send_NGAP_Uplink_Nas_Transport()
+{
+    printf("\n\nNGAP_Uplink_Nas_Transport-------------encode\n");
+		
+	int assoc[1];
+	sctp_data_t * sctp_data_p = NULL;
+	char *local_ip_addr[] = {"127.0.0.1"};
+	char remote_ip_addr[] = "127.0.0.1";
+	Ngap_NGAP_PDU_t 						pdu;
+	uint8_t * buffer_p = NULL;
+	uint32_t length = 0;
+
+	
+	Ngap_UplinkNASTransport_t						*ngapUplinkNasTransport = NULL;
+	Ngap_UplinkNASTransport_IEs_t					*ngapUplinkNasTransportIEs = NULL;
+	memset(&pdu, 0, sizeof(pdu));
+	
+	//for NGSetupFailure
+	pdu.present = Ngap_NGAP_PDU_PR_initiatingMessage;
+	pdu.choice.initiatingMessage = calloc(1, sizeof(Ngap_InitiatingMessage_t));
+	pdu.choice.initiatingMessage->procedureCode = Ngap_ProcedureCode_id_UplinkNASTransport;
+	pdu.choice.initiatingMessage->criticality = Ngap_Criticality_reject;
+	pdu.choice.initiatingMessage->value.present = Ngap_InitiatingMessage__value_PR_UplinkNASTransport;
+	ngapUplinkNasTransport = &pdu.choice.initiatingMessage->value.choice.UplinkNASTransport;
+
+	printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);
+	printf("procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);	  
+  
+	//AMF_UE_NGAP_ID
+    ngapUplinkNasTransportIEs = calloc(1, sizeof(Ngap_UplinkNASTransport_IEs_t));
+	ngapUplinkNasTransportIEs->id = Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID; 
+	ngapUplinkNasTransportIEs->value.present = Ngap_UplinkNASTransport_IEs__value_PR_AMF_UE_NGAP_ID;
+  
+
+	uint8_t amf_UN[2] = {0x01, 0x02};
+	Ngap_AMF_UE_NGAP_ID_t amf_uni;
+	memset(&amf_uni, 0 , sizeof(Ngap_AMF_UE_NGAP_ID_t));
+	amf_uni.buf = amf_UN;
+	amf_uni.size  =  2;
+    //asn_ulong2INTEGER(&ngapUplinkNasTransportIEs->value.choice.AMF_UE_NGAP_ID, 0x80);
+	ngapUplinkNasTransportIEs->value.choice.AMF_UE_NGAP_ID = amf_uni;
+    ASN_SEQUENCE_ADD(&ngapUplinkNasTransport->protocolIEs, ngapUplinkNasTransport);
+	printf("AMF_UE_NGAP_ID, size:%d,0x%x,0x%x\n", 
+	ngapUplinkNasTransportIEs->value.choice.AMF_UE_NGAP_ID.size,
+	ngapUplinkNasTransportIEs->value.choice.AMF_UE_NGAP_ID.buf[0],
+	ngapUplinkNasTransportIEs->value.choice.AMF_UE_NGAP_ID.buf[1]);
+
+   
+    //RAN_UE_NGAP_ID
+	ngapUplinkNasTransportIEs = calloc(1, sizeof(Ngap_UplinkNASTransport_IEs_t));
+	ngapUplinkNasTransportIEs->id = Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID;; 
+	ngapUplinkNasTransportIEs->value.present = Ngap_UplinkNASTransport_IEs__value_PR_RAN_UE_NGAP_ID;
+	ngapUplinkNasTransportIEs->value.choice.RAN_UE_NGAP_ID = 0x80;
+    ASN_SEQUENCE_ADD(&ngapUplinkNasTransport->protocolIEs, ngapUplinkNasTransport);
+	printf("RAN_UE_NGAP_ID:0x%x\n", ngapUplinkNasTransportIEs->value.choice.RAN_UE_NGAP_ID);
+
+
+	//NAS_PDU
+	ngapUplinkNasTransportIEs = calloc(1, sizeof(Ngap_UplinkNASTransport_IEs_t));
+	ngapUplinkNasTransportIEs->id = Ngap_ProtocolIE_ID_id_NAS_PDU;; 
+	ngapUplinkNasTransportIEs->value.present = Ngap_UplinkNASTransport_IEs__value_PR_NAS_PDU;
+	uint8_t amf_nas_pdu[3] = { 0x02, 0xF8, 0x29 };
+	OCTET_STRING_fromBuf(&ngapUplinkNasTransportIEs->value.choice.NAS_PDU, (const char*)amf_nas_pdu, 3);
+    ASN_SEQUENCE_ADD(&ngapUplinkNasTransport->protocolIEs, ngapUplinkNasTransport);
+	printf("NAS_PDU:0x%x,0x%x,0x%x\n", 
+	ngapUplinkNasTransportIEs->value.choice.NAS_PDU.buf[0],
+	ngapUplinkNasTransportIEs->value.choice.NAS_PDU.buf[1],
+	ngapUplinkNasTransportIEs->value.choice.NAS_PDU.buf[2]);
+
+    //UserLocationInformation
+    ngapUplinkNasTransportIEs = calloc(1, sizeof(Ngap_UplinkNASTransport_IEs_t));
+	ngapUplinkNasTransportIEs->id = Ngap_ProtocolIE_ID_id_UserLocationInformation;; 
+	ngapUplinkNasTransportIEs->value.present = Ngap_UplinkNASTransport_IEs__value_PR_UserLocationInformation;
+    
+    Ngap_UserLocationInformation_t	 UserLocationInformation;
+	memset(&UserLocationInformation, 0, sizeof(Ngap_UserLocationInformation_t));
+	UserLocationInformation.present =  Ngap_UserLocationInformation_PR_userLocationInformationEUTRA;
+
+	Ngap_UserLocationInformationEUTRA_t	*userLocationInformationEUTRA = calloc(1, sizeof(Ngap_UserLocationInformationEUTRA_t));
+
+	UserLocationInformation.choice.userLocationInformationEUTRA = userLocationInformationEUTRA; 
+
+    //eUTRA_CGI: pLMNIdentity,eUTRACellIdentity.
+
+    uint8_t plmni[3] = { 0x02, 0xF8, 0x29 };
+	OCTET_STRING_fromBuf(&userLocationInformationEUTRA->eUTRA_CGI.pLMNIdentity, (const char*)plmni, 3);
+
+	uint8_t UTRACellI[3] = { 0x02, 0xF8, 0x29 };
+    Ngap_EUTRACellIdentity_t	eUTRACellIdentity;
+	memset(&eUTRACellIdentity, 0, sizeof(eUTRACellIdentity));
+	eUTRACellIdentity.buf = UTRACellI;
+	eUTRACellIdentity.size = 3;
+
+    userLocationInformationEUTRA->eUTRA_CGI.eUTRACellIdentity = eUTRACellIdentity;
+	
+	
+	//tai: pLMNIdentity,tAC;
+	//Ngap_PLMNIdentity_t	 pLMNIdentity;
+	//Ngap_TAC_t	 tAC;
+	uint8_t plmnit[3] = { 0x02, 0xF8, 0x29 };
+	OCTET_STRING_fromBuf(&userLocationInformationEUTRA->tAI.pLMNIdentity, (const char*)plmnit, 3);
+	uint8_t tACt[3] = { 0x02, 0xF8, 0x29 };
+	OCTET_STRING_fromBuf(&userLocationInformationEUTRA->tAI.tAC, (const char*)tACt, 3);
+    
+
+    //timestamp
+    uint8_t timestamp[3] = { 0x02, 0xF8, 0x29 };
+	OCTET_STRING_fromBuf(userLocationInformationEUTRA->timeStamp, (const char*)timestamp, 3);
+    
+    ngapUplinkNasTransportIEs->value.choice.UserLocationInformation =  UserLocationInformation;
+	
+    ASN_SEQUENCE_ADD(&ngapUplinkNasTransport->protocolIEs, ngapUplinkNasTransport);
+	
+    int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
+
+    #if 0
+        Ngap_NGAP_PDU_t  decoded_pdu;
+        Ngap_NGAP_PDU_t * ppdu = &decoded_pdu;
+        asn_dec_rval_t rc = asn_decode(NULL,ATS_ALIGNED_CANONICAL_PER,&asn_DEF_Ngap_NGAP_PDU,(void**)&ppdu,buffer_p,length);
+        printf("decode result(%d)\n",rc);
+        printf("decoded message present(%d)\n",decoded_pdu.present);
+        switch(decoded_pdu.present){
+          case Ngap_NGAP_PDU_PR_initiatingMessage:
+            printf("precedureCode(%d)\n",decoded_pdu.choice.initiatingMessage->procedureCode);
+            printf("message type(%d)\n",decoded_pdu.choice.initiatingMessage->value.present);
+        } 
+   #endif
+ 
+
+    MessagesIds message_id = MESSAGES_ID_MAX;
+    Ngap_NGAP_PDU_t decoded_pdu = {0};
+     
+	bstring b = blk2bstr(buffer_p, length);
+	 
+	printf("NGAP_Uplink_Nas_Transport-------------decode, length:%d\n", length);
+    ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+    ngap_amf_handle_message(0,0,&decoded_pdu);
+
+    return  0;
+}
+
+
 int main(
 		int argc,
 		char * argv[])
@@ -277,8 +474,11 @@ int main(
 
 
 	//Test NGAP messages
+	
 	send_NGAP_SetupRequest();
 	send_NGAP_SetupFailure();
+	send_NGAP_Initial_UE_Message();
+	send_NGAP_Uplink_Nas_Transport();
 	//test NGAP
 	//test gNB
 /*

@@ -24,11 +24,13 @@ ngap_message_decoded_callback   messages_callback[][3] = {
     {0,0,0}, /*CellTrafficTrace*/
     {0,0,0}, /*DeactivateTrace*/
     {0,0,0}, /*DownlinkNASTransport*/
+    
     {0,0,0}, /*DownlinkNonUEAssociatedNRPPaTransport*/
     {0,0,0}, /*DownlinkRANConfigurationTransfer*/
     {0,0,0}, /*DownlinkRANStatusTransfer*/
     {0,0,0}, /*DownlinkUEAssociatedNRPPaTransport*/
     {0,0,0},//{ngap_amf_handle_error_indication,0,0}, /*ErrorIndication*/
+    
     {0,0,0}, /*HandoverCancel*/
     {0,0,0}, /*HandoverNotification*/
     {0,0,0}, /*HandoverPreparation*/
@@ -36,43 +38,64 @@ ngap_message_decoded_callback   messages_callback[][3] = {
     {0,0,0},//{
      //0,ngap_amf_handle_initial_context_setup_response,
      //ngap_amf_handle_initial_context_setup_failure}, /*InitialContextSetup*/
-    {0,0,0},//{ngap_amf_handle_initial_ue_message,0,0}, /*InitialUEMessage*/
+    {ngap_amf_handle_ng_initial_ue_message,0,0},//{ngap_amf_handle_initial_ue_message,0,0}, /*InitialUEMessage*/
     {0,0,0}, /*LocationReportingControl*/
     {0,0,0}, /*LocationReportingFailureIndication*/
     {0,0,0}, /*LocationReport*/
     {0,0,0}, /*NASNonDeliveryIndication*/
+    
     {0,0,0}, /*NGReset*/
-    {ngap_amf_handle_ng_setup_request,0,0}, /*NGSetup*/
+    {ngap_amf_handle_ng_setup_request,0,ngap_amf_handle_ng_setup_failure}, /*NGSetup*/
     {0,0,0}, /*OverloadStart*/
-    {0,0,0}, /*OverloadStop*/
+	{0,0,0}, /*OverloadStop*/
     {0,0,0}, /*Paging*/
-    {0,0,0},//{ngap_amf_handle_path_switch_request,0,0}, /*PathSwitchRequest*/
+    
+    {0,0,0},//{ngap_amf_handle_path_switch_request,0,0}, /*PathSwitchRequest*
     {0,0,0}, /*PDUSessionResourceModify*/
     {0,0,0}, /*PDUSessionResourceModifyIndication*/
     {0,0,0}, /*PDUSessionResourceRelease*/
     {0,0,0}, /*PDUSessionResourceSetup*/
+    
     {0,0,0}, /*PDUSessionResourceNotify*/
     {0,0,0}, /*PrivateMessage*/
     {0,0,0}, /*PWSCancel*/
     {0,0,0}, /*PWSFailureIndication*/
     {0,0,0}, /*PWSRestartIndication*/
+
+	
     {0,0,0}, /*RANConfigurationUpdate*/
     {0,0,0}, /*RerouteNASRequest*/
     {0,0,0}, /*RRCInactiveTransitionReport*/
     {0,0,0}, /*TraceFailureIndication*/
     {0,0,0}, /*TraceStart*/
+
+	
     {0,0,0}, /*UEContextModification*/
     {0,0,0},//{0,ngap_amf_handle_ue_context_release_complete,0}, /*UEContextRelease*/
     {0,0,0},//{ngap_amf_handle_ue_context_release_request,0,0}, /*UEContextReleaseRequest*/
     {0,0,0}, /*UERadioCapabilityCheck*/
     {0,0,0},//{ngap_amf_handle_ue_radio_cap_indication,0,0}, /*UERadioCapabilityInfoIndication*/
+
+	
     {0,0,0}, /*UETNLABindingRelease*/
-    {0,0,0},//{ngap_amf_handle_uplink_nas_transport,0,0}, /*UplinkNASTransport*/
+    {ngap_amf_handle_ng_uplink_nas_transport,0,0},//{ngap_amf_handle_uplink_nas_transport,0,0}, /*UplinkNASTransport*/
     {0,0,0}, /*UplinkNonUEAssociatedNRPPaTransport*/
     {0,0,0}, /*UplinkRANConfigurationTransfer*/
     {0,0,0}, /*UplinkRANStatusTransfer*/
+
+	
     {0,0,0}, /*UplinkUEAssociatedNRPPaTransport*/
-    {0,0,0} /*WriteReplaceWarning*/
+    {0,0,0}, /*WriteReplaceWarning*/
+	{0,0,0}, /*WriteReplaceWarning*/
+	{0,0,0}, /*WriteReplaceWarning*/
+	{0,0,0}, /*WriteReplaceWarning*/
+	
+	{0,0,0}, /*WriteReplaceWarning*/
+	{0,0,0}, /*WriteReplaceWarning*/
+	{0,0,0}, /*WriteReplaceWarning*/
+	{0,0,0}, /*WriteReplaceWarning*/
+	{0,0,0} /*WriteReplaceWarning*/
+	
 };
 
 const char                             *ngap_direction2String[] = {
@@ -99,6 +122,9 @@ ngap_amf_handle_message(
     case Ngap_NGAP_PDU_PR_unsuccessfulOutcome:
       procedureCode = pdu->choice.unsuccessfulOutcome->procedureCode;
       break;
+	default:
+	  printf("ngap_amf_handle_message unknown protocol %d\n",present);
+	  return -1;
   }
 
   printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);
@@ -425,6 +451,65 @@ ngap_amf_handle_ng_setup_request(
 }
 
 //------------------------------------------------------------------------------------------------------------
+int
+ngap_amf_handle_ng_setup_failure(
+    const sctp_assoc_id_t assoc_id,
+    const sctp_stream_id_t stream,
+	Ngap_NGAP_PDU_t *pdu)
+
+{
+    //OAILOG_FUNC_IN (LOG_NGAP);
+    int rc = RETURNok;
+    Ngap_NGSetupFailureIEs_t * ngSetupFailure_p = NULL;
+	Ngap_NGSetupFailureIEs_t * ngSetupFailureIEs_p = NULL;
+    gnb_description_t   * gnb_association = NULL;
+    uint32_t              gnb_id = 0;
+    char                 *gnb_name = NULL;
+    int				      gnb_name_size = 0;
+    int                   ta_ret = 0;
+    uint32_t              max_gnb_connected = 0;
+    int i = 0;
+    Ngap_NGSetupFailure_t                  *container = NULL;
+    Ngap_NGSetupFailureIEs_t               *ie = NULL;
+    Ngap_NGSetupFailureIEs_t               *ie_gnb_name = NULL;
+
+    printf("ngap_amf_handle_ng_setup_Failure\n");
+    DevAssert (pdu != NULL);
+	
+    container = &pdu->choice.initiatingMessage->value.choice.NGSetupFailure;
+	
+	for (i = 0; i < container->protocolIEs.list.count; i++)
+	{
+        Ngap_NGSetupFailureIEs_t *setupFailureIes_p = NULL;
+        setupFailureIes_p = container->protocolIEs.list.array[i];
+		if(!setupFailureIes_p)
+			continue;
+		switch(setupFailureIes_p->id)
+	    {
+	        case Ngap_ProtocolIE_ID_id_Cause:
+			{
+			}
+			break;
+            case Ngap_ProtocolIE_ID_id_TimeToWait:
+			{
+				
+			}
+			break;
+            case Ngap_ProtocolIE_ID_id_CriticalityDiagnostics:
+			{
+				
+            }		
+            break;
+            default:
+			{
+		   	    printf("Unknown protocol IE id (%d) for message ngsetup_failure_ies\n", (int)setupFailureIes_p->id);
+            }
+		    break;
+		}
+	 }
+	 return 0;
+}
+
 static int
 ngap_generate_ng_setup_response(
   gnb_description_t * gnb_association)
@@ -433,7 +518,63 @@ ngap_generate_ng_setup_response(
 
 }
 
+int
+ngap_amf_handle_ng_initial_ue_message(
+    const sctp_assoc_id_t assoc_id,
+    const sctp_stream_id_t stream,
+	Ngap_NGAP_PDU_t *pdu)
+{
+    //OAILOG_FUNC_IN (LOG_NGAP);
+    int rc = RETURNok;
+    Ngap_NGSetupFailureIEs_t * ngInitialUeMsg = NULL;
+	Ngap_NGSetupFailureIEs_t * ngInitialUeMsgIEs_p = NULL;
+    gnb_description_t   * gnb_association = NULL;
+    uint32_t              gnb_id = 0;
+    char                 *gnb_name = NULL;
+    int				      gnb_name_size = 0;
+    int                   ta_ret = 0;
+    uint32_t              max_gnb_connected = 0;
+    int i = 0;
+    Ngap_InitialUEMessage_t                  *container = NULL;
+    Ngap_InitialUEMessage_IEs_t               *ie = NULL;
+    Ngap_InitialUEMessage_IEs_t               *ie_gnb_name = NULL;
 
+    printf("ngap_amf_handle_ng_initial_ue_msg\n");
+    DevAssert (pdu != NULL);
+	
+    container = &pdu->choice.initiatingMessage->value.choice.InitialUEMessage;
+	
+	for (i = 0; i < container->protocolIEs.list.count; i++)
+	{
+        Ngap_InitialUEMessage_IEs_t *initialUeMsgIEs_p = NULL;
+        initialUeMsgIEs_p = container->protocolIEs.list.array[i];
+		if(!initialUeMsgIEs_p)
+			continue;
+		switch(initialUeMsgIEs_p->id)
+	    {
+	        case Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
+			{
+				printf("RAN_UE_NGAP_ID:0x%x\n",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
+			}
+			break;
+            default:
+			{
+		   	    printf("Unknown protocol IE id (%d) for message ngsetup_failure_ies\n", (int)initialUeMsgIEs_p->id);
+            }
+		    break;
+		}
+	 }
+     return 0;
+}
+
+
+int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
+    const sctp_stream_id_t stream,
+	Ngap_NGAP_PDU_t *pdu)
+{
+    printf("ngap_amf_handle_ng_uplink_nas_transport-----\n");
+    return  0;
+}
 
 int
 ngap_handle_new_association (
