@@ -43,6 +43,7 @@ extern "C"{
 #include "ngap_amf.h"
 #include "amf_app.h"
 #include "log.h"
+#include "amf_config.h"
 //#include "nas_mm.h"
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,14 +127,15 @@ int main(
     pid_file_name = get_exe_absolute_path("/var/run");
 */
     CHECK_INIT_RETURN (OAILOG_INIT (MAX_LOG_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
-    //log_init(LOG_SPGW_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS);
+    CHECK_INIT_RETURN (amf_config_parse_opt_line (argc,argv,&amf_config));
     CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,NULL,NULL));
     //CHECK_INIT_RETURN (nas_mm_init());
     //nas_mm_init();
-    CHECK_INIT_RETURN (sctp_init());
+    CHECK_INIT_RETURN (sctp_init(&amf_config));
     CHECK_INIT_RETURN (ngap_amf_init());
     //CHECK_INIT_RETURN (amf_app_init());
     OAILOG_DEBUG(LOG_NGAP,"NGAP\n");
+    OAILOG_INFO(LOG_AMF_APP,"AMF-APP\n");
 
 
     //TTN (16/05/2019) first activate NGAP->SCTP

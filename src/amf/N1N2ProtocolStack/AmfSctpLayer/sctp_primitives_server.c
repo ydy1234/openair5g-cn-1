@@ -757,18 +757,18 @@ int handle_assoc_change(int sd, uint32_t ppid, struct sctp_assoc_change  *sctp_a
 }
 
 //------------------------------------------------------------------------------
-//int sctp_init (const mme_config_t * mme_config_p)
-int sctp_init ()
+int sctp_init (const amf_config_t * amf_config_p)
+//int sctp_init ()
 {
   OAILOG_DEBUG (LOG_SCTP, "Initializing SCTP task interface\n");
   memset (&sctp_desc, 0, sizeof (sctp_descriptor_t));
   /*
    * Number of streams from configuration
    */
-  //sctp_desc.nb_instreams = mme_config_p->sctp_config.in_streams;
-  sctp_desc.nb_instreams = 3;
-  //sctp_desc.nb_outstreams = mme_config_p->sctp_config.out_streams;
-  sctp_desc.nb_outstreams = 333;
+  sctp_desc.nb_instreams = amf_config_p->sctp_config.in_streams;
+  //sctp_desc.nb_instreams = 3;
+  sctp_desc.nb_outstreams = amf_config_p->sctp_config.out_streams;
+  //sctp_desc.nb_outstreams = 333;
 
   if (itti_create_task (TASK_SCTP, &sctp_intertask_interface, NULL) < 0) {
     OAILOG_ERROR (LOG_SCTP, "create task failed\n");

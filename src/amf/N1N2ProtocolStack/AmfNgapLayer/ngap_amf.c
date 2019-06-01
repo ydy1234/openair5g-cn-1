@@ -13,6 +13,8 @@
 #include "asn_internal.h"
 #include "hashtable.h"
 #include "ngap_amf.h"
+#include "amf_default_values.h"
+#include "amf_config.h"
 
 
 uint32_t                                nb_gnb_associated = 0;
@@ -26,11 +28,12 @@ static int ngap_send_init_sctp(void)
 {
   MessageDef                             *message_p = NULL;
   message_p = itti_alloc_new_message (TASK_NGAP, SCTP_INIT_MSG);
-  message_p->ittiMsg.sctpInit.port = 36412;
-  message_p->ittiMsg.sctpInit.ppid = 60;
+  message_p->ittiMsg.sctpInit.port = NGAP_PORT_NUMBER;
+  message_p->ittiMsg.sctpInit.ppid = NGAP_SCTP_PPID;
   message_p->ittiMsg.sctpInit.ipv4 = 1;
   message_p->ittiMsg.sctpInit.ipv6 = 0;
   message_p->ittiMsg.sctpInit.nb_ipv4_addr = 1;
+/*
   int intAddress = 0;
   bstring address = NULL;
   bstring mask = NULL;
@@ -42,7 +45,8 @@ static int ngap_send_init_sctp(void)
   mask    = list->entry[1];
   printf("address(%s);mask(%s)\n",address->data,mask->data);
   IPV4_STR_ADDR_TO_INT_NWBO (bdata(address), intAddress, "BAD IP ADDRESS FORMAT FOR S1-MME !\n");
-  message_p->ittiMsg.sctpInit.ipv4_address[0] = intAddress; //1684303882;//1546416138;//117506058;
+*/
+  message_p->ittiMsg.sctpInit.ipv4_address[0] = amf_config.ipv4.ng_amf; //1684303882;//1546416138;//117506058;
   message_p->ittiMsg.sctpInit.nb_ipv6_addr = 0;
   message_p->ittiMsg.sctpInit.ipv6_address[0] = "0:0:0:0:0:0:0:1";
   return itti_send_msg_to_task (TASK_SCTP, INSTANCE_DEFAULT, message_p);
@@ -111,7 +115,7 @@ ngap_amf_init(void)
       //OAILOG_DEBUG (LOG_NGAP, "ASN1C version %d\n", get_asn1c_environment_version ());
     //}
   
-    //OAILOG_DEBUG (LOG_NGAP, "S1AP Release v10.5\n");
+    //OAILOG_DEBUG (LOG_NGAP, "NGAP Release v10.5\n");
 
     bstring bs1 = bfromcstr("ngap_gNB_coll");
     hash_table_ts_t * h = hashtable_ts_init(&g_ngap_gnb_coll,16,NULL,free_wrapper,bs1);

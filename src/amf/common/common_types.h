@@ -26,4 +26,7 @@ typedef uint32_t                 sctp_assoc_id_t;
 typedef uint8_t       ksi_t;
 #define KSI_NO_KEY_AVAILABLE     0x07
 
+typedef uint32_t ipv4_nbo_t;
+
+
 #endif

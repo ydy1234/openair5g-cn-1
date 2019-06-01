@@ -294,7 +294,7 @@ void log_set_config(const log_config_t * const config)
     //if ((MAX_LOG_LEVEL > config->gtpv2c_log_level) && (MIN_LOG_LEVEL <= config->gtpv2c_log_level))   g_oai_log.log_level[LOG_GTPV2C]   = config->gtpv2c_log_level;
     if ((MAX_LOG_LEVEL > config->sctp_log_level) && (MIN_LOG_LEVEL <= config->sctp_log_level))       g_oai_log.log_level[LOG_SCTP]     = config->sctp_log_level;
     if ((MAX_LOG_LEVEL > config->ngap_log_level) && (MIN_LOG_LEVEL <= config->ngap_log_level))       g_oai_log.log_level[LOG_NGAP]     = config->ngap_log_level;
-    if ((MAX_LOG_LEVEL > config->mme_app_log_level) && (MIN_LOG_LEVEL <= config->mme_app_log_level)) g_oai_log.log_level[LOG_MME_APP]  = config->mme_app_log_level;
+    if ((MAX_LOG_LEVEL > config->amf_app_log_level) && (MIN_LOG_LEVEL <= config->amf_app_log_level)) g_oai_log.log_level[LOG_AMF_APP]  = config->amf_app_log_level;
     if ((MAX_LOG_LEVEL > config->nas_log_level) && (MIN_LOG_LEVEL <= config->nas_log_level)) {
       g_oai_log.log_level[LOG_NAS]      = config->nas_log_level;
     //  g_oai_log.log_level[LOG_NAS_EMM]  = config->nas_log_level;
@@ -462,7 +462,7 @@ log_init (
   //rv = snprintf (&g_oai_log.log_proto2str[LOG_GTPV1U][0], LOG_MAX_PROTO_NAME_LENGTH, "GTPv1-U");
   //rv = snprintf (&g_oai_log.log_proto2str[LOG_GTPV2C][0], LOG_MAX_PROTO_NAME_LENGTH, "GTPv2-C");
   rv = snprintf (&g_oai_log.log_proto2str[LOG_NGAP][0], LOG_MAX_PROTO_NAME_LENGTH, "NGAP");
-  rv = snprintf (&g_oai_log.log_proto2str[LOG_MME_APP][0], LOG_MAX_PROTO_NAME_LENGTH, "MME-APP");
+  rv = snprintf (&g_oai_log.log_proto2str[LOG_AMF_APP][0], LOG_MAX_PROTO_NAME_LENGTH, "AMF-APP");
   rv = snprintf (&g_oai_log.log_proto2str[LOG_NAS][0], LOG_MAX_PROTO_NAME_LENGTH, "NAS");
   //rv = snprintf (&g_oai_log.log_proto2str[LOG_NAS_EMM][0], LOG_MAX_PROTO_NAME_LENGTH, "NAS-EMM");
   //rv = snprintf (&g_oai_log.log_proto2str[LOG_NAS_ESM][0], LOG_MAX_PROTO_NAME_LENGTH, "NAS-ESM");

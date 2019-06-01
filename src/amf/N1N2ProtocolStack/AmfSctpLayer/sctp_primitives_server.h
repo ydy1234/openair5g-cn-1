@@ -36,7 +36,7 @@
 #define FILE_SCTP_PRIMITIVES_SERVER_SEEN
 #include <netinet/in.h>
 #include <netinet/sctp.h>
-//#include "mme_config.h"
+#include "amf_config.h"
 
 /** \brief SCTP data received callback
  \param buffer pointer to buffer received
@@ -48,8 +48,8 @@ typedef void (*sctp_recv_callback)(uint8_t *buffer, uint32_t length);
  \param mme_config The global MME configuration structure
  @returns -1 on error, 0 otherwise.
  **/
-//int sctp_init(const mme_config_t *mme_config_p);
-int sctp_init();
+int sctp_init(const amf_config_t *amf_config_p);
+//int sctp_init();
 
 #endif /* FILE_SCTP_PRIMITIVES_SERVER_SEEN */
 

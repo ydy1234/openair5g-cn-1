@@ -222,6 +222,7 @@ check_install_amf_software()
     PACKAGE_LIST="\
       ca-cacert
       cmake \
+      libconfig8-dev \
       libgcrypt11-dev \
       g++ \
       gcc \
