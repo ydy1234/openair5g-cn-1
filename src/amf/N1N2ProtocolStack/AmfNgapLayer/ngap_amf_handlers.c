@@ -23,7 +23,7 @@ ngap_message_decoded_callback   messages_callback[][3] = {
     {0,0,0}, /*AMFStatusIndication*/
     {0,0,0}, /*CellTrafficTrace*/
     {0,0,0}, /*DeactivateTrace*/
-    {0,0,0}, /*DownlinkNASTransport*/
+    {ngap_amf_handle_ng_downlink_nas_transport,0,0}, /*DownlinkNASTransport*/
     
     {0,0,0}, /*DownlinkNonUEAssociatedNRPPaTransport*/
     {0,0,0}, /*DownlinkRANConfigurationTransfer*/
@@ -574,6 +574,14 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 {
     printf("ngap_amf_handle_ng_uplink_nas_transport-----\n");
     return  0;
+}
+
+int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+								Ngap_NGAP_PDU_t *pdu)
+{
+
+    printf("ngap_amf_handle_ng_downlink_nas_transport\n");
+    return 0;
 }
 
 int

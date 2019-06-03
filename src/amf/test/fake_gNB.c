@@ -325,7 +325,7 @@ int send_NGAP_Uplink_Nas_Transport()
 	Ngap_UplinkNASTransport_IEs_t					*ngapUplinkNasTransportIEs = NULL;
 	memset(&pdu, 0, sizeof(pdu));
 	
-	//for NGSetupFailure
+	//for NGuplinkNasTransport
 	pdu.present = Ngap_NGAP_PDU_PR_initiatingMessage;
 	pdu.choice.initiatingMessage = calloc(1, sizeof(Ngap_InitiatingMessage_t));
 	pdu.choice.initiatingMessage->procedureCode = Ngap_ProcedureCode_id_UplinkNASTransport;
@@ -449,7 +449,95 @@ int send_NGAP_Uplink_Nas_Transport()
     return  0;
 }
 
+int send_NGAP_Downlink_Nas_Transport()
+{
+    printf("\n\nNGAP_Downlink_Nas_Transport-------------encode\n");
+		
+	int assoc[1];
+	sctp_data_t * sctp_data_p = NULL;
+	char *local_ip_addr[] = {"127.0.0.1"};
+	char remote_ip_addr[] = "127.0.0.1";
+	Ngap_NGAP_PDU_t 						pdu;
+	uint8_t * buffer_p = NULL;
+	uint32_t length = 0;
 
+	Ngap_DownlinkNASTransport_t	     *ngapDownlinkNASTransport     = NULL;
+	Ngap_DownlinkNASTransport_IEs_t  *ngapDownlinkNASTransportIEs  = NULL;
+	
+	memset(&pdu, 0, sizeof(pdu));
+	
+	//for NGDownLinkNasTransport
+	pdu.present = Ngap_NGAP_PDU_PR_initiatingMessage;
+	pdu.choice.initiatingMessage = calloc(1, sizeof(Ngap_InitiatingMessage_t));
+	pdu.choice.initiatingMessage->procedureCode = Ngap_ProcedureCode_id_DownlinkNASTransport;
+	pdu.choice.initiatingMessage->criticality = Ngap_Criticality_reject;
+	pdu.choice.initiatingMessage->value.present = Ngap_InitiatingMessage__value_PR_DownlinkNASTransport;
+	ngapDownlinkNASTransport = &pdu.choice.initiatingMessage->value.choice.DownlinkNASTransport;
+
+	printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);
+	printf("procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);	  
+
+
+    //AMF_UE_NGAP_ID
+    ngapDownlinkNASTransportIEs = calloc(1, sizeof(Ngap_DownlinkNASTransport_IEs_t));
+	ngapDownlinkNASTransportIEs->id = Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID; 
+	ngapDownlinkNASTransportIEs->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_AMF_UE_NGAP_ID;
+  
+
+	uint8_t amf_UN[2] = {0x01, 0x02};
+	Ngap_AMF_UE_NGAP_ID_t amf_uni;
+	memset(&amf_uni, 0 , sizeof(Ngap_AMF_UE_NGAP_ID_t));
+	amf_uni.buf = amf_UN;
+	amf_uni.size  =  2;
+    //asn_ulong2INTEGER(&ngapUplinkNasTransportIEs->value.choice.AMF_UE_NGAP_ID, 0x80);
+	ngapDownlinkNASTransportIEs->value.choice.AMF_UE_NGAP_ID = amf_uni;
+    ASN_SEQUENCE_ADD(&ngapDownlinkNASTransport->protocolIEs, ngapDownlinkNASTransportIEs);
+	
+	printf("AMF_UE_NGAP_ID, size:%d,0x%x,0x%x\n", 
+	ngapDownlinkNASTransportIEs->value.choice.AMF_UE_NGAP_ID.size,
+	ngapDownlinkNASTransportIEs->value.choice.AMF_UE_NGAP_ID.buf[0],
+	ngapDownlinkNASTransportIEs->value.choice.AMF_UE_NGAP_ID.buf[1]);
+
+
+    //RAN_UE_NGAP_ID
+    ngapDownlinkNASTransportIEs = calloc(1, sizeof(Ngap_DownlinkNASTransport_IEs_t));
+	ngapDownlinkNASTransportIEs->id = Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID; 
+	ngapDownlinkNASTransportIEs->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_RAN_UE_NGAP_ID;
+  
+
+	uint8_t amf_RU[2] = {0x03, 0x04};
+	Ngap_RAN_UE_NGAP_ID_t amf_ru;
+	memset(&amf_ru, 0 , sizeof(Ngap_RAN_UE_NGAP_ID_t));
+	amf_ru =  0x79;
+    //asn_ulong2INTEGER(&ngapUplinkNasTransportIEs->value.choice.AMF_UE_NGAP_ID, 0x80);
+	ngapDownlinkNASTransportIEs->value.choice.RAN_UE_NGAP_ID = amf_ru;
+    ASN_SEQUENCE_ADD(&ngapDownlinkNASTransport->protocolIEs, ngapDownlinkNASTransportIEs);
+	
+	printf("RAN_UE_NGAP_ID, size:%d,0x%x\n",ngapDownlinkNASTransportIEs->value.choice.RAN_UE_NGAP_ID);
+
+
+	//Ngap_AMFName_t
+	ngapDownlinkNASTransportIEs = calloc(1, sizeof(Ngap_DownlinkNASTransport_IEs_t));
+	ngapDownlinkNASTransportIEs->id = Ngap_ProtocolIE_ID_id_AMFName; 
+	ngapDownlinkNASTransportIEs->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_AMFName;
+	OCTET_STRING_fromBuf(&ngapDownlinkNASTransportIEs->value.choice.AMFName, "amfName", strlen("amfName"));
+	ASN_SEQUENCE_ADD(&ngapDownlinkNASTransport->protocolIEs, ngapDownlinkNASTransportIEs);
+	   
+	printf("AMFName:%s\n",ngapDownlinkNASTransportIEs->value.choice.AMFName.buf);
+    
+    int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
+    printf("decode --------------------\n");
+	MessagesIds message_id = MESSAGES_ID_MAX;
+    Ngap_NGAP_PDU_t decoded_pdu = {0};
+     
+	bstring b = blk2bstr(buffer_p, length);
+	 
+	printf("NGAP_downlink_Nas_Transport-------------decode, length:%d\n", length);
+    ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+    ngap_amf_handle_message(0,0,&decoded_pdu);
+	
+    return 0;
+}
 int main(
 		int argc,
 		char * argv[])
@@ -479,6 +567,7 @@ int main(
 	send_NGAP_SetupFailure();
 	send_NGAP_Initial_UE_Message();
 	send_NGAP_Uplink_Nas_Transport();
+	//send_NGAP_Downlink_Nas_Transport();
 	//test NGAP
 	//test gNB
 /*
