@@ -17,6 +17,8 @@
 #include "sctp_default_values.h"
 #include "common_defs.h"
 #include "amf_default_values.h"
+#include "config.h"
+
 
 amf_config_t                            amf_config = {.rw_lock = PTHREAD_RWLOCK_INITIALIZER, 0};
 
@@ -381,6 +383,31 @@ static int amf_config_parse_file (amf_config_t * config_pP)
 
 static void amf_config_display (amf_config_t * config_pP)
 {
+  OAILOG_INFO (LOG_CONFIG, "==== BUPT %s v%s ====\n", PACKAGE_NAME, PACKAGE_VERSION);
+  OAILOG_INFO (LOG_CONFIG, "Configuration:\n");
+  OAILOG_INFO (LOG_CONFIG, "- File .................................: %s\n", bdata(config_pP->config_file));
+  OAILOG_INFO (LOG_CONFIG, "- Realm ................................: %s\n", bdata(config_pP->realm));
+  OAILOG_INFO (LOG_CONFIG, "- Run mode .............................: %s\n", (RUN_MODE_TEST == config_pP->run_mode) ? "TEST":"NORMAL");
+  OAILOG_INFO (LOG_CONFIG, "- Max eNBs .............................: %u\n", config_pP->max_enbs);
+  OAILOG_INFO (LOG_CONFIG, "- Max UEs ..............................: %u\n", config_pP->max_ues);
+  OAILOG_INFO (LOG_CONFIG, "- IMS voice over PS session in NG ......: %s\n", config_pP->_5gs_network_feature_support.ims_voice_over_ps_session_in_ng == 0 ? "false" : "true");
+  OAILOG_INFO (LOG_CONFIG, "- Emergency bearer services in NG mode .: %s\n", config_pP->_5gs_network_feature_support.emergency_bearer_services_in_ng_mode == 0 ? "false" : "true");
+  OAILOG_INFO (LOG_CONFIG, "- Location services via epc ............: %s\n", config_pP->_5gs_network_feature_support.location_services_via_5gc == 0 ? "false" : "true");
+  OAILOG_INFO (LOG_CONFIG, "- Extended service request .............: %s\n", config_pP->_5gs_network_feature_support.extended_service_request == 0 ? "false" : "true");
+  OAILOG_INFO (LOG_CONFIG, "- Unauth IMSI support ..................: %s\n", config_pP->unauthenticated_imsi_supported == 0 ? "false" : "true");
+  OAILOG_INFO (LOG_CONFIG, "- Relative capa ........................: %u\n", config_pP->relative_capacity);
+  OAILOG_INFO (LOG_CONFIG, "- Statistics timer .....................: %u (seconds)\n\n", config_pP->amf_statistic_timer);
+  OAILOG_INFO (LOG_CONFIG, "- NG-AMF:\n");
+  OAILOG_INFO (LOG_CONFIG, "    port number ......: %d\n", config_pP->ngap_config.port_number);
+  OAILOG_INFO (LOG_CONFIG, "- IP:\n");
+  OAILOG_INFO (LOG_CONFIG, "    ng-AMF iface .....: %s\n", bdata(config_pP->ipv4.if_name_ng_amf));
+  OAILOG_INFO (LOG_CONFIG, "    ng-AMF ip ........: %s\n", inet_ntoa (*((struct in_addr *)&config_pP->ipv4.ng_amf)));
+  OAILOG_INFO (LOG_CONFIG, "- ITTI:\n");
+  OAILOG_INFO (LOG_CONFIG, "    queue size .......: %u (bytes)\n", config_pP->itti_config.queue_size);
+  OAILOG_INFO (LOG_CONFIG, "    log file .........: %s\n", bdata(config_pP->itti_config.log_file));
+  OAILOG_INFO (LOG_CONFIG, "- SCTP:\n");
+  OAILOG_INFO (LOG_CONFIG, "    in streams .......: %u\n", config_pP->sctp_config.in_streams);
+  OAILOG_INFO (LOG_CONFIG, "    out streams ......: %u\n", config_pP->sctp_config.out_streams);
 }
 
 static void usage (char *target)
@@ -463,8 +490,8 @@ amf_config_parse_opt_line (
   /*
    * Display the configuration
    */
-/*
+
   amf_config_display (config_pP);
-*/
+
   return 0;
 }

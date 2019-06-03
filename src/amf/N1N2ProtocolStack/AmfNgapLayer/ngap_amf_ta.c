@@ -7,7 +7,7 @@
 #include "ngap_common.h"
 #include "ngap_amf_ta.h"
 
-
+/*
 static
   int
 ngap_amf_compare_plmn (
@@ -22,7 +22,7 @@ ngap_amf_compare_plmn (
 
   DevAssert (plmn != NULL);
   TBCD_TO_MCC_MNC (plmn, mcc, mnc, mnc_len);
-/*
+
   for (i = 0; i < 1; i++) {
     //OAILOG_TRACE (LOG_NGAP, "Comparing plmn_mcc %d/%d, plmn_mnc %d/%d plmn_mnc_len %d/%d\n",
     //    208, mcc, 93, mnc, mme_config.served_tai.plmn_mnc_len[i], mnc_len);
@@ -32,7 +32,7 @@ ngap_amf_compare_plmn (
         (mme_config.served_tai.plmn_mnc_len[i] == mnc_len))
       return TA_LIST_AT_LEAST_ONE_MATCH;
   }
-*/
+
   return TA_LIST_NO_MATCH;
 }
 
@@ -91,9 +91,6 @@ ngap_amf_compare_ta_lists (
 
   DevAssert (ta_list != NULL);
 
-  /*
-   * Parse every item in the list and try to find matching parameters
-   */
   for (i = 0; i < ta_list->list.count; i++) {
     SupportedTAItem_t               *ta;
 
@@ -115,3 +112,4 @@ ngap_amf_compare_ta_lists (
 
   return TA_LIST_RET_OK;
 }
+*/

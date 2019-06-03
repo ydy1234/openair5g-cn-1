@@ -3,6 +3,7 @@
 #include "ngap_common.h"
 #include "dynamic_memory_check.h"
 #include "log.h"
+/*
 
 int                                     asn_debug = 0;
 int                                     asn1_xer_print = 0;
@@ -29,9 +30,6 @@ ngap_generate_unsuccessfull_outcome (
     xer_fprint (stdout, &asn_DEF_NGAP_PDU, (void *)&pdu);
   }
 
-  /*
-   * We can safely free list of IE from sptr
-   */
   ASN_STRUCT_FREE_CONTENTS_ONLY (*td, sptr);
 
   if ((encoded = uper_encode_to_new_buffer (&asn_DEF_NGAP_PDU, 0, &pdu, (void **)buffer)) < 0) {
@@ -65,9 +63,6 @@ ngap_generate_initiating_message (
     xer_fprint (stdout, &asn_DEF_NGAP_PDU, (void *)&pdu);
   }
 
-  /*
-   * We can safely free list of IE from sptr
-   */
   ASN_STRUCT_FREE_CONTENTS_ONLY (*td, sptr);
 
   if ((encoded = uper_encode_to_new_buffer (&asn_DEF_NGAP_PDU, 0, &pdu, (void **)buffer)) < 0) {
@@ -112,3 +107,4 @@ ngap_new_ie (
   
   return buff;
 }
+*/

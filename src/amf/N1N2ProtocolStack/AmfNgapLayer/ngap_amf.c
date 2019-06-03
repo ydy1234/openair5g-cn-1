@@ -9,13 +9,12 @@
 #include "intertask_interface_types.h"
 #include "common_defs.h"
 #include "log.h"
-#include "ngap_ies_defs.h"
 #include "asn_internal.h"
 #include "hashtable.h"
 #include "ngap_amf.h"
 #include "amf_default_values.h"
 #include "amf_config.h"
-
+#include "Ngap_NGAP-PDU.h"
 
 uint32_t                                nb_gnb_associated = 0;
 hash_table_ts_t g_ngap_gnb_coll = {.mutex = PTHREAD_MUTEX_INITIALIZER, 0};// contains gNB_description_s, key is gNB_description_s.gnb_id (uint32_t);
@@ -82,7 +81,7 @@ ngap_amf_thread (
           break;
         case SCTP_DATA_IND:{
             OAILOG_DEBUG(LOG_NGAP,"SCTP_DATA_IND(recv N2 Messages from AN)\n");
-            ngap_message  message = {0};
+            Ngap_NGAP_PDU_t  message = {0};
 
             if (ngap_amf_decode_pdu (&message, SCTP_DATA_IND (received_message_p).payload, &message_id) < 0) {
               OAILOG_ERROR (LOG_NGAP, "Failed to decode new buffer\n");
@@ -91,7 +90,7 @@ ngap_amf_thread (
                                    SCTP_DATA_IND (received_message_p).stream, &message);
             }
             if (message_id != MESSAGES_ID_MAX) {
-              ngap_free_amf_decode_pdu(&message, message_id);
+              //ngap_free_amf_decode_pdu(&message, message_id);
             }
             bdestroy (SCTP_DATA_IND (received_message_p).payload);
 
@@ -106,7 +105,7 @@ ngap_amf_thread (
 
 int 
 ngap_amf_init(void)
-{  
+{ 
     OAILOG_DEBUG (LOG_NGAP, "Initializing NGAP interface\n");
     //if (get_asn1c_environment_version () < ASN1_MINIMUM_VERSION) {
       //OAILOG_ERROR (LOG_NGAP, "ASN1C version %d fount, expecting at least %d\n", get_asn1c_environment_version (), ASN1_MINIMUM_VERSION);

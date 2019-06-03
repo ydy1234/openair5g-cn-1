@@ -9,14 +9,13 @@
 #include "intertask_interface.h"
 #include "asn1_conversions.h"
 #include "ngap_common.h"
-#include "ngap_ies_defs.h"
 #include "ngap_amf_encoder.h"
 #include "ngap_amf_itti_messaging.h"
 #include "ngap_amf.h"
 #include "dynamic_memory_check.h"
 
 
-
+/*
 int
 ngap_amf_handle_initial_ue_message (
   const sctp_assoc_id_t assoc_id,
@@ -97,3 +96,4 @@ ngap_amf_handle_initial_ue_message (
   }
 
 }
+*/

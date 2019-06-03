@@ -194,7 +194,8 @@ set (NGAP_ASN_FILES
     ${NGAP_ASN_DIR}/NGAP-PDU.asn
 
     )
-set (NGAP_C_DIR ${OPENAIR5GCNDIR}/build/amf/build/${ASN1RELDIR})
+#set (NGAP_C_DIR ${OPENAIR5GCNDIR}/build/amf/build/${ASN1RELDIR})
+set (NGAP_C_DIR ${OPENAIR5GCNDIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/messages/asn1/r15.2/generated_ngap)
 #set (NGAP_C_DIR ${asn1_generated_dir}/${ASN1RELDIR})
 #execute_process(COMMAND ${asn1c_call} ${NGAP_C_DIR} ${NGAP_ASN_FILES})
 #file(GLOB NGAP_source ${NGAP_C_DIR}/*.c)
@@ -253,7 +254,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/N1N2ProtocolStack/
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/utils)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/N1N2ProtocolStack/AmfNgapLayer)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/AmfAppLayer)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/N1N2ProtocolStack/AmfNgapLayer/messages/asn1/r15.2/generated_ngap)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/Security)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary)
 #include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/test)
@@ -277,7 +279,8 @@ file(GLOB NAS_C_CODE
 
 
 #file(GLOB ASN1_C_FILES ${NGAP_C_DIR}/*.c)
-file(GLOB ASN1_C_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/*.c)
+#file(GLOB ASN1_C_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/*.c)
+file(GLOB ASN1_C_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/N1N2ProtocolStack/AmfNgapLayer/messages/asn1/r15.2/generated_ngap/*.c)
 
 file(GLOB NGAP_LAYER_SOURCE_CODE
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf.c
@@ -310,6 +313,7 @@ file(GLOB SRCS
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_primitives_server.c
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_primitives_client.c 
     ${OPENAIR5GCN_DIR}/src/amf/utils/conversions.c
+    ${OPENAIR5GCN_DIR}/src/amf/utils/pid_file.c
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_common.c
     #${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf.c
     #${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_common.c

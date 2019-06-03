@@ -37,6 +37,7 @@
 ////////////////////////////////////////////////// itti header /////////////////////////////////
 extern "C"{
 #include "intertask_interface.h"
+#include "dynamic_memory_check.h"
 #include "assertions.h"
 #include "intertask_interface_init.h"
 #include "sctp_primitives_server.h"
@@ -44,6 +45,7 @@ extern "C"{
 #include "amf_app.h"
 #include "log.h"
 #include "amf_config.h"
+#include "pid_file.h"
 //#include "nas_mm.h"
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,22 +123,86 @@ int main(
     int argc,
     char * argv[])
 {
-/*
+
     char * pid_dir;
     char * pid_file_name;
     pid_file_name = get_exe_absolute_path("/var/run");
-*/
+
     CHECK_INIT_RETURN (OAILOG_INIT (MAX_LOG_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
     CHECK_INIT_RETURN (amf_config_parse_opt_line (argc,argv,&amf_config));
+
+  pid_dir = bstr2cstr(amf_config.pid_dir, 1);
+  if (pid_dir == NULL) {
+      pid_file_name = get_exe_absolute_path("/var/run");
+  } else {
+      pid_file_name = get_exe_absolute_path(pid_dir);
+      bcstrfree(pid_dir);
+  }
+
+#if DAEMONIZE
+  pid_t pid, sid; // Our process ID and Session ID
+
+  // Fork off the parent process
+  pid = fork();
+  if (pid < 0) {
+    exit(EXIT_FAILURE);
+  }
+  // If we got a good PID, then we can exit the parent process.
+  if (pid > 0) {
+    exit(EXIT_SUCCESS);
+  }
+  // Change the file mode mask
+  umask(0);
+
+  // Create a new SID for the child process
+  sid = setsid();
+  if (sid < 0) {
+    exit(EXIT_FAILURE); // Log the failure
+  }
+  // Change the current working directory
+  if ((chdir("/")) < 0) {
+    // Log the failure
+    exit(EXIT_FAILURE);
+  }
+
+  /* Close out the standard file descriptors */
+  close(STDIN_FILENO);
+  close(STDOUT_FILENO);
+  close(STDERR_FILENO);
+
+  openlog(NULL, 0, LOG_DAEMON);
+
+  if (! is_pid_file_lock_success(pid_file_name)) {
+    closelog();
+    free_wrapper((void **) &pid_file_name);
+    exit (-EDEADLK);
+  }
+#else
+  if (! is_pid_file_lock_success(pid_file_name)) {
+    free_wrapper((void**) &pid_file_name);
+    exit (-EDEADLK);
+  }
+#endif
+
+
+
+
     CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,NULL,NULL));
     //CHECK_INIT_RETURN (nas_mm_init());
     //nas_mm_init();
     CHECK_INIT_RETURN (sctp_init(&amf_config));
     CHECK_INIT_RETURN (ngap_amf_init());
-    //CHECK_INIT_RETURN (amf_app_init());
+    CHECK_INIT_RETURN (amf_app_init());
     OAILOG_DEBUG(LOG_NGAP,"NGAP\n");
-    OAILOG_INFO(LOG_AMF_APP,"AMF-APP\n");
+    //OAILOG_INFO(LOG_AMF_APP,"AMF-APP\n");
 
+    OAILOG_DEBUG(LOG_AMF_APP, "AMF app initialization complete\n");
+    /*
+     * Handle signals here
+     */
+    itti_wait_tasks_end ();
+    pid_file_unlock();
+    free_wrapper((void**) &pid_file_name);
 
     //TTN (16/05/2019) first activate NGAP->SCTP
 
@@ -206,7 +272,7 @@ int main(
 */
     //std::thread amf_services_manager_app(&AMFServicesManager::start, amfServicesManager);
 
-    itti_wait_tasks_end();
+    //itti_wait_tasks_end();
     return 0;
 }
 
