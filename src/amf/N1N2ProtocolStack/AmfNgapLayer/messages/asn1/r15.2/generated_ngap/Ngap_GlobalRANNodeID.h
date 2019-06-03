@@ -13,6 +13,7 @@
 
 /* Including external dependencies */
 #include <constr_CHOICE.h>
+#include <asn_SEQUENCE_OF.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,6 +47,14 @@ typedef struct Ngap_GlobalRANNodeID {
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
 } Ngap_GlobalRANNodeID_t;
+
+typedef struct Ngap_GlobalRANNodeIDList {
+	A_SEQUENCE_OF(struct Ngap_GlobalRANNodeID) list;
+	
+	/* Context for parsing across buffer boundaries */
+	asn_struct_ctx_t _asn_ctx;
+} Ngap_GlobalRANNodeIDList_t;
+
 
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_GlobalRANNodeID;

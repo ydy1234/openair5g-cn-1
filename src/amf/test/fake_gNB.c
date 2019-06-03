@@ -24,6 +24,51 @@
 #include "bstrlib.h"
 
 
+Ngap_SupportedTAList_t	     g_SupportedTAList;
+Ngap_GlobalRANNodeIDList_t   g_glocalRANNodeIDList;
+
+int g_supportTaListCount = 0;;
+int init_ng_setup_request_param()
+{
+    memset(&g_SupportedTAList,  0, sizeof(g_SupportedTAList));
+	memset(&g_glocalRANNodeIDList,  0, sizeof(Ngap_GlobalRANNodeID_t));
+    
+	
+	//Ngap_SupportedTAItem_t: tac
+	Ngap_SupportedTAItem_t *ta;
+	ta = (Ngap_SupportedTAItem_t *)calloc(1, sizeof(Ngap_SupportedTAItem_t));
+	uint8_t tAC[3] = {0x01, 0x02, 0x03};
+	OCTET_STRING_fromBuf(&ta->tAC, (const char*)tAC, 3);
+
+	//Ngap_SupportedTAItem_t: broadcastPLMNList
+	Ngap_BroadcastPLMNItem_t *broadcastPLMNItem = NULL;
+	broadcastPLMNItem = (Ngap_BroadcastPLMNItem_t *)calloc(1, sizeof(Ngap_BroadcastPLMNItem_t));
+	
+
+	//broadcastPLMNList: pLMNIdentity;
+	uint8_t plmnIdentity[3] = {0x01, 0x02, 0x03};
+	OCTET_STRING_fromBuf(&broadcastPLMNItem->pLMNIdentity, (const char*)plmnIdentity, 3);
+	
+    
+	//broadcastPLMNList: tAISliceSupportList
+	Ngap_SliceSupportItem_t *sliceSupportItem = NULL;
+	sliceSupportItem = calloc (1, sizeof(sliceSupportItem));
+	sliceSupportItem->s_NSSAI.sD = calloc(1, sizeof (sliceSupportItem->s_NSSAI.sD));
+	uint8_t sST[1] = {0x03};
+	uint8_t sD[3] = {0x30, 0x33, 0x01};
+	OCTET_STRING_fromBuf(&sliceSupportItem->s_NSSAI.sST, (const char*)sST, 1);
+	OCTET_STRING_fromBuf(sliceSupportItem->s_NSSAI.sD, (const char*)sD, 3);
+	ASN_SEQUENCE_ADD (&broadcastPLMNItem->tAISliceSupportList.list, &sliceSupportItem);
+    ASN_SEQUENCE_ADD(&ta->broadcastPLMNList, &broadcastPLMNItem);
+	
+    ASN_SEQUENCE_ADD (&g_SupportedTAList.list, ta);
+
+    g_supportTaListCount = g_SupportedTAList.list.count;
+	
+    return  0;
+}
+
+
 void
 send_NGAP_SetupRequest()
 {
@@ -61,7 +106,7 @@ send_NGAP_SetupRequest()
 	ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
 	ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_GlobalRANNodeID;
 
-	Ngap_GlobalRANNodeID_t *ngap_GlobalRANNodeID;
+	Ngap_GlobalRANNodeID_t *ngap_GlobalRANNodeID = NULL;
 	ngap_GlobalRANNodeID = &ngapSetupRequestIEs->value.choice.GlobalRANNodeID;
 	ngap_GlobalRANNodeID->present = Ngap_GlobalRANNodeID_PR_globalGNB_ID;
 	ngap_GlobalRANNodeID->choice.globalGNB_ID = calloc(1, sizeof(struct Ngap_GlobalGNB_ID));
@@ -148,8 +193,7 @@ send_NGAP_SetupRequest()
 	 printf("NGAP_SetupRequest-------------decode\n");
      ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
      ngap_amf_handle_message(0,0,&decoded_pdu);
-     //printf("decoded_pdu precedureCode(%d)\n",decoded_pdu.choice.initiatingMessage->procedureCode);
-     printf("over\n");
+	 
     #if 0
 	//connect to sctp and send message to AMF
 	sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
@@ -562,7 +606,7 @@ int main(
 
 
 	//Test NGAP messages
-	
+	init_ng_setup_request_param();
 	send_NGAP_SetupRequest();
 	send_NGAP_SetupFailure();
 	send_NGAP_Initial_UE_Message();

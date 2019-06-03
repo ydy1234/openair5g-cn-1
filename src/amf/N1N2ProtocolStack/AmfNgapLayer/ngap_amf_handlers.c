@@ -223,12 +223,131 @@ ngap_amf_generate_ng_setup_failure (
   */
 }
 
+#define MAX_NG_ENG_CONNECTED 2
+static unsigned int  g_NG_ENG_CONNECTED  = 0;
 
+extern Ngap_GlobalRANNodeIDList_t   g_glocalRANNodeIDList;
+extern Ngap_SupportedTAList_t	    g_SupportedTAList;
+extern int g_supportTaListCount ;
+int ng_setup_request_find_GlobalRANNodeID(Ngap_GlobalRANNodeID_t *req_glocalRANNodeID)
+{
+    //not in:add;in:return failure;
+    int count = g_glocalRANNodeIDList.list.count;
+    
+    return 0;
+}
+int ng_setup_request_to_sendback_response()
+{
+    printf("ng_setup_request_to_sendback_response-------------\n");
+    return 0;
+}
+
+int ng_setup_request_to_sendback_failure()
+{
+    printf("ng_setup_request_to_sendback_failure-------------\n");
+    return 0;
+}
+
+int ng_setup_request_is_supported_plmn_id(Ngap_SupportedTAList_t	 req_supportedTAList)
+{
+
+  
+
+   Ngap_SupportedTAList_t	 reqSupportedTAList;
+   memset(&req_supportedTAList, 0,  sizeof(Ngap_SupportedTAList_t));
+   req_supportedTAList = req_supportedTAList;
+   int  count = reqSupportedTAList.list.count;
+   int i  =  0;
+   for(; i<count; i++)
+   {
+       Ngap_SupportedTAItem_t  *req_ta = NULL;
+	   memset(req_ta, 0, sizeof(Ngap_SupportedTAItem_t));
+	   
+       req_ta = req_supportedTAList.list.array[i];
+	   if(!req_ta)
+	   {
+           printf("ta is NULL, continue\n");
+		   continue;
+	   }
+	   Ngap_TAC_t	 req_tAC = req_ta->tAC;
+	   Ngap_BroadcastPLMNList_t	 req_broadcastPLMNList  = req_ta->broadcastPLMNList;
+
+	   if(req_tAC.size == 0 || req_broadcastPLMNList.list.count == 0)
+	   {
+	       printf("req_tAC.size:%d,req_broadcastPLMNList.list.count:%d",
+		   req_tAC.size,req_broadcastPLMNList.list.count);
+           continue;
+	   }
+  
+	   printf("req_tAC:0x%x,0x%x,0x%x\n",req_tAC.buf[0], req_tAC.buf[1], req_tAC.buf[2]);
+
+	   
+	   //Ngap_SupportedTAItem
+	   int j  = 0;
+	   for(j; j< g_supportTaListCount; j++)
+	   {
+           Ngap_SupportedTAItem_t *taTmp = NULL;
+		   memset(taTmp, 0, sizeof(Ngap_SupportedTAItem_t));
+		   taTmp = g_SupportedTAList.list.array[j];
+		   if(!taTmp)
+		   {
+               printf("g_ta is NULL, continue\n");
+			   continue;
+
+               //tAC
+			   bool tacEqual = 0;
+			   Ngap_TAC_t	 tmptAC = req_ta->tAC;
+			   if(req_tAC.size == tmptAC.size)
+			   {
+			       printf("ta size is EQUAL g_tac size:%d\n",req_tAC.size);
+                   if(!memcmp(req_tAC.buf, tmptAC.buf, tmptAC.size))
+			       {
+				      tacEqual = 1;
+					  printf("tac is EQUAL, size:%d, buf:0x%x,0x%x,0x%x\n",
+					  tmptAC.size,tmptAC.buf[0],tmptAC.buf[1],tmptAC.buf[2]);
+			       }
+			   }
+
+			   if(!tacEqual)
+			   {
+			       printf("tac is not EQUAL,continue\n");
+                   continue;
+			   }
+
+               
+               //broadcastPLMNList
+			   Ngap_BroadcastPLMNList_t	 tmp_broadcastPLMNList  = taTmp->broadcastPLMNList;
+			   int tmp_plmnCount = tmp_broadcastPLMNList.list.count;  
+			   if( tmp_plmnCount != 0  && req_broadcastPLMNList.list.count == tmp_plmnCount)
+			   {   
+                   int req_plmnCount  = req_broadcastPLMNList.list.count;
+				   int i = 0 ,j = 0;
+				   for(; i< req_plmnCount; i++)
+				   {
+                        ;
+
+				   }
+			   }   
+		    };
+	    }
+ 
+   }
+   return -1;
+}
 int
 ngap_amf_handle_ng_setup_request(
     const sctp_assoc_id_t assoc_id,
     const sctp_stream_id_t stream,
 	Ngap_NGAP_PDU_t *pdu){
+
+    if(g_NG_ENG_CONNECTED >= MAX_NG_ENG_CONNECTED)
+    {
+       ng_setup_request_to_sendback_failure();
+	   return -1;
+       //return NG SETUP FAILURE;
+	}
+    g_NG_ENG_CONNECTED++;
+	
 
     //OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
@@ -274,7 +393,15 @@ ngap_amf_handle_ng_setup_request(
 				    }
 					break;
 				    case Ngap_GlobalRANNodeID_PR_globalGNB_ID:
+					{
+						 printf("Ngap_GlobalRANNodeID_PR_globalGNB_ID----------\n");
+						 
+                         if(ng_setup_request_find_GlobalRANNodeID(ngap_GlobalRANNodeID)  == -1)
+                         {
+                             //return failure
+						 }
 
+						 #if 0
 						 switch(ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.present)
 						 {
                             case Ngap_GNB_ID_PR_NOTHING:	/* No components present */
@@ -291,9 +418,11 @@ ngap_amf_handle_ng_setup_request(
 	                        case Ngap_GNB_ID_PR_choice_Extensions:
 							break;
 						 } 
+						 #endif
+				    }
 					break;
 	                case Ngap_GlobalRANNodeID_PR_globalNgENB_ID:
-						
+						 
 					break;
 	                case Ngap_GlobalRANNodeID_PR_globalN3IWF_ID:
 						
@@ -317,6 +446,17 @@ ngap_amf_handle_ng_setup_request(
             case Ngap_ProtocolIE_ID_id_SupportedTAList:
             {
 				printf("Ngap_ProtocolIE_ID_id_SupportedTAList\n");
+			    if(ng_setup_request_is_supported_plmn_id(setupRequestIes_p->value.choice.SupportedTAList)== 0)
+			    {
+                    printf("support plmn id\n");
+					
+				}
+				else 
+			    {
+                    printf("not support plmn id\n");
+					//return ng setup failure;
+				}
+			    break;
             }
 			break;
             case Ngap_ProtocolIE_ID_id_DefaultPagingDRX:
