@@ -14,6 +14,7 @@
 #include "ngap_amf.h"
 #include "dynamic_memory_check.h"
 
+extern hash_table_ts_t g_ngap_amf_id2assoc_id_coll;
 
 /*
 int
@@ -30,7 +31,7 @@ ngap_amf_handle_initial_ue_message (
   OAILOG_FUNC_IN(LOG_NGAP);
 
   initialUEMessage_p = &message->msg.initialUEMessage_IEs;
-  OAILOG_INFO (LOG_NGAP, "Received S1AP INITIAL_UE_MESSAGE RAN_UE_NGAP_ID " RAN_UE_NGAP_ID_FMT "\n", (ran_ue_ngap_id_t)initialUEMessage_p->ran_ue_ngap_id);
+  OAILOG_INFO (LOG_NGAP, "Received NGAP INITIAL_UE_MESSAGE RAN_UE_NGAP_ID " RAN_UE_NGAP_ID_FMT "\n", (ran_ue_ngap_id_t)initialUEMessage_p->ran_ue_ngap_id);
 
   if((gnb_ref = ngap_is_gnb_assoc_id_in_list(assoc_id)) == NULL){
     OAILOG_ERROR (LOG_NGAP, "Unknown gNB on assoc_id %d\n", assoc_id);
@@ -97,3 +98,98 @@ ngap_amf_handle_initial_ue_message (
 
 }
 */
+
+int
+ngap_generate_downlink_nas_transport (
+  const ran_ue_ngap_id_t ran_ue_ngap_id,
+  const amf_ue_ngap_id_t ue_id,
+  STOLEN_REF bstring *payload)
+{
+  ue_description_t                       *ue_ref = NULL;
+  uint8_t                                *buffer_p = NULL;
+  uint32_t                                length = 0;
+  void                                   *id = NULL;
+      
+  OAILOG_FUNC_IN (LOG_NGAP);
+
+  // Try to retrieve SCTP assoication id using amf_ue_ngap_id
+  if (HASH_TABLE_OK ==  hashtable_ts_get (&g_ngap_amf_id2assoc_id_coll, (const hash_key_t)ue_id, (void **)&id)) {
+    sctp_assoc_id_t sctp_assoc_id = (sctp_assoc_id_t)(uintptr_t)id;
+    gnb_description_t  *gnb_ref = ngap_is_gnb_assoc_id_in_list (sctp_assoc_id);
+    if (gnb_ref) {
+      ue_ref = ngap_is_ue_gnb_id_in_list (gnb_ref,ran_ue_ngap_id);
+    } else {
+      OAILOG_ERROR (LOG_NGAP, "No gNB for SCTP association id %d \n", sctp_assoc_id);
+      OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
+    } 
+  }   
+  // TODO remove soon:
+  if (!ue_ref) {
+    ue_ref = ngap_is_ue_amf_id_in_list (ue_id);
+  }     
+  // finally!
+  if (!ue_ref) {
+    /*
+     * If the UE-associated logical S1-connection is not established,
+     * * * * the AMF shall allocate a unique AMF UE NGAP ID to be used for the UE.
+     */
+    OAILOG_WARNING (LOG_NGAP, "Unknown UE AMF ID " AMF_UE_NGAP_ID_FMT ", This case is not handled right now\n", ue_id);
+    OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
+  } else {
+    /*
+     * We have fount the UE in the list.
+     * * * * Create new IE list message and encode it.
+     */
+
+    Ngap_DownlinkNASTransport_t          *ngapDownlinkNASTransport     = NULL;
+    Ngap_DownlinkNASTransport_IEs_t      *ngapDownlinkNASTransportIEs  = NULL;
+
+    Ngap_NGAP_PDU_t   pdu = {0};
+
+    pdu.present = Ngap_NGAP_PDU_PR_initiatingMessage;
+    pdu.choice.initiatingMessage = calloc(1, sizeof(Ngap_InitiatingMessage_t));
+    pdu.choice.initiatingMessage->procedureCode = Ngap_ProcedureCode_id_DownlinkNASTransport;
+    pdu.choice.initiatingMessage->criticality = Ngap_Criticality_notify;
+    pdu.choice.initiatingMessage->value.present = Ngap_InitiatingMessage__value_PR_DownlinkNASTransport;
+    ngapDownlinkNASTransport = &pdu.choice.initiatingMessage->value.choice.DownlinkNASTransport;
+//amf_ue_ngap_id IE 
+    ngapDownlinkNASTransportIEs = calloc(1, sizeof(Ngap_DownlinkNASTransport_IEs_t));
+    ngapDownlinkNASTransportIEs->id = Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID;
+    ngapDownlinkNASTransportIEs->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_AMF_UE_NGAP_ID;
+    Ngap_AMF_UE_NGAP_ID_t amf_ue_ngap_id;
+    memset(&amf_ue_ngap_id, 0 , sizeof(Ngap_AMF_UE_NGAP_ID_t));
+    amf_ue_ngap_id.buf = (uint8_t*)calloc(1,4*sizeof(uint8_t));
+    *amf_ue_ngap_id.buf = ue_ref->amf_ue_ngap_id; 
+    amf_ue_ngap_id.size = 4;//4 octets
+    ngapDownlinkNASTransportIEs->value.choice.AMF_UE_NGAP_ID = amf_ue_ngap_id;
+    ASN_SEQUENCE_ADD(&ngapDownlinkNASTransport->protocolIEs, ngapDownlinkNASTransportIEs);
+//ran_ue_ngap_id IE
+    ngapDownlinkNASTransportIEs = calloc(1, sizeof(Ngap_DownlinkNASTransport_IEs_t));
+    ngapDownlinkNASTransportIEs->id = Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID;
+    ngapDownlinkNASTransportIEs->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_RAN_UE_NGAP_ID;  
+    Ngap_RAN_UE_NGAP_ID_t ran_ue_ngap_id;
+    memset(&ran_ue_ngap_id, 0 , sizeof(Ngap_RAN_UE_NGAP_ID_t));
+    ran_ue_ngap_id = ue_ref->ran_ue_ngap_id; 
+    ngapDownlinkNASTransportIEs->value.choice.RAN_UE_NGAP_ID = ran_ue_ngap_id;
+    ASN_SEQUENCE_ADD(&ngapDownlinkNASTransport->protocolIEs, ngapDownlinkNASTransportIEs);
+//NAS-PDU IE
+    ngapDownlinkNASTransportIEs = calloc(1, sizeof(Ngap_DownlinkNASTransport_IEs_t));
+    ngapDownlinkNASTransportIEs->id = Ngap_ProtocolIE_ID_id_NAS_PDU;
+    ngapDownlinkNASTransportIEs->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_NAS_PDU;
+    OCTET_STRING_fromBuf(&ngapDownlinkNASTransportIEs->value.choice.NAS_PDU,(char *)bdata(*payload), blength(*payload));
+    ASN_SEQUENCE_ADD(&ngapDownlinkNASTransport->protocolIEs, ngapDownlinkNASTransportIEs); 
+    bdestroy(*payload);
+    *payload = NULL;
+
+    if(ngap_amf_encode_pdu (&pdu, &buffer_p, &length) < 0){
+      OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
+    }
+
+    OAILOG_NOTICE (LOG_NGAP, "Send NGAP DOWNLINK_NAS_TRANSPORT message ue_id = " AMF_UE_NGAP_ID_FMT " AMF_UE_NGAP_ID = " AMF_UE_NGAP_ID_FMT " gNB_UE_NGAP_ID = " RAN_UE_NGAP_ID_FMT "\n",
+                ue_id, (amf_ue_ngap_id_t)ue_ref->amf_ue_ngap_id, (ran_ue_ngap_id_t)ue_ref->ran_ue_ngap_id);
+    bstring b = blk2bstr(buffer_p, length);
+    ngap_amf_itti_send_sctp_request (&b , ue_ref->gnb->sctp_assoc_id, ue_ref->sctp_stream_send, ue_ref->amf_ue_ngap_id);
+  }
+
+  OAILOG_FUNC_RETURN (LOG_NGAP, RETURNok);
+}

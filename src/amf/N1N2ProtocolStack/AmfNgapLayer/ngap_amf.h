@@ -70,4 +70,8 @@ int ngap_amf_init(void);
 gnb_description_t* ngap_is_gnb_assoc_id_in_list(const sctp_assoc_id_t sctp_assoc_id);
 gnb_description_t* ngap_new_gnb(void);
 ue_description_t* ngap_is_ue_gnb_id_in_list(gnb_description_t *gnb_ref, const ran_ue_ngap_id_t ran_ue_ngap_id);
+ue_description_t* ngap_is_ue_amf_id_in_list(const amf_ue_ngap_id_t amf_ue_ngap_id);
+
+
 ue_description_t* ngap_new_ue(const sctp_assoc_id_t sctp_assoc_id, ran_ue_ngap_id_t ran_ue_ngap_id);
+

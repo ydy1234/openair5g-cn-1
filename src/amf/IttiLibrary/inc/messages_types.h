@@ -42,6 +42,8 @@
 
 #include "demo_messages_types.h"
 #include "sctp_messages_types.h"
+#include "ngap_messages_types.h"
+#include "nas_messages_types.h"
 #include "amf_app_messages_types.h"
 
 

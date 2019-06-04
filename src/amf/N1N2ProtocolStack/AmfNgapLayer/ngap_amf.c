@@ -96,12 +96,45 @@ ngap_amf_thread (
 
           }
           break;
+        case NGAP_NAS_DL_DATA_REQ:{
+          ngap_generate_downlink_nas_transport (NGAP_NAS_DL_DATA_REQ (received_message_p).ran_ue_ngap_id,
+            NGAP_NAS_DL_DATA_REQ (received_message_p).amf_ue_ngap_id,
+            &NGAP_NAS_DL_DATA_REQ (received_message_p).nas_msg);
+        }
+        break;
       }
     itti_free (ITTI_MSG_ORIGIN_ID (received_message_p), received_message_p);
     received_message_p = NULL;
     }
     return NULL;
 }
+
+bool ngap_ue_compare_by_amf_ue_id_cb (__attribute__((unused)) const hash_key_t keyP,
+                                      void * const elementP, void * parameterP, void **resultP)
+{
+  amf_ue_ngap_id_t                      * amf_ue_ngap_id_p = (amf_ue_ngap_id_t*)parameterP;
+  ue_description_t                       *ue_ref           = (ue_description_t*)elementP;
+  if ( *amf_ue_ngap_id_p == ue_ref->amf_ue_ngap_id ) {
+    *resultP = elementP;
+    OAILOG_TRACE(LOG_NGAP, "Found ue_ref %p amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "\n", ue_ref, ue_ref->amf_ue_ngap_id);
+    return true;
+  }
+  return false;
+}
+
+bool ngap_gnb_find_ue_by_amf_ue_id_cb (__attribute__((unused))const hash_key_t keyP,
+                                       void * const elementP, void * parameterP, void **resultP)
+{
+  gnb_description_t                      *gnb_ref = (gnb_description_t*)elementP;
+
+  hashtable_ts_apply_callback_on_elements((hash_table_ts_t * const)&gnb_ref->ue_coll, ngap_ue_compare_by_amf_ue_id_cb, parameterP, resultP);
+  if (*resultP) {
+    OAILOG_TRACE(LOG_NGAP, "Found ue_ref %p amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "\n", *resultP, ((ue_description_t*)(*resultP))->amf_ue_ngap_id);
+    return true;
+  }
+  return false;
+}
+
 
 int 
 ngap_amf_init(void)
@@ -179,6 +212,18 @@ ngap_is_ue_gnb_id_in_list (
 {   
   ue_description_t                       *ue_ref = NULL;
   hashtable_ts_get ((hash_table_ts_t * const)&gnb_ref->ue_coll, (const hash_key_t)ran_ue_ngap_id, (void **)&ue_ref);
+  return ue_ref;
+}
+
+ue_description_t                       *
+ngap_is_ue_amf_id_in_list (
+  const amf_ue_ngap_id_t amf_ue_ngap_id)
+{ 
+  ue_description_t                       *ue_ref = NULL;
+  amf_ue_ngap_id_t                       *amf_ue_ngap_id_p = (amf_ue_ngap_id_t*)&amf_ue_ngap_id;
+  
+  hashtable_ts_apply_callback_on_elements(&g_ngap_gnb_coll, ngap_gnb_find_ue_by_amf_ue_id_cb, (void*)amf_ue_ngap_id_p, (void**)&ue_ref);
+  OAILOG_TRACE(LOG_NGAP, "Return ue_ref %p \n", ue_ref);
   return ue_ref;
 }
 

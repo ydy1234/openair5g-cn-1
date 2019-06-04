@@ -630,14 +630,7 @@ static void * sctp_intertask_interface (
     switch (ITTI_MSG_ID (received_message_p)) {
     case SCTP_INIT_MSG:{
         OAILOG_DEBUG (LOG_SCTP, "Received SCTP_INIT_MSG\n");
-
-        /*
-         * We received a new connection request
-         */
         if ((sctp_sd = sctp_create_new_listener (&received_message_p->ittiMsg.sctpInit)) < 0) {
-          /*
-           * SCTP socket creation or bind failed...
-           */
           AssertFatal(false, "Failed to create new SCTP listener\n");
         }
       }
@@ -656,16 +649,8 @@ static void * sctp_intertask_interface (
               SCTP_DATA_REQ (received_message_p).assoc_id,
               SCTP_DATA_REQ (received_message_p).stream,
               SCTP_DATA_REQ (received_message_p).amf_ue_ngap_id,
-              false);
-        } /* NO NEED FOR CONFIRM success yet else {
-          if (INVALID_MME_UE_S1AP_ID != SCTP_DATA_REQ (received_message_p).mme_ue_s1ap_id) {
-            sctp_itti_send_lower_layer_conf(received_message_p->ittiMsgHeader.originTaskId,
-                SCTP_DATA_REQ (received_message_p).assoc_id,
-                SCTP_DATA_REQ (received_message_p).stream,
-                SCTP_DATA_REQ (received_message_p).mme_ue_s1ap_id,
-                true);
-          }
-        }*/
+              false);//lower layer failure detected
+        } 
       }
       break;
 
@@ -677,8 +662,6 @@ static void * sctp_intertask_interface (
     case TERMINATE_MESSAGE:{
         close(sctp_sd);
         sctp_exit();
-        //itti_free_msg_content(received_message_p);
-        //itti_free (ITTI_MSG_ORIGIN_ID (received_message_p), received_message_p);
         itti_exit_task ();
       }
       break;
@@ -689,7 +672,6 @@ static void * sctp_intertask_interface (
       break;
     }
 
-    //itti_free_msg_content(received_message_p);
     itti_free (ITTI_MSG_ORIGIN_ID (received_message_p), received_message_p);
     received_message_p = NULL;
   }

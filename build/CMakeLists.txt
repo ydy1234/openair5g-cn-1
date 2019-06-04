@@ -263,6 +263,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/ies)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/mm)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/mm/msg)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/NasLibrary/sm/msg)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/N1N2ProtocolStack/AmfNasLayer)
 #include_directories(${NGAP_C_DIR})
 
 file(GLOB NAS_C_CODE
@@ -295,6 +296,10 @@ file(GLOB NGAP_LAYER_SOURCE_CODE
 file(GLOB NGAP_LIB_SOURCE_CODE
     NGAP_C_DIR/*.c)
 
+file(GLOB NAS_LAYER_SOURCE_CODE
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNasLayer/nas_amf.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNasLayer/nas_amf_handlers.c
+    )
     
 
 file(GLOB SRCS
@@ -335,7 +340,7 @@ file(GLOB SRCS
     #${OPENAIR5GCN_DIR}/build/amf/build/r15.2/*.c
 )
 
-add_executable(${PROJECT_NAME} ${OPENAIR5GCN_DIR}/src/amf/AmfMain.cpp ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NGAP_LAYER_SOURCE_CODE} ${NGAP_LIB_SOURCE_CODE} )
+add_executable(${PROJECT_NAME} ${OPENAIR5GCN_DIR}/src/amf/AmfMain.cpp ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NAS_LAYER_SOURCE_CODE} ${NGAP_LAYER_SOURCE_CODE} ${NGAP_LIB_SOURCE_CODE} )
 target_link_libraries(${PROJECT_NAME} pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES} ${CRYPTO_LIBRARIES} m ${CONFIG_LIBRARIES})
 
 #add_executable(ngap ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/example/ngapTestMain.c ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NGAP_LAYER_SOURCE_CODE} ${NGAP_LIB_SOURCE_CODE})

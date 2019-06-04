@@ -38,4 +38,5 @@
 #include "demo_messages_def.h"
 #include "sctp_messages_def.h"
 #include "ngap_messages_def.h"
+#include "nas_messages_def.h"
 #include "amf_app_messages_def.h"

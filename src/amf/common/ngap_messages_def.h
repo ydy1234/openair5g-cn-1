@@ -7,3 +7,5 @@ MESSAGE_DEF(NGAP_NAS_NON_DELIVERY_INDICATION_LOG            , MESSAGE_PRIORITY_M
 MESSAGE_DEF(NGAP_INITIAL_CONTEXT_SETUP_RSP_LOG            , MESSAGE_PRIORITY_MED, IttiMsgText                      , ngap_initial_context_setup_rsp_log)
 MESSAGE_DEF(NGAP_UE_CONTEXT_RELEASE_LOG            , MESSAGE_PRIORITY_MED, IttiMsgText                      , ngap_ue_context_release_log)
 MESSAGE_DEF(NGAP_INITIAL_CONTEXT_SETUP_FAILURE_LOG            , MESSAGE_PRIORITY_MED, IttiMsgText                      , ngap_initial_context_setup_failure_log)
+
+MESSAGE_DEF(NGAP_NAS_DL_DATA_REQ, MESSAGE_PRIORITY_MED, itti_ngap_nas_dl_data_req_t, ngap_nas_dl_data_req)

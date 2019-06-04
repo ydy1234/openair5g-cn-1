@@ -11,9 +11,9 @@
 */
 
 
-#include "pistache/endpoint.h"
-#include "pistache/http.h"
-#include "pistache/router.h"
+//#include "pistache/endpoint.h"
+//#include "pistache/http.h"
+//#include "pistache/router.h"
 #ifdef __linux__
 #include <vector>
 #include <signal.h>
@@ -46,6 +46,7 @@ extern "C"{
 #include "log.h"
 #include "amf_config.h"
 #include "pid_file.h"
+#include "nas_amf.h"
 //#include "nas_mm.h"
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,6 +130,7 @@ int main(
     pid_file_name = get_exe_absolute_path("/var/run");
 
     CHECK_INIT_RETURN (OAILOG_INIT (MAX_LOG_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
+    OAILOG_START_USE ();
     CHECK_INIT_RETURN (amf_config_parse_opt_line (argc,argv,&amf_config));
 
   pid_dir = bstr2cstr(amf_config.pid_dir, 1);
@@ -188,10 +190,9 @@ int main(
 
 
     CHECK_INIT_RETURN (itti_init (TASK_MAX, THREAD_MAX, MESSAGES_ID_MAX, tasks_info, messages_info,NULL,NULL));
-    //CHECK_INIT_RETURN (nas_mm_init());
-    //nas_mm_init();
     CHECK_INIT_RETURN (sctp_init(&amf_config));
     CHECK_INIT_RETURN (ngap_amf_init());
+    CHECK_INIT_RETURN (nas_amf_init(&amf_config));
     CHECK_INIT_RETURN (amf_app_init());
     OAILOG_DEBUG(LOG_NGAP,"NGAP\n");
     //OAILOG_INFO(LOG_AMF_APP,"AMF-APP\n");
