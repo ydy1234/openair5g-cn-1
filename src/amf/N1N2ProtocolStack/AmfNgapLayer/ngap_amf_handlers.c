@@ -333,10 +333,19 @@ int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
 	ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
     printf("PagingDRX:%ld\n",ngapSetupRequestIEs->value.choice.PagingDRX);
 	
-	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
+	//int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
+
 	
-	bstring b = blk2bstr(buffer_p, length);
-	printf("ngap_setup_failure assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, length); 
+	//encode
+	size_t buffer_size = 1000;
+	void *buffer = calloc(1,buffer_size);
+	asn_enc_rval_t er;
+	
+	er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, &pdu, buffer, buffer_size);
+	printf("sctp client send buffer(%x) length(%d)\n",buffer,er.encoded);
+	
+	bstring b = blk2bstr(buffer, er.encoded);
+	printf("ngap_setup_failure assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, er.encoded); 
 
     printf("11111111111111111111111111 ngap_amf_itti_send_sctp_request\n");
 	rc =  ngap_amf_itti_send_sctp_request (&b, assoc_id, stream, 0);
