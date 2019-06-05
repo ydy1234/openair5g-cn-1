@@ -225,12 +225,12 @@ int ngap_amf_decode_pdu(
     
 	Ngap_NGAP_PDU_t                     *decoded_pdu = pdu;
     asn_dec_rval_t                       dec_ret = {(RC_OK)};
- 
+    printf("ngap_amf_decode_pdu\n"); 
     asn_dec_rval_t rc = asn_decode(NULL,ATS_ALIGNED_CANONICAL_PER,&asn_DEF_Ngap_NGAP_PDU,(void**)&decoded_pdu,bdata(raw),blength(raw));
     if(rc.code != RC_OK)
     {
-       printf("asn_decode failed\n");
-	   return -1; 
+       printf("asn_decode failed(%d)\n",rc.code);
+    	   return -1; 
     }
 //    printf("decoded message present(%d)\n",decoded_pdu->present);
 /*
@@ -286,7 +286,7 @@ int ngap_amf_decode_pdu(
   }
   ASN_STRUCT_FREE(asn_DEF_NGAP_PDU, pdu_p);
   */
-  return -1;
+  return rc.code;
 
 }
 
