@@ -14,6 +14,8 @@
 #include "Ngap_NGAP-PDU.h"
 #include "Ngap_SliceSupportItem.h"
 #include "sctp_gNB_defs.h"
+#include "Ngap_CriticalityDiagnostics-IE-Item.h"
+#include "Ngap_CriticalityDiagnostics-IE-List.h"
 
 
 extern hash_table_ts_t g_ngap_gnb_coll;
@@ -233,201 +235,234 @@ ngap_amf_generate_ng_setup_failure (
 int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
 		const sctp_stream_id_t stream, Ngap_NGAP_PDU_t *setup_req_pdu)
 {
-		printf("ng_setup_request_to_sendback_failure-------------\n");
+   printf("\n\nNGAP_SetupFailure-------------encode\n");
+	int assoc[1];
+	sctp_data_t * sctp_data_p = NULL;
+	char *local_ip_addr[] = {"192.168.2.122"};
+	char remote_ip_addr[] = "192.168.2.122";
+	//char *local_ip_addr[] = {"127.0.0.1"};
+	//char remote_ip_addr[] = "127.0.0.1";
+	int rc = RETURNok;
+
+	Ngap_NGAP_PDU_t pdu;
+
+	uint8_t * buffer_p = NULL;
+	uint32_t length = 0;
+
+	Ngap_NGSetupRequest_t    *ngapSetupRequest = NULL;
+	Ngap_NGSetupRequestIEs_t *ngapSetupRequestIEs = NULL;
+
+	memset(&pdu, 0, sizeof(pdu));
+    
+	//for NGSetupRequest
+	pdu.present = Ngap_NGAP_PDU_PR_initiatingMessage;
+	pdu.choice.initiatingMessage = calloc(1, sizeof(Ngap_InitiatingMessage_t));
+	pdu.choice.initiatingMessage->procedureCode = Ngap_ProcedureCode_id_NGSetup;
+	pdu.choice.initiatingMessage->criticality = Ngap_Criticality_reject;
+	pdu.choice.initiatingMessage->value.present = Ngap_InitiatingMessage__value_PR_NGSetupRequest;
+	ngapSetupRequest = &(pdu.choice.initiatingMessage->value.choice.NGSetupRequest);
+
+    printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);
+    printf("procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);    
+
+	ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
+	ngapSetupRequestIEs->id = Ngap_ProtocolIE_ID_id_GlobalRANNodeID;
+	ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
+	ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_GlobalRANNodeID;
+
+	Ngap_GlobalRANNodeID_t *ngap_GlobalRANNodeID = NULL;
+	ngap_GlobalRANNodeID = &ngapSetupRequestIEs->value.choice.GlobalRANNodeID;
+	ngap_GlobalRANNodeID->present = Ngap_GlobalRANNodeID_PR_globalGNB_ID;
+	ngap_GlobalRANNodeID->choice.globalGNB_ID = calloc(1, sizeof(struct Ngap_GlobalGNB_ID));
+
+	uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
+	OCTET_STRING_fromBuf(&ngap_GlobalRANNodeID->choice.globalGNB_ID->pLMNIdentity, (const char*)plmn, 3);
+
+	ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.present = Ngap_GNB_ID_PR_gNB_ID;
+	uint8_t gNB_ID[4] = { 0x01, 0x02, 0x03, 0x04 };
+	ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.buf = calloc(4, sizeof(uint8_t));
+	ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.size = 4;
+	memcpy(ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.buf, gNB_ID, 4);
+	ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
+    printf("gNB_ID: 0x%x,0x%x,0x%x,0x%x\n",gNB_ID[0],gNB_ID[1],gNB_ID[2],gNB_ID[3]);
+
+	//RANNodeName
+	ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
+	ngapSetupRequestIEs->id = Ngap_ProtocolIE_ID_id_RANNodeName;
+	ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
+	ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_RANNodeName;
+	OCTET_STRING_fromBuf (&ngapSetupRequestIEs->value.choice.RANNodeName, "gNB1 Eurecom", strlen ("gNB1 Eurecom"));
+	ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
+	printf("len:%d,RANNodeName:%s\n",ngapSetupRequestIEs->value.choice.RANNodeName.size, ngapSetupRequestIEs->value.choice.RANNodeName.buf);
+
+	//supportedTAList
+    ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
+    ngapSetupRequestIEs->id =Ngap_ProtocolIE_ID_id_SupportedTAList;
+    ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
+    ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_SupportedTAList;
+
+    Ngap_SupportedTAItem_t *ta;
+    ta = (Ngap_SupportedTAItem_t *)calloc(1, sizeof(ta));
+    uint8_t tAC[3] = {0x01, 0x02, 0x03};
+    OCTET_STRING_fromBuf(&ta->tAC, (const char*)tAC, 3);
+    Ngap_BroadcastPLMNItem_t *broadcastPLMNItem;
+    Ngap_SliceSupportItem_t *sliceSupportItem;
+    sliceSupportItem = calloc (1, sizeof(sliceSupportItem));
+    sliceSupportItem->s_NSSAI.sD = calloc(1, sizeof (sliceSupportItem->s_NSSAI.sD));
+    uint8_t sST[1] = {0x03};
+    uint8_t sD[3] = {0x30, 0x33, 0x01};
+    OCTET_STRING_fromBuf(&sliceSupportItem->s_NSSAI.sST, (const char*)sST, 1);
+    OCTET_STRING_fromBuf(sliceSupportItem->s_NSSAI.sD, (const char*)sD, 3);
+    broadcastPLMNItem = (Ngap_BroadcastPLMNItem_t *)calloc (1, sizeof(broadcastPLMNItem));
+    //memset (&broadcastPLMNItem, 0, sizeof(Ngap_BroadcastPLMNItem_t));
+
+    OCTET_STRING_fromBuf(&broadcastPLMNItem->pLMNIdentity, (const char*)plmn, 3);
+    ASN_SEQUENCE_ADD (&broadcastPLMNItem->tAISliceSupportList.list, &sliceSupportItem);
+    ASN_SEQUENCE_ADD (&ta->broadcastPLMNList.list, broadcastPLMNItem);
+
+    ASN_SEQUENCE_ADD (&ngapSetupRequestIEs->value.choice.SupportedTAList.list, ta);
+    //ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
+
+
+	//PagingDRX
+	ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
+	ngapSetupRequestIEs->id =Ngap_ProtocolIE_ID_id_DefaultPagingDRX;
+	ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
+	ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_PagingDRX;
+	ngapSetupRequestIEs->value.choice.PagingDRX = Ngap_PagingDRX_v256;
+	ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
+    printf("PagingDRX:%ld\n",ngapSetupRequestIEs->value.choice.PagingDRX);
 	
-	#if 0
-		int assoc[1];
-		sctp_data_t * sctp_data_p = NULL;
-		char *local_ip_addr[] = {"127.0.0.1"};
-		char remote_ip_addr[] = "127.0.0.1";
-		Ngap_NGAP_PDU_t 						pdu;
-		uint8_t * buffer_p = NULL;
-		uint32_t length = 0;
-		int rc = RETURNok;
+	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
 	
-		Ngap_NGSetupFailure_t						*ngapSetupFailure = NULL;
-		Ngap_NGSetupFailureIEs_t					*ngapSetupFailureIEs = NULL;
-		memset(&pdu, 0, sizeof(pdu));
+	bstring b = blk2bstr(buffer_p, length);
+	printf("ngap_setup_failure assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, length); 
+
+    printf("11111111111111111111111111 ngap_amf_itti_send_sctp_request\n");
+	rc =  ngap_amf_itti_send_sctp_request (&b, assoc_id, stream, 0);
 	
-		//for NGSetupFailure
-		pdu.present = Ngap_NGAP_PDU_PR_unsuccessfulOutcome;
-		pdu.choice.unsuccessfulOutcome = calloc(1, sizeof(Ngap_UnsuccessfulOutcome_t));
-		pdu.choice.unsuccessfulOutcome->procedureCode = Ngap_ProcedureCode_id_NGSetup;
-		pdu.choice.unsuccessfulOutcome->criticality = Ngap_Criticality_reject;
-		pdu.choice.unsuccessfulOutcome->value.present = Ngap_UnsuccessfulOutcome__value_PR_NGSetupFailure;
-		ngapSetupFailure = &pdu.choice.unsuccessfulOutcome->value.choice.NGSetupFailure;
-	
+    if(rc != RETURNok)
+    {
+        printf("ngap_setup_failure send sctp client failed\n"); 
+	}
+	else
+	{
+        printf("ngap_setup_failure send sctp client size:%d, succ \n", length);
+	}
+
+    #if 0
+	int assoc[1];
+	sctp_data_t * sctp_data_p = NULL;
+	Ngap_NGAP_PDU_t 			pdu;
+	uint8_t * buffer_p = NULL;
+	uint32_t length = 0;
+	int rc = RETURNok;
 		
-		printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);
-		printf("procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);	  
-	
-		//cause: radioNetwork
-		ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
-		ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_Cause; 
-		ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_Cause;
-		ngapSetupFailureIEs->value.choice.Cause.present =  Ngap_Cause_PR_radioNetwork;
-		ngapSetupFailureIEs->value.choice.Cause.choice.radioNetwork = 0x80;
-		ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
-		printf("radioNetwork:0x%x\n", ngapSetupFailureIEs->value.choice.Cause.choice.radioNetwork);
-	
-	   
-		//timetowait
-		ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
-		ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_TimeToWait; 
-		ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_TimeToWait;
-		ngapSetupFailureIEs->value.choice.TimeToWait =	0x81;
-		ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
-	
-		printf("TimeToWait:0x%x\n", ngapSetupFailureIEs->value.choice.TimeToWait);
-	
+	Ngap_NGSetupFailure_t						*ngapSetupFailure = NULL;
+	Ngap_NGSetupFailureIEs_t					*ngapSetupFailureIEs = NULL;
+	memset(&pdu, 0, sizeof(pdu));
 		
-		//CriticalityDiagnostics
-		ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
-		ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_CriticalityDiagnostics; 
-		ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_CriticalityDiagnostics;
-	
-		//Ngap_CriticalityDiagnostics_t  criticalityDiagnostics;
-		//memset(&criticalityDiagnostics, 0, sizeof(Ngap_CriticalityDiagnostics_t));
+	//for NGSetupFailure
+	pdu.present = Ngap_NGAP_PDU_PR_unsuccessfulOutcome;
+	pdu.choice.unsuccessfulOutcome = calloc(1, sizeof(Ngap_UnsuccessfulOutcome_t));
+	pdu.choice.unsuccessfulOutcome->procedureCode = Ngap_ProcedureCode_id_NGSetup;
+	pdu.choice.unsuccessfulOutcome->criticality = Ngap_Criticality_reject;
+	pdu.choice.unsuccessfulOutcome->value.present = Ngap_UnsuccessfulOutcome__value_PR_NGSetupFailure;
+	ngapSetupFailure = &pdu.choice.unsuccessfulOutcome->value.choice.NGSetupFailure;
 		
-		Ngap_ProcedureCode_t  *procedureCode = calloc(1, sizeof(Ngap_ProcedureCode_t));
-		*procedureCode = 0x81;
-		ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.procedureCode	= procedureCode;
-	
-		Ngap_TriggeringMessage_t  *triggeringMessage = calloc(1, sizeof(Ngap_TriggeringMessage_t));
-		*triggeringMessage = 0x82;
-		ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.triggeringMessage = triggeringMessage;
-	
-		Ngap_Criticality_t	*procedureCriticality = calloc(1, sizeof(Ngap_Criticality_t));
-		*procedureCriticality = 0x83;
-		ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.procedureCriticality = procedureCriticality;
-	
-		Ngap_CriticalityDiagnostics_IE_Item_t  *criticalityDiagnosticsIEs = calloc(1, sizeof(Ngap_CriticalityDiagnostics_IE_Item_t));
-		criticalityDiagnosticsIEs->iECriticality = 0x85;
-		criticalityDiagnosticsIEs->iE_ID = 0x86;
-		criticalityDiagnosticsIEs->typeOfError = 0x86;
-	
-		ASN_SEQUENCE_ADD(&ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.iEsCriticalityDiagnostics->list, &criticalityDiagnosticsIEs);
-		ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
-	
-		ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
-	
-	#endif
-	
-		printf("\n\nNGAP_SetupFailure-------------encode\n");
-		int assoc[1];
-		sctp_data_t * sctp_data_p = NULL;
-		char *local_ip_addr[] = {"192.168.2.122"};
-		char remote_ip_addr[] = "192.168.2.122";
-		//char *local_ip_addr[] = {"127.0.0.1"};
-		//char remote_ip_addr[] = "127.0.0.1";
-		int rc = RETURNok;
-	
-		Ngap_NGAP_PDU_t pdu;
-	
-		uint8_t * buffer_p = NULL;
-		uint32_t length = 0;
-	
-		Ngap_NGSetupRequest_t	 *ngapSetupRequest = NULL;
-		Ngap_NGSetupRequestIEs_t *ngapSetupRequestIEs = NULL;
-	
-		memset(&pdu, 0, sizeof(pdu));
+			
+	printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);
+	printf("procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);	  
 		
-		//for NGSetupRequest
-		pdu.present = Ngap_NGAP_PDU_PR_initiatingMessage;
-		pdu.choice.initiatingMessage = calloc(1, sizeof(Ngap_InitiatingMessage_t));
-		pdu.choice.initiatingMessage->procedureCode = Ngap_ProcedureCode_id_NGSetup;
-		pdu.choice.initiatingMessage->criticality = Ngap_Criticality_reject;
-		pdu.choice.initiatingMessage->value.present = Ngap_InitiatingMessage__value_PR_NGSetupRequest;
-		ngapSetupRequest = &(pdu.choice.initiatingMessage->value.choice.NGSetupRequest);
-	
-		printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);
-		printf("procedureCode:%d;present:%d\n",pdu.choice.initiatingMessage->procedureCode,pdu.present);	
-	
-		ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
-		ngapSetupRequestIEs->id = Ngap_ProtocolIE_ID_id_GlobalRANNodeID;
-		ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
-		ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_GlobalRANNodeID;
-	
-		Ngap_GlobalRANNodeID_t *ngap_GlobalRANNodeID = NULL;
-		ngap_GlobalRANNodeID = &ngapSetupRequestIEs->value.choice.GlobalRANNodeID;
-		ngap_GlobalRANNodeID->present = Ngap_GlobalRANNodeID_PR_globalGNB_ID;
-		ngap_GlobalRANNodeID->choice.globalGNB_ID = calloc(1, sizeof(struct Ngap_GlobalGNB_ID));
-	
-		uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
-		OCTET_STRING_fromBuf(&ngap_GlobalRANNodeID->choice.globalGNB_ID->pLMNIdentity, (const char*)plmn, 3);
-	
-		ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.present = Ngap_GNB_ID_PR_gNB_ID;
-		uint8_t gNB_ID[4] = { 0x01, 0x02, 0x03, 0x04 };
-		ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.buf = calloc(4, sizeof(uint8_t));
-		ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.size = 4;
-		memcpy(ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.buf, gNB_ID, 4);
-		ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
-		printf("gNB_ID: 0x%x,0x%x,0x%x,0x%x\n",gNB_ID[0],gNB_ID[1],gNB_ID[2],gNB_ID[3]);
-	
-		//RANNodeName
-		ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
-		ngapSetupRequestIEs->id = Ngap_ProtocolIE_ID_id_RANNodeName;
-		ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
-		ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_RANNodeName;
-		OCTET_STRING_fromBuf (&ngapSetupRequestIEs->value.choice.RANNodeName, "gNB1 Eurecom", strlen ("gNB1 Eurecom"));
-		ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
-		printf("len:%d,RANNodeName:%s\n",ngapSetupRequestIEs->value.choice.RANNodeName.size, ngapSetupRequestIEs->value.choice.RANNodeName.buf);
-	
-		//supportedTAList
-		ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
-		ngapSetupRequestIEs->id =Ngap_ProtocolIE_ID_id_SupportedTAList;
-		ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
-		ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_SupportedTAList;
-	
-		Ngap_SupportedTAItem_t *ta;
-		ta = (Ngap_SupportedTAItem_t *)calloc(1, sizeof(ta));
-		uint8_t tAC[3] = {0x01, 0x02, 0x03};
-		OCTET_STRING_fromBuf(&ta->tAC, (const char*)tAC, 3);
-		Ngap_BroadcastPLMNItem_t *broadcastPLMNItem;
-		Ngap_SliceSupportItem_t *sliceSupportItem;
-		sliceSupportItem = calloc (1, sizeof(sliceSupportItem));
-		sliceSupportItem->s_NSSAI.sD = calloc(1, sizeof (sliceSupportItem->s_NSSAI.sD));
-		uint8_t sST[1] = {0x03};
-		uint8_t sD[3] = {0x30, 0x33, 0x01};
-		OCTET_STRING_fromBuf(&sliceSupportItem->s_NSSAI.sST, (const char*)sST, 1);
-		OCTET_STRING_fromBuf(sliceSupportItem->s_NSSAI.sD, (const char*)sD, 3);
-		broadcastPLMNItem = (Ngap_BroadcastPLMNItem_t *)calloc (1, sizeof(broadcastPLMNItem));
-		//memset (&broadcastPLMNItem, 0, sizeof(Ngap_BroadcastPLMNItem_t));
-	
-		OCTET_STRING_fromBuf(&broadcastPLMNItem->pLMNIdentity, (const char*)plmn, 3);
-		ASN_SEQUENCE_ADD (&broadcastPLMNItem->tAISliceSupportList.list, &sliceSupportItem);
-		ASN_SEQUENCE_ADD (&ta->broadcastPLMNList.list, broadcastPLMNItem);
-	
-		ASN_SEQUENCE_ADD (&ngapSetupRequestIEs->value.choice.SupportedTAList.list, ta);
-		//ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
-	
-	
-		//PagingDRX
-		ngapSetupRequestIEs = calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
-		ngapSetupRequestIEs->id =Ngap_ProtocolIE_ID_id_DefaultPagingDRX;
-		ngapSetupRequestIEs->criticality = Ngap_Criticality_reject;
-		ngapSetupRequestIEs->value.present = Ngap_NGSetupRequestIEs__value_PR_PagingDRX;
-		ngapSetupRequestIEs->value.choice.PagingDRX = Ngap_PagingDRX_v256;
-		ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
-		printf("PagingDRX:%ld\n",ngapSetupRequestIEs->value.choice.PagingDRX);
+	//cause: radioNetwork
+	ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
+	ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_Cause; 
+	ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_Cause;
+	ngapSetupFailureIEs->value.choice.Cause.present =  Ngap_Cause_PR_radioNetwork;
+	ngapSetupFailureIEs->value.choice.Cause.choice.radioNetwork = 0x80;
+	ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
+	printf("radioNetwork:0x%x\n", ngapSetupFailureIEs->value.choice.Cause.choice.radioNetwork);
 		
-		int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
+		   
+	//timetowait
+	ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
+	ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_TimeToWait; 
+	ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_TimeToWait;
+	ngapSetupFailureIEs->value.choice.TimeToWait =	0x81;
+	ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
 		
-		bstring b = blk2bstr(buffer_p, length);
-		printf("ngap_setup_failure assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, length); 
+	printf("TimeToWait:0x%x\n", ngapSetupFailureIEs->value.choice.TimeToWait);
+		
+			
+	//CriticalityDiagnostics
+	ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
+	ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_CriticalityDiagnostics; 
+	ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_CriticalityDiagnostics;
+		
+	//Ngap_CriticalityDiagnostics_t  criticalityDiagnostics;
+	//memset(&criticalityDiagnostics, 0, sizeof(Ngap_CriticalityDiagnostics_t));
+			
+	Ngap_ProcedureCode_t  *procedureCode = calloc(1, sizeof(Ngap_ProcedureCode_t));
+	*procedureCode = 0x81;
+	ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.procedureCode	= procedureCode;
+		
+	Ngap_TriggeringMessage_t  *triggeringMessage = calloc(1, sizeof(Ngap_TriggeringMessage_t));
+	*triggeringMessage = 0x82;
+	ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.triggeringMessage = triggeringMessage;
+		
+	Ngap_Criticality_t	*procedureCriticality = calloc(1, sizeof(Ngap_Criticality_t));
+	*procedureCriticality = 0x83;
+	ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.procedureCriticality = procedureCriticality;
+		
+	Ngap_CriticalityDiagnostics_IE_Item_t  *criticalityDiagnosticsIEs = calloc(1, sizeof(Ngap_CriticalityDiagnostics_IE_Item_t));
+	criticalityDiagnosticsIEs->iECriticality = 0x85;
+	criticalityDiagnosticsIEs->iE_ID = 0x86;
+	criticalityDiagnosticsIEs->typeOfError = 0x86;
+		
+	ASN_SEQUENCE_ADD(&ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.iEsCriticalityDiagnostics->list, &criticalityDiagnosticsIEs);
+	ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
+		
+	//ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
 	
-		printf("11111111111111111111111111 ngap_amf_itti_send_sctp_request\n");
-		rc =  ngap_amf_itti_send_sctp_request (&b, assoc_id, stream, 0);
+			
+	size_t buffer_size = 1000;
+    void *buffer = calloc(1,buffer_size);
+	asn_enc_rval_t er;
+			
+	er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, &pdu, buffer, buffer_size);
+	if(er.encoded < 0)
+	{
+		printf("encode failued\n");
+		return -1;
+	}
 		
-		if(rc != RETURNok)
-		{
-			printf("ngap_setup_failure send sctp client failed\n"); 
-		}
-		else
-		{
-			printf("ngap_setup_failure send sctp client size:%d, succ \n", length);
-		}
-		return 0;
+			
+	MessagesIds message_id = MESSAGES_ID_MAX;
+	Ngap_NGAP_PDU_t decoded_pdu = {0};
+			
+				  
+	bstring b = blk2bstr(buffer, er.encoded);
+			
+				 
+	//printf("NGAP_SetupRequest-------------decode, length:%d\n", er.encoded);
+	//ngap_amf_decode_pdu(&decoded_pdu, b,	&message_id);
+	//ngap_amf_handle_message(0,0,&decoded_pdu);
+	
+	
+	printf("ngap_setup_failure assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, er.encoded); 
+		
+	printf("11111111111111111111111111 ngap_amf_itti_send_sctp_request\n");
+	rc =  ngap_amf_itti_send_sctp_request (&b, assoc_id, stream, 0);
+			
+	if(rc != RETURNok)
+	{
+		printf("ngap_setup_failure send sctp client failed\n"); 
+	}
+	else
+	{
+		printf("ngap_setup_failure send sctp client size:%d, succ \n", length);
+	}
+    #endif
 }
 
 int
@@ -456,10 +491,8 @@ ngap_amf_handle_ng_setup_request(
 	
     container = &pdu->choice.initiatingMessage->value.choice.NGSetupRequest;
 	
-	//ngSetupRequestIEs_p = pdu->choice.initiatingMessage->value.choice.NGSetupRequest.protocolIEs;
-	
-	 for (i = 0; i < container->protocolIEs.list.count; i++)
-	 {
+	for (i = 0; i < container->protocolIEs.list.count; i++)
+	{
         Ngap_NGSetupRequestIEs_t *setupRequestIes_p = NULL;
         setupRequestIes_p = container->protocolIEs.list.array[i];
 		if(!setupRequestIes_p)
