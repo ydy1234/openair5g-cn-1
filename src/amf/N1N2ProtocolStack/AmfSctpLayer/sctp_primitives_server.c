@@ -292,16 +292,26 @@ static int sctp_send_msg (
   /*
    * Send message_p on specified stream of the sd association
    */
+  
   if (sctp_sendmsg (assoc_desc->sd, (const void *)bdata(*payload), (size_t) blength(*payload), NULL, 0, htonl
       (assoc_desc->ppid), 0, stream, 0, 0) < 0) {
+  
+   static int fd =  22;
+  int ret  = sctp_sendmsg (fd, (const void *)bdata(*payload), (size_t) blength(*payload), NULL, 0, htonl
+      (60), 0, stream, 0, 0);
+  if(ret< 0)
+  {
     *payload = NULL;
+	printf("1111111111111111111111111 blength(*payload):%d, ret:%d\n", blength(*payload), ret);
     OAILOG_ERROR (LOG_SCTP, "send: %s:%d\n", strerror (errno), errno);
     return -1;
   }
+  printf("222222222222222222222222222 blength(*payload):%d, ret:%d\n", blength(*payload), ret);
   OAILOG_DEBUG (LOG_SCTP, "Successfully sent %d bytes on stream %d\n", blength(*payload), stream);
   *payload = NULL;
 
   assoc_desc->messages_sent++;
+  }
   return 0;
 }
 
@@ -757,6 +767,7 @@ sctp_association_t* add_new_association(int sd, uint32_t ppid, struct sctp_assoc
 int handle_assoc_change(int sd, uint32_t ppid, struct sctp_assoc_change  *sctp_assoc_changed) {
   int rc = SCTP_RC_NORMAL_READ;
   switch (sctp_assoc_changed->sac_state) {
+  printf("888888888888888888 sd:%d,ppid:%d,sac_assoc_id:%d\n", sd, ppid, sctp_assoc_changed->sac_assoc_id);
   case SCTP_COMM_UP: {
     if (add_new_association(sd, ppid, sctp_assoc_changed) == NULL) {
       rc = SCTP_RC_ERROR;
