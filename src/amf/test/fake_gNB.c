@@ -72,7 +72,7 @@ int init_ng_setup_request_param()
 void
 send_NGAP_SetupRequest()
 {
-    printf("\n\nNGAP_SetupRequest-------------encode\n");
+    printf("\n\00000000000000000000000000 nNGAP_SetupRequest-------------encode\n");
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
 	char *local_ip_addr[] = {"10.112.43.231"};
@@ -150,14 +150,14 @@ send_NGAP_SetupRequest()
     OCTET_STRING_fromBuf(&sliceSupportItem->s_NSSAI.sST, (const char*)sST, 1);
     OCTET_STRING_fromBuf(sliceSupportItem->s_NSSAI.sD, (const char*)sD, 3);
     broadcastPLMNItem = (Ngap_BroadcastPLMNItem_t *)calloc (1, sizeof(broadcastPLMNItem));
-    //memset (&broadcastPLMNItem, 0, sizeof(Ngap_BroadcastPLMNItem_t));
+    memset (broadcastPLMNItem, 0, sizeof(Ngap_BroadcastPLMNItem_t));
 
     OCTET_STRING_fromBuf(&broadcastPLMNItem->pLMNIdentity, (const char*)plmn, 3);
     ASN_SEQUENCE_ADD (&broadcastPLMNItem->tAISliceSupportList.list, &sliceSupportItem);
     ASN_SEQUENCE_ADD (&ta->broadcastPLMNList.list, broadcastPLMNItem);
 
     ASN_SEQUENCE_ADD (&ngapSetupRequestIEs->value.choice.SupportedTAList.list, ta);
-    //ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
+    ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
 
 
 	//PagingDRX
@@ -168,10 +168,10 @@ send_NGAP_SetupRequest()
 	ngapSetupRequestIEs->value.choice.PagingDRX = Ngap_PagingDRX_v256;
 	ASN_SEQUENCE_ADD(&ngapSetupRequest->protocolIEs, ngapSetupRequestIEs);
     printf("PagingDRX:%ld\n",ngapSetupRequestIEs->value.choice.PagingDRX);
-	
+	printf("0000000000000000000000\n");
 	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
 
-   #if 1
+   #if 0
         Ngap_NGAP_PDU_t  decoded_pdu;
         Ngap_NGAP_PDU_t * ppdu = &decoded_pdu;
         asn_dec_rval_t rc = asn_decode(NULL,ATS_ALIGNED_CANONICAL_PER,&asn_DEF_Ngap_NGAP_PDU,(void**)&ppdu,buffer_p,length);
@@ -183,17 +183,17 @@ send_NGAP_SetupRequest()
             printf("message type(%d)\n",decoded_pdu.choice.initiatingMessage->value.present);
         } 
    #endif
-   #if 0 
+   
 	 MessagesIds message_id = MESSAGES_ID_MAX;
      Ngap_NGAP_PDU_t decoded_pdu = {0};
      
 	 bstring b = blk2bstr(buffer_p, length);
 	 
-	 printf("NGAP_SetupRequest-------------decode\n");
-     if(ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id)<0)
+	 printf("NGAP_SetupRequest111111111111111111-------------decode\n");
+   ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
        printf("error!!!!\n");
      ngap_amf_handle_message(0,0,&decoded_pdu);
-   #endif
+  
    #if 0
         //connect to sctp and send message to AMF
         printf("sctp client send msg buffer(%x) length(%d)\n",buffer_p,length);

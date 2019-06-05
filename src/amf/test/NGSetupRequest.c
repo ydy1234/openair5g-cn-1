@@ -223,6 +223,8 @@ void check_NGAP_pdu_constraints(Ngap_NGAP_PDU_t *pdu) {
         fprintf(stderr,"Constraintvalidationfailed:%s\n", errbuf);
     }
 }
+#include  "bstrlib.h"
+#include  "intertask_interface_types.h"
 
 void encode_pdu_to_aper_and_write_to_stdout(Ngap_NGAP_PDU_t *pdu) {
     size_t buffer_size = 1000;
@@ -231,6 +233,18 @@ void encode_pdu_to_aper_and_write_to_stdout(Ngap_NGAP_PDU_t *pdu) {
 
     er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
     printf("sctp client send buffer(%x) length(%d)\n",buffer,er.encoded);
+
+
+	MessagesIds message_id = MESSAGES_ID_MAX;
+    Ngap_NGAP_PDU_t decoded_pdu = {0};
+
+	  
+	bstring b = blk2bstr(buffer, buffer_size);
+
+	 
+	printf("NGAP_SetupRequest-------------decode, length:%d\n", buffer_size);
+    ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+    ngap_amf_handle_message(0,0,&decoded_pdu);
 
    #if 0
         Ngap_NGAP_PDU_t  decoded_pdu;
@@ -304,7 +318,8 @@ int main( int argc, char * argv[]) {
     fprintf(stderr, "  terminal 1: $ socat SCTP-LISTEN:38412,reuseaddr,fork STDOUT\n");
     fprintf(stderr, "  terminal 2: $ ./NGSetupRequest | socat STDIN SCTP-CONNECT:127.0.0.1:38412,end-close\n\n");
 
-
+    uint8_t * buffer_p = NULL;
+	uint32_t length = 0;
 	Ngap_NGAP_PDU_t *pdu;
 	pdu = make_NGAP_SetupRequest();
 
@@ -313,5 +328,9 @@ int main( int argc, char * argv[]) {
 
     check_NGAP_pdu_constraints(pdu);
     encode_pdu_to_aper_and_write_to_stdout(pdu);
+
+
+   
+	
     ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
 }

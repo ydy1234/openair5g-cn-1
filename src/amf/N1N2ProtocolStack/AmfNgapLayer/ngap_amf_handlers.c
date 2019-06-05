@@ -401,7 +401,7 @@ ngap_amf_handle_ng_setup_request(
                              //return failure
 						 }
 
-						 #if 0
+						 
 						 switch(ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.present)
 						 {
                             case Ngap_GNB_ID_PR_NOTHING:	/* No components present */
@@ -418,7 +418,7 @@ ngap_amf_handle_ng_setup_request(
 	                        case Ngap_GNB_ID_PR_choice_Extensions:
 							break;
 						 } 
-						 #endif
+						 
 				    }
 					break;
 	                case Ngap_GlobalRANNodeID_PR_globalNgENB_ID:
@@ -444,7 +444,48 @@ ngap_amf_handle_ng_setup_request(
             }		
             break;
             case Ngap_ProtocolIE_ID_id_SupportedTAList:
-            {
+            {  
+                Ngap_SupportedTAList_t	 SupportedTAList = setupRequestIes_p->value.choice.SupportedTAList;
+				int i = 0;
+				for(; i < SupportedTAList.list.count; i++)
+				{
+				  	Ngap_SupportedTAItem_t  *supportTA = SupportedTAList.list.array[i];
+					if(!supportTA)
+						continue;
+					
+				    printf("TAC",supportTA->tAC.buf);
+
+					int j = 0;
+					for(; j< supportTA->broadcastPLMNList.list.count; j++)
+					{
+                         Ngap_BroadcastPLMNItem_t *plmnItem = supportTA->broadcastPLMNList.list.array[j];
+                         if(!plmnItem)
+							 continue;
+						 printf("pLMNIdentity:0x%x,0x%x,0x%x\n", 
+						 plmnItem->pLMNIdentity.buf[0], plmnItem->pLMNIdentity.buf[1],plmnItem->pLMNIdentity.buf[2]);
+
+						 int k = 0;
+						 for(; k < plmnItem->tAISliceSupportList.list.count; k++)
+						 {
+                             Ngap_SliceSupportItem_t  *slisupportItem =  plmnItem->tAISliceSupportList.list.array[k];
+                             if(!slisupportItem)
+							 	continue;
+							 	
+							 printf("ssT:0x%x,0x%x,0x%x\n",
+							 slisupportItem->s_NSSAI.sST.buf[0],slisupportItem->s_NSSAI.sST.buf[1],slisupportItem->s_NSSAI.sST.buf[2]);
+							 
+                             if(!slisupportItem->s_NSSAI.sD)
+                                continue;
+                             
+							 printf("sd:0x%x,0x%x,0x%x\n",
+							 	slisupportItem->s_NSSAI.sD->buf[0],
+							 	slisupportItem->s_NSSAI.sD->buf[1],
+							 	slisupportItem->s_NSSAI.sD->buf[2]); 
+						 }
+					}
+					
+				}
+				#if 0
 				printf("Ngap_ProtocolIE_ID_id_SupportedTAList\n");
 			    if(ng_setup_request_is_supported_plmn_id(setupRequestIes_p->value.choice.SupportedTAList)== 0)
 			    {
@@ -456,6 +497,7 @@ ngap_amf_handle_ng_setup_request(
                     printf("not support plmn id\n");
 					//return ng setup failure;
 				}
+				#endif
 			    break;
             }
 			break;
