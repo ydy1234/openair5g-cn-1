@@ -337,7 +337,36 @@ int main( int argc, char * argv[]) {
     asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
 
     check_NGAP_pdu_constraints(pdu);
-    encode_pdu_to_aper_and_write_to_stdout(pdu);
+    //encode_pdu_to_aper_and_write_to_stdout(pdu);
+
+
+	size_t buffer_size = 1000;
+    void *buffer = calloc(1,buffer_size);
+    asn_enc_rval_t er;
+
+    er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
+
+  #if 1
+        printf("sctp client send buffer length(%d)\nbuffer:\t",er.encoded);
+        int i=0;
+        uint8_t * buffer_p = (uint8_t*)buffer;
+        uint8_t * buffer_send = (uint8_t*)buffer;
+        for(;i<er.encoded;buffer_p+=sizeof(uint8_t),i++)
+          printf("%x",*((uint8_t*)buffer_p));
+        printf("\n");
+#endif    
+
+
+	MessagesIds message_id = MESSAGES_ID_MAX;
+    Ngap_NGAP_PDU_t decoded_pdu = {0};
+
+	  
+	bstring b = blk2bstr(buffer, er.encoded);
+
+	 
+	printf("NGAP_SetupRequest-------------decode, length:%d\n", er.encoded);
+    ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+    ngap_amf_handle_message(0,0,&decoded_pdu);
 
 
    
