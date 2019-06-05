@@ -75,8 +75,8 @@ send_NGAP_SetupRequest()
     printf("\n\nNGAP_SetupRequest-------------encode\n");
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
-	char *local_ip_addr[] = {"192.168.2.122"};
-	char remote_ip_addr[] = "192.168.2.122";
+	char *local_ip_addr[] = {"10.112.43.231"};
+	char remote_ip_addr[] = "10.112.43.231";
 	//char *local_ip_addr[] = {"127.0.0.1"};
 	//char remote_ip_addr[] = "127.0.0.1";
 
@@ -171,7 +171,7 @@ send_NGAP_SetupRequest()
 	
 	int enc_rval = ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
 
-   #if 0
+   #if 1
         Ngap_NGAP_PDU_t  decoded_pdu;
         Ngap_NGAP_PDU_t * ppdu = &decoded_pdu;
         asn_dec_rval_t rc = asn_decode(NULL,ATS_ALIGNED_CANONICAL_PER,&asn_DEF_Ngap_NGAP_PDU,(void**)&ppdu,buffer_p,length);
@@ -183,25 +183,25 @@ send_NGAP_SetupRequest()
             printf("message type(%d)\n",decoded_pdu.choice.initiatingMessage->value.present);
         } 
    #endif
- 
-
+   #if 0 
 	 MessagesIds message_id = MESSAGES_ID_MAX;
      Ngap_NGAP_PDU_t decoded_pdu = {0};
      
 	 bstring b = blk2bstr(buffer_p, length);
 	 
 	 printf("NGAP_SetupRequest-------------decode\n");
-     ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+     if(ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id)<0)
+       printf("error!!!!\n");
      ngap_amf_handle_message(0,0,&decoded_pdu);
-	 
-    #if 0
-	//connect to sctp and send message to AMF
+   #endif
+   #if 0
+        //connect to sctp and send message to AMF
+        printf("sctp client send msg buffer(%x) length(%d)\n",buffer_p,length);
 	sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
 	if (sctp_data_p == NULL)  exit(1);
 	assoc[0] = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p);
 	sctp_send_msg (sctp_data_p, 60, 0, buffer_p,length);
     #endif
-
 }
 
 void
@@ -606,11 +606,11 @@ int main(
 
 
 	//Test NGAP messages
-	init_ng_setup_request_param();
+	//init_ng_setup_request_param();
 	send_NGAP_SetupRequest();
-	send_NGAP_SetupFailure();
-	send_NGAP_Initial_UE_Message();
-	send_NGAP_Uplink_Nas_Transport();
+	//send_NGAP_SetupFailure();
+	//send_NGAP_Initial_UE_Message();
+	//send_NGAP_Uplink_Nas_Transport();
 	//send_NGAP_Downlink_Nas_Transport();
 	//test NGAP
 	//test gNB

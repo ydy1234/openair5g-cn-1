@@ -204,7 +204,7 @@ file(GLOB SRCS
 #target_link_libraries(nas pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES} )
 
 
-add_executable(fake_gNB ${OPENAIR5GCN_DIR}/src/amf/test/fake_gNB.c ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_primitives_client.c ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_encoder.c ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NGAP_LAYER_SOURCE_CODE} )
+add_executable(fake_gNB ${OPENAIR5GCN_DIR}/src/amf/test/NGSetupRequest.c ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfSctpLayer/sctp_primitives_client.c ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_encoder.c ${SRCS} ${ITTICFiles} ${ASN1_C_FILES} ${NAS_C_CODE} ${NGAP_LAYER_SOURCE_CODE} )
 target_link_libraries(fake_gNB
 pistache pthread rt ${LFDS} sctp ${NETTLE_LIBRARIES}
   )
