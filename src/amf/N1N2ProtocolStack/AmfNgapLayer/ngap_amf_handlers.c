@@ -138,6 +138,7 @@ ngap_amf_handle_message(
     return -2;
   }     
   printf("procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);    
+  printf("assoc_id(%d)\n",assoc_id);    
   return (*messages_callback[procedureCode][present - 1]) (assoc_id, stream, pdu);
  
 }
@@ -335,6 +336,11 @@ ngap_amf_handle_ng_setup_request(
 		    break;
 		}
 	 }
+  unsigned char b[100]="112sd";
+  bstring bb =  blk2bstr(b, 100);
+  printf("before ngap_generate_downlink_nas_transport(assoc_id(%d))",assoc_id);
+  ngap_generate_downlink_nas_transport(assoc_id,assoc_id,&bb);
+
 	 return 0;
 	//printf("id:%d\n",ngSetupRequestIEs_p->id);
 	//printf("criticality:%d\n",ngSetupRequestIEs_p->criticality);
@@ -356,7 +362,7 @@ ngap_amf_handle_ng_setup_request(
     }
 
     if (gnb_association->ng_state == NGAP_RESETING || gnb_association->ng_state == NGAP_SHUTDOWN) {
-      OAILOG_WARNING(LOG_S1AP, "Ignoring s1setup from eNB in state %s on assoc id %u",
+      OAILOG_WARNING(LOG_NGAP, "Ignoring ngsetup from gNB in state %s on assoc id %u",
       ng_gnb_state_str[gnb_association->ng_state], assoc_id);
       rc = ngap_amf_generate_ng_setup_failure(assoc_id,Ngap_Cause_PR_transport,
                                             Ngap_CauseTransport_transport_resource_unavailable,
@@ -410,7 +416,7 @@ ngap_amf_handle_ng_setup_request(
     max_gnb_connected = 16;
 
     if(nb_gnb_associated == max_gnb_connected){
-      OAILOG_ERROR (LOG_NGAP, "There is too much eNB connected to MME, rejecting the association\n");
+      OAILOG_ERROR (LOG_NGAP, "There is too much gNB connected to MME, rejecting the association\n");
       OAILOG_DEBUG (LOG_NGAP, "Connected = %d, maximum allowed = %d\n", nb_gnb_associated, max_gnb_connected);
       rc = ngap_amf_generate_ng_setup_failure(assoc_id,
                                             Ngap_Cause_PR_misc,
@@ -584,7 +590,52 @@ int
 ngap_handle_new_association (
   sctp_new_peer_t * sctp_new_peer_p)
 {
+#if 1
+  gnb_description_t                      *gnb_association = NULL;
 
+  OAILOG_FUNC_IN (LOG_NGAP);
+  DevAssert (sctp_new_peer_p != NULL);
+
+  /*
+   * Checking that the assoc id has a valid gNB attached to.
+   */
+  if ((gnb_association = ngap_is_gnb_assoc_id_in_list (sctp_new_peer_p->assoc_id)) == NULL) {
+    OAILOG_DEBUG (LOG_NGAP, "Create gNB context for assoc_id: %d\n", sctp_new_peer_p->assoc_id);
+    /*
+     * Create new context
+     */
+    gnb_association = ngap_new_gnb ();
+
+    if (gnb_association == NULL) {
+      /*
+       * We failed to allocate memory
+       */
+      OAILOG_ERROR (LOG_NGAP, "Failed to allocate gNB context for assoc_id: %d\n", sctp_new_peer_p->assoc_id);
+      OAILOG_FUNC_RETURN(LOG_NGAP, RETURNok);
+    }
+    gnb_association->sctp_assoc_id = sctp_new_peer_p->assoc_id;
+    hashtable_rc_t  hash_rc = hashtable_ts_insert (&g_ngap_gnb_coll, (const hash_key_t)gnb_association->sctp_assoc_id, (void *)gnb_association);
+    if (HASH_TABLE_OK != hash_rc) {
+      OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
+    }
+  } else if ((gnb_association->ng_state == NGAP_SHUTDOWN) || (gnb_association->ng_state == NGAP_RESETING)) {
+    OAILOG_WARNING(LOG_NGAP, "Received new association request on an association that is being %s, ignoring",
+                   ng_gnb_state_str[gnb_association->ng_state]);
+    OAILOG_FUNC_RETURN(LOG_NGAP, RETURNerror);
+  } else {
+    OAILOG_DEBUG (LOG_NGAP, "gNB context already exists for assoc_id: %d, update it\n", sctp_new_peer_p->assoc_id);
+  }
+
+  gnb_association->sctp_assoc_id = sctp_new_peer_p->assoc_id;
+  /*
+   * Fill in in and out number of streams available on SCTP connection.
+   */
+  gnb_association->instreams = (sctp_stream_id_t) sctp_new_peer_p->instreams;
+  gnb_association->outstreams = (sctp_stream_id_t) sctp_new_peer_p->outstreams;
+  gnb_association->next_sctp_stream = 1;
+  gnb_association->ng_state = NGAP_INIT;
+  OAILOG_FUNC_RETURN (LOG_NGAP, RETURNok);
+#endif
 
 }
 

@@ -94,7 +94,7 @@ ngap_amf_thread (
         printf("\n");
      #endif
 
-
+            printf("before ngap_amf_decode_pdu assoc_id(%d)\n",SCTP_DATA_IND (received_message_p).assoc_id);
             if (ngap_amf_decode_pdu (&message, SCTP_DATA_IND (received_message_p).payload, &message_id) < 0) {
               OAILOG_ERROR (LOG_NGAP, "Failed to decode new buffer\n");
             } else {

@@ -109,6 +109,7 @@ static void sctp_exit (void);
 //------------------------------------------------------------------------------
 static sctp_association_t *sctp_add_new_peer (void)
 {
+  printf("sctp_add_new_peer\n");
   sctp_association_t              *new_sctp_descriptor = calloc (1, sizeof (sctp_association_t));
 
   if (new_sctp_descriptor == NULL) {
@@ -129,6 +130,9 @@ static sctp_association_t *sctp_add_new_peer (void)
   }
 
   sctp_desc.number_of_connections++;
+  printf("sctp_desc.number_of_connections(%d)\n",sctp_desc.number_of_connections);
+  printf("sctp_desc.available_connections_head(%p)\n",sctp_desc.available_connections_head);
+  printf("%p\n",new_sctp_descriptor);
   sctp_dump_list ();
   return new_sctp_descriptor;
 }
@@ -138,16 +142,22 @@ static sctp_association_t *sctp_is_assoc_in_list (sctp_assoc_id_t assoc_id)
 {
   sctp_association_t              *assoc_desc = NULL;
 
+  printf("assos_id(%d)\n",assoc_id);
   if (assoc_id < 0) {
+    printf("NULL\n");
     return NULL;
   }
 
   for (assoc_desc = sctp_desc.available_connections_head; assoc_desc; assoc_desc = assoc_desc->next_assoc) {
+    printf("assos_id(%d) in sctp_desc\n",assoc_desc->assoc_id);
+    printf("assos_desc(%p)\n",assoc_desc);
     if (assoc_desc->assoc_id == assoc_id) {
+      printf("found\n");
       break;
     }
   }
-
+  printf("in sctp_is_assoc_in_list：sctp_desc.available_connections_head(%p)\n",sctp_desc.available_connections_head);
+  printf("in sctp_is_assoc_in_list：assoc_desc(%p)\n",assoc_desc);
   return assoc_desc;
 }
 
@@ -255,11 +265,13 @@ static int sctp_send_msg (
     uint16_t stream,
     STOLEN_REF bstring *payload)
 {
+  printf("in sctp_send_msg\n");
   sctp_association_t              *assoc_desc = NULL;
 
   DevAssert (*payload);
-
+  printf("after DevAssert (*payload)\n");
   if ((assoc_desc = sctp_is_assoc_in_list (sctp_assoc_id)) == NULL) {
+    printf("This assoc id has not been fount in list (%d)\n",sctp_assoc_id);
     OAILOG_DEBUG (LOG_SCTP, "This assoc id has not been fount in list (%d)\n", sctp_assoc_id);
     return -1;
   }
@@ -268,9 +280,11 @@ static int sctp_send_msg (
     /*
      * The socket is invalid may be closed.
      */
+    printf("The socket is invalid may be closed (assoc id %d)\n",sctp_assoc_id);
     OAILOG_DEBUG (LOG_SCTP, "The socket is invalid may be closed (assoc id %d)\n", sctp_assoc_id);
     return -1;
   }
+  printf("sctp_sendmsg\n");
 
   OAILOG_DEBUG (LOG_SCTP, "[%d][%d] Sending buffer %p of %d bytes on stream %d with ppid %d\n",
       assoc_desc->sd, sctp_assoc_id, bdata(*payload), blength(*payload), stream, assoc_desc->ppid);
@@ -670,6 +684,7 @@ static void * sctp_intertask_interface (
       break;
 
     case SCTP_DATA_REQ:{
+        printf("SCTP_DATA_REQ\n");
         if (sctp_send_msg (SCTP_DATA_REQ (received_message_p).assoc_id,
             SCTP_DATA_REQ (received_message_p).stream,
             &SCTP_DATA_REQ (received_message_p).payload) < 0) {
@@ -716,12 +731,13 @@ sctp_association_t* add_new_association(int sd, uint32_t ppid, struct sctp_assoc
     OAILOG_ERROR (LOG_SCTP, "Failed to allocate new sctp peer \n");
     return NULL;
   }
-
+  printf("After sctp_add_new_peer\n");
   new_association->sd = sd;
   new_association->ppid = ppid;
   new_association->instreams = sctp_assoc_changed->sac_inbound_streams;
   new_association->outstreams = sctp_assoc_changed->sac_outbound_streams;
   new_association->assoc_id = (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id;
+  printf("sctp_assoc_changed->sac_assoc_id(%d)\n",sctp_assoc_changed->sac_assoc_id);
   sctp_get_localaddresses(sd, NULL, NULL);
   sctp_get_peeraddresses(sd, &new_association->peer_addresses, &new_association->nb_peer_addresses);
 
