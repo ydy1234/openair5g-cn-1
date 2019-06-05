@@ -415,7 +415,7 @@ int main( int argc, char * argv[]) {
           	   MessagesIds message_id = MESSAGES_ID_MAX;
                Ngap_NGAP_PDU_t decoded_pdu = {0};
                uint8_t * buffer_p = NULL;
-               bstring b = blk2bstr(buffer_p, n);
+               bstring b = blk2bstr(recvBuffer, n);
           
           	 
                printf("NGAP_SetupRequest-------------decode, length:%d\n", n);
