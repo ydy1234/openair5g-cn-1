@@ -334,12 +334,14 @@ int ng_setup_request_is_supported_plmn_id(Ngap_SupportedTAList_t	 req_supportedT
    }
    return -1;
 }
+
 int
 ngap_amf_handle_ng_setup_request(
     const sctp_assoc_id_t assoc_id,
     const sctp_stream_id_t stream,
 	Ngap_NGAP_PDU_t *pdu){
 
+    #if 0
     if(g_NG_ENG_CONNECTED >= MAX_NG_ENG_CONNECTED)
     {
        ng_setup_request_to_sendback_failure();
@@ -347,7 +349,7 @@ ngap_amf_handle_ng_setup_request(
        //return NG SETUP FAILURE;
 	}
     g_NG_ENG_CONNECTED++;
-	
+	#endif
 
     //OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
@@ -395,12 +397,13 @@ ngap_amf_handle_ng_setup_request(
 				    case Ngap_GlobalRANNodeID_PR_globalGNB_ID:
 					{
 						 printf("Ngap_GlobalRANNodeID_PR_globalGNB_ID----------\n");
-						 
+
+						 #if 0
                          if(ng_setup_request_find_GlobalRANNodeID(ngap_GlobalRANNodeID)  == -1)
                          {
                              //return failure
 						 }
-
+                         #endif
 						 
 						 switch(ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.present)
 						 {

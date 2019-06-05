@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "Ngap_ProtocolIE-Field.h"
 #include "Ngap_NGAP-PDU.h"
@@ -13,6 +14,27 @@
 #include "Ngap_SupportedTAItem.h"
 #include "Ngap_UnsuccessfulOutcome.h"
 #endif
+
+
+#include "bstrlib.h"
+#include "intertask_interface_types.h"
+#include "ngap_amf_encoder.h"
+#include "sctp_primitives_client.h"
+#include "intertask_interface.h"
+#include "assertions.h"
+#include "intertask_interface_init.h"
+#include "sctp_primitives_server.h"
+#include "Ngap_CriticalityDiagnostics-IE-Item.h"
+#include "Ngap_CriticalityDiagnostics-IE-List.h"
+#include "Ngap_ProtocolIE-Field.h"
+#include "Ngap_UserLocationInformationEUTRA.h"
+
+#include "ngap_amf.h"
+#include "amf_app.h"
+#include "log.h"
+#include "ngap_common.h"
+#include "sctp_gNB_defs.h"
+
 
 #include "sctp_gNB_defs.h"
 #include <unistd.h>
@@ -318,19 +340,102 @@ int main( int argc, char * argv[]) {
     fprintf(stderr, "  terminal 1: $ socat SCTP-LISTEN:38412,reuseaddr,fork STDOUT\n");
     fprintf(stderr, "  terminal 2: $ ./NGSetupRequest | socat STDIN SCTP-CONNECT:127.0.0.1:38412,end-close\n\n");
 
-    uint8_t * buffer_p = NULL;
-	uint32_t length = 0;
-	Ngap_NGAP_PDU_t *pdu;
+    //uint8_t * buffer = NULL;
+	//uint32_t buffer_size = 0;
+	Ngap_NGAP_PDU_t *pdu = NULL;
 	pdu = make_NGAP_SetupRequest();
 
     // debug
     asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
 
     check_NGAP_pdu_constraints(pdu);
-    encode_pdu_to_aper_and_write_to_stdout(pdu);
+    //encode_pdu_to_aper_and_write_to_stdout(pdu);
 
+	//encode
+    size_t buffer_size = 1000;
+    void *buffer = calloc(1,buffer_size);
+    asn_enc_rval_t er;
+
+    er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
+    printf("sctp client send buffer(%x) length(%d)\n",buffer,er.encoded);
+
+    int assoc[1] = {0};
+    sctp_data_t * sctp_data_p = NULL;
+	char *local_ip_addr[] = {"192.168.2.122"};
+	char remote_ip_addr[] = "192.168.2.122";
+	
     
-   
+    sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
+  	if (sctp_data_p == NULL)  exit(1);
+  	assoc[0] = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p);
+  	sctp_send_msg (sctp_data_p, 60, 0, buffer,er.encoded);
+  
+     
+     int                                     flags = 0, n = 0;
+     #define SCTP_RECV_BUFFER_SIZE  1024
+     //socklen_t								from_len = 0;
+     int								from_len = 0;
+     struct sctp_sndrcvinfo					sinfo = {0};
+     struct sockaddr_in 					    addr = {0};
+     char 								    recvBuffer[SCTP_RECV_BUFFER_SIZE] = {0};
+     int sd = sctp_data_p->sd;
+   	 while(1)
+  	 {
+          memset ((void *)&addr, 0, sizeof (struct sockaddr_in));
+          from_len = (socklen_t) sizeof (struct sockaddr_in);
+          memset ((void *)&sinfo, 0, sizeof (struct sctp_sndrcvinfo));
+          n = sctp_recvmsg (sd, (void *)recvBuffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
+         
+          if (n < 0) {
+             OAILOG_DEBUG (LOG_SCTP, "An error occured during read\n");
+             OAILOG_ERROR (LOG_SCTP, "sctp_recvmsg: %s:%d\n", strerror (errno), errno);
+             continue;
+          }
+          if (flags & MSG_NOTIFICATION)
+  		{
+             union sctp_notification                *snp = (union sctp_notification *)recvBuffer;
+         
+             switch (snp->sn_header.sn_type) {
+             case SCTP_SHUTDOWN_EVENT: {
+               OAILOG_DEBUG (LOG_SCTP, "SCTP_SHUTDOWN_EVENT received\n");
+               //return sctp_handle_com_down((sctp_assoc_id_t) snp->sn_shutdown_event.sse_assoc_id);
+             }
+             case SCTP_ASSOC_CHANGE: {
+               OAILOG_DEBUG(LOG_SCTP, "SCTP association change event received\n");
+               //return handle_assoc_change(sd, ppid, &snp->sn_assoc_change);
+             }
+             default: {
+               OAILOG_WARNING(LOG_SCTP, "Unhandled notification type %u\n", snp->sn_header.sn_type);
+               break;
+             }
+             }
+           }
+           else
+           {
+          	   MessagesIds message_id = MESSAGES_ID_MAX;
+               Ngap_NGAP_PDU_t decoded_pdu = {0};
+               uint8_t * buffer_p = NULL;
+               bstring b = blk2bstr(buffer_p, n);
+          
+          	 
+               printf("NGAP_SetupRequest-------------decode, length:%d\n", n);
+               ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+               ngap_amf_handle_message(0,0,&decoded_pdu);
+   			   break;
+           }
+      }
+
+
+	#if 0
+    //decode
+	MessagesIds message_id = MESSAGES_ID_MAX;
+    Ngap_NGAP_PDU_t decoded_pdu = {0};
+	bstring b = blk2bstr(buffer, er.encoded);
+	printf("NGAP_SetupRequest-------------decode, length:%d\n", er.encoded);
+    ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+    ngap_amf_handle_message(0,0,&decoded_pdu);
+    #endif
+	
 	
     ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
 }

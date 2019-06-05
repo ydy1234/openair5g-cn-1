@@ -4,6 +4,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
+
 #include "bstrlib.h"
 #include "intertask_interface_types.h"
 #include "ngap_amf_encoder.h"
@@ -21,7 +23,10 @@
 #include "amf_app.h"
 #include "log.h"
 #include "ngap_common.h"
-#include "bstrlib.h"
+#include "sctp_gNB_defs.h"
+
+
+
 
 
 Ngap_SupportedTAList_t	     g_SupportedTAList;
@@ -72,11 +77,11 @@ int init_ng_setup_request_param()
 void
 send_NGAP_SetupRequest()
 {
-    printf("\n\00000000000000000000000000 nNGAP_SetupRequest-------------encode\n");
+    printf("\n\nNGAP_SetupRequest-------------encode\n");
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
-	char *local_ip_addr[] = {"10.112.43.231"};
-	char remote_ip_addr[] = "10.112.43.231";
+	char *local_ip_addr[] = {"192.168.2.122"};
+	char remote_ip_addr[] = "192.168.2.122";
 	//char *local_ip_addr[] = {"127.0.0.1"};
 	//char remote_ip_addr[] = "127.0.0.1";
 
@@ -186,7 +191,8 @@ send_NGAP_SetupRequest()
    
 	 MessagesIds message_id = MESSAGES_ID_MAX;
      Ngap_NGAP_PDU_t decoded_pdu = {0};
-     
+
+	 #if 0
 	 bstring b = blk2bstr(buffer_p, length);
 	 
 	 printf("NGAP_SetupRequest111111111111111111-------------decode\n");
@@ -194,7 +200,8 @@ send_NGAP_SetupRequest()
      printf("error!!!!\n");
      ngap_amf_handle_message(0,0,&decoded_pdu);
 
-    
+     #endif
+	
   	 sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
   	 if (sctp_data_p == NULL)  exit(1);
   	 assoc[0] = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p);
@@ -244,7 +251,7 @@ send_NGAP_SetupRequest()
            {
           	   MessagesIds message_id = MESSAGES_ID_MAX;
                Ngap_NGAP_PDU_t decoded_pdu = {0};
-          
+               uint8_t * buffer = NULL;
                bstring b = blk2bstr(buffer, n);
           
           	 
