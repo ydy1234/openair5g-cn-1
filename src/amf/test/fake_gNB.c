@@ -190,9 +190,71 @@ send_NGAP_SetupRequest()
 	 bstring b = blk2bstr(buffer_p, length);
 	 
 	 printf("NGAP_SetupRequest111111111111111111-------------decode\n");
-   ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
-       printf("error!!!!\n");
+     ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+     printf("error!!!!\n");
      ngap_amf_handle_message(0,0,&decoded_pdu);
+
+    
+  	 sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
+  	 if (sctp_data_p == NULL)  exit(1);
+  	 assoc[0] = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p);
+  	 sctp_send_msg (sctp_data_p, 60, 0, buffer_p,length);
+  
+     
+     int                                     flags = 0, n = 0;
+     #define SCTP_RECV_BUFFER_SIZE  1024
+     //socklen_t								from_len = 0;
+     int								from_len = 0;
+     struct sctp_sndrcvinfo					sinfo = {0};
+     struct sockaddr_in 					    addr = {0};
+     char 								    buffer[SCTP_RECV_BUFFER_SIZE] = {0};
+     int sd = sctp_data_p->sd;
+   	 while(1)
+  	 {
+          memset ((void *)&addr, 0, sizeof (struct sockaddr_in));
+          from_len = (socklen_t) sizeof (struct sockaddr_in);
+          memset ((void *)&sinfo, 0, sizeof (struct sctp_sndrcvinfo));
+          n = sctp_recvmsg (sd, (void *)buffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
+         
+          if (n < 0) {
+             OAILOG_DEBUG (LOG_SCTP, "An error occured during read\n");
+             OAILOG_ERROR (LOG_SCTP, "sctp_recvmsg: %s:%d\n", strerror (errno), errno);
+             continue;
+          }
+          if (flags & MSG_NOTIFICATION)
+  		{
+             union sctp_notification                *snp = (union sctp_notification *)buffer;
+         
+             switch (snp->sn_header.sn_type) {
+             case SCTP_SHUTDOWN_EVENT: {
+               OAILOG_DEBUG (LOG_SCTP, "SCTP_SHUTDOWN_EVENT received\n");
+               //return sctp_handle_com_down((sctp_assoc_id_t) snp->sn_shutdown_event.sse_assoc_id);
+             }
+             case SCTP_ASSOC_CHANGE: {
+               OAILOG_DEBUG(LOG_SCTP, "SCTP association change event received\n");
+               //return handle_assoc_change(sd, ppid, &snp->sn_assoc_change);
+             }
+             default: {
+               OAILOG_WARNING(LOG_SCTP, "Unhandled notification type %u\n", snp->sn_header.sn_type);
+               break;
+             }
+             }
+           }
+           else
+           {
+          	   MessagesIds message_id = MESSAGES_ID_MAX;
+               Ngap_NGAP_PDU_t decoded_pdu = {0};
+          
+               bstring b = blk2bstr(buffer, n);
+          
+          	 
+               printf("NGAP_SetupRequest-------------decode, length:%d\n", n);
+               ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+               ngap_amf_handle_message(0,0,&decoded_pdu);
+   			   break;
+           }
+      }
+   
   
    #if 0
         //connect to sctp and send message to AMF

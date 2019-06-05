@@ -329,7 +329,7 @@ int main( int argc, char * argv[]) {
     check_NGAP_pdu_constraints(pdu);
     encode_pdu_to_aper_and_write_to_stdout(pdu);
 
-
+    
    
 	
     ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
