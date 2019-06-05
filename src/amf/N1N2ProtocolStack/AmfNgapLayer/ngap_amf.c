@@ -82,7 +82,7 @@ ngap_amf_thread (
         case SCTP_DATA_IND:{
             OAILOG_DEBUG(LOG_NGAP,"SCTP_DATA_IND(recv N2 Messages from AN)\n");
             Ngap_NGAP_PDU_t  message = {0};
-
+            printf("sctp server recv buffer(%x) length(%d)\n",(SCTP_DATA_IND (received_message_p).payload)->data,(SCTP_DATA_IND (received_message_p).payload)->slen);
             if (ngap_amf_decode_pdu (&message, SCTP_DATA_IND (received_message_p).payload, &message_id) < 0) {
               OAILOG_ERROR (LOG_NGAP, "Failed to decode new buffer\n");
             } else {

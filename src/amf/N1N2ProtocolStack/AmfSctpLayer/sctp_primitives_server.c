@@ -429,6 +429,15 @@ static inline int sctp_read_from_socket (int sd, uint32_t ppid)
   memset ((void *)&sinfo, 0, sizeof (struct sctp_sndrcvinfo));
   n = sctp_recvmsg (sd, (void *)buffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
 
+  #if 0
+        printf("sctp server recv buffer length(%d)\nbuffer:\t",n);
+        int i=0;
+        uint8_t * buffer_p = (uint8_t*)buffer;
+        for(;i<n;buffer_p+=sizeof(uint8_t),i++)
+          printf("%x",*((uint8_t*)buffer_p));
+        printf("\n");
+#endif
+
   if (n < 0) {
     OAILOG_DEBUG (LOG_SCTP, "An error occured during read\n");
     OAILOG_ERROR (LOG_SCTP, "sctp_recvmsg: %s:%d\n", strerror (errno), errno);
@@ -441,9 +450,19 @@ static inline int sctp_read_from_socket (int sd, uint32_t ppid)
     switch (snp->sn_header.sn_type) {
     case SCTP_SHUTDOWN_EVENT: {
       OAILOG_DEBUG (LOG_SCTP, "SCTP_SHUTDOWN_EVENT received\n");
+      printf("SCTP_SHUTDOWN_EVENT received\n");
       return sctp_handle_com_down((sctp_assoc_id_t) snp->sn_shutdown_event.sse_assoc_id);
     }
     case SCTP_ASSOC_CHANGE: {
+#if 0
+        printf("sctp server recv buffer length(%d)\nbuffer:\t",n);
+        int j=0;
+        uint8_t * buffer_p_1 = (uint8_t*)buffer;
+        for(;j<n;buffer_p_1+=sizeof(uint8_t),j++)
+          printf("%x",*((uint8_t*)buffer_p_1));
+        printf("\n");
+#endif
+      printf("SCTP association change event received\n");
       OAILOG_DEBUG(LOG_SCTP, "SCTP association change event received\n");
       return handle_assoc_change(sd, ppid, &snp->sn_assoc_change);
     }
@@ -456,6 +475,15 @@ static inline int sctp_read_from_socket (int sd, uint32_t ppid)
     /*
      * Data payload received
      */
+    printf("Data payload received\n");
+  #if 1
+        printf("sctp server recv buffer length(%d)\nbuffer:\t",n);
+        int i=0;
+        uint8_t * buffer_p = (uint8_t*)buffer;
+        for(;i<n;buffer_p+=sizeof(uint8_t),i++)
+          printf("%x",*((uint8_t*)buffer_p));
+        printf("\n");
+#endif
     sctp_association_t              *association;
 
     if ((association = sctp_is_assoc_in_list ((sctp_assoc_id_t) sinfo.sinfo_assoc_id)) == NULL) {
@@ -630,6 +658,7 @@ static void * sctp_intertask_interface (
     switch (ITTI_MSG_ID (received_message_p)) {
     case SCTP_INIT_MSG:{
         OAILOG_DEBUG (LOG_SCTP, "Received SCTP_INIT_MSG\n");
+        printf("Received SCTP_INIT_MSG\n");
         if ((sctp_sd = sctp_create_new_listener (&received_message_p->ittiMsg.sctpInit)) < 0) {
           AssertFatal(false, "Failed to create new SCTP listener\n");
         }

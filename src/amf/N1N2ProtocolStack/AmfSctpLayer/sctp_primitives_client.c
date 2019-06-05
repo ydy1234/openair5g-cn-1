@@ -48,9 +48,9 @@ sctp_send_msg (
   const uint8_t * buffer,
   const size_t length)
 {
+  printf("sctp_send_msg\n");
   DevAssert (buffer != NULL);
   DevAssert (sctp_data_p != NULL);
-
   /*
    * Send message on specified stream of the sd association
    * * * * NOTE: PPID should be defined in network order
@@ -58,6 +58,8 @@ sctp_send_msg (
   if (sctp_sendmsg (sctp_data_p->sd, (const void *)buffer, length, NULL, 0, htonl (ppid), 0, stream, 0, 0) < 0) {
     OAILOG_ERROR (LOG_SCTP, "Sctp_sendmsg failed: %s\n", strerror (errno));
     return -1;
+  }else{
+    printf("sctp_sendmsg\n");
   }
 
   OAILOG_DEBUG (LOG_SCTP, "Successfully sent %d bytes to port %d on stream %d\n", length, sctp_data_p->remote_port, stream);
@@ -195,6 +197,7 @@ sctp_connect_to_remote_host (
       goto err;
     }
   }
+  printf ("Connected to  %s:%u\n", remote_ip_addr, port);
   printf ("Connected to  %s:%u\n", remote_ip_addr, port);
   /*
    * Get SCTP status

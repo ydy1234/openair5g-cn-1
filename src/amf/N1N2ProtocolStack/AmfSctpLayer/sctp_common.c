@@ -88,6 +88,7 @@ int sctp_get_sockinfo (
   sctp_stream_id_t * outstream,
   sctp_assoc_id_t * assoc_id)
 {
+  printf("sctp_get_sockinfo\n");
   socklen_t                               i = 0;
   struct sctp_status                      status = {0};
 
