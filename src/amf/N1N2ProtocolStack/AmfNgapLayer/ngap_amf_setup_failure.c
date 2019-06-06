@@ -105,7 +105,8 @@ Ngap_NGSetupFailureIEs_t *make_TimeToWait_ie(e_Ngap_TimeToWait  TimeToWait)
     ie->criticality = Ngap_Criticality_ignore; 
     ie->value.present = Ngap_NGSetupFailureIEs__value_PR_TimeToWait;
     ie->value.choice.TimeToWait = TimeToWait;
-    
+
+	printf("TimeToWait:0x%x\n", ie->value.choice.TimeToWait);
 	return ie;
 }
 
@@ -154,9 +155,11 @@ Ngap_NGAP_PDU_t *make_NGAP_SetupFailure()
     ie  = make_TimeToWait_ie(Ngap_TimeToWait_v60s);
     add_NGSetupFailure_ie(ngapSetupFailure, ie);
 
+
+
 	#if 0
-	//CriticalityDiagnostics:procedureCode
-	ie =  make_CriticalityDiagnostics_ie(Ngap_ProcedureCode_id_AMFConfigurationUpdate,0x82,0x83);
+	//CriticalityDiagnostics   // encode failed;
+	ie =  make_CriticalityDiagnostics_ie(Ngap_ProcedureCode_id_AMFConfigurationUpdate,Ngap_TriggeringMessage_unsuccessfull_outcome,Ngap_Criticality_reject);
 	add_NGSetupFailure_ie(ngapSetupFailure, ie);
     #endif
 	

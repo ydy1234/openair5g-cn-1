@@ -465,9 +465,7 @@ int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
 	//ngap_amf_handle_message(0,0,&decoded_pdu);
 	
 	
-	printf("ngap_setup_failure assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, er.encoded); 
-		
-	printf("11111111111111111111111111 ngap_amf_itti_send_sctp_request\n");
+	printf("ngap_setup_failure assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, er.encoded);
 	rc =  ngap_amf_itti_send_sctp_request (&b, assoc_id, stream, 0);
 			
 	if(rc != RETURNok)
