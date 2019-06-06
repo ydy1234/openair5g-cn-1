@@ -396,7 +396,7 @@ int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
 	ngapSetupFailureIEs = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
 	ngapSetupFailureIEs->id = Ngap_ProtocolIE_ID_id_TimeToWait; 
 	ngapSetupFailureIEs->value.present = Ngap_NGSetupFailureIEs__value_PR_TimeToWait;
-	ngapSetupFailureIEs->value.choice.TimeToWait =	0x81;
+	ngapSetupFailureIEs->value.choice.TimeToWait = Ngap_TimeToWait_v10s;
 	ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
 		
 	printf("TimeToWait:0x%x\n", ngapSetupFailureIEs->value.choice.TimeToWait);
@@ -436,7 +436,7 @@ int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
     int ret;
     char errbuf[512];
     size_t errlen =sizeof(errbuf);
-    ret = asn_check_constraints(&asn_DEF_Ngap_NGAP_PDU, &pdu, errbuf, &errlen);
+    ret = asn_check_constraints(&asn_DEF_Ngap_NGAP_PDU, pdu, errbuf, &errlen);
     if(ret != 0) {
         fprintf(stderr,"Constraintvalidationfailed:%s\n", errbuf);
     }
@@ -445,7 +445,7 @@ int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
     void *buffer = calloc(1,buffer_size);
 	asn_enc_rval_t er;
 			
-	er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, &pdu, buffer, buffer_size);
+	er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
 	if(er.encoded < 0)
 	{
 		printf("encode failued\n");

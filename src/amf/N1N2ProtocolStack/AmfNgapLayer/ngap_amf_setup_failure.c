@@ -100,10 +100,11 @@ Ngap_Criticality_t	procedureCriticality)
 Ngap_NGSetupFailureIEs_t *make_TimeToWait_ie(e_Ngap_TimeToWait  TimeToWait)
 {
     Ngap_NGSetupFailureIEs_t *ie = NULL;
-	ie = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
+    ie = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
     ie->id = Ngap_ProtocolIE_ID_id_TimeToWait; 
+    ie->criticality = Ngap_Criticality_ignore; 
     ie->value.present = Ngap_NGSetupFailureIEs__value_PR_TimeToWait;
-	ie->value.choice.TimeToWait = TimeToWait;
+    ie->value.choice.TimeToWait = TimeToWait;
     
 	return ie;
 }
@@ -115,6 +116,7 @@ Ngap_NGSetupFailureIEs_t *make_Cause_radioNetwork_ie(e_Ngap_CauseRadioNetwork ra
     Ngap_NGSetupFailureIEs_t *ie = NULL;
 	ie = calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
 	ie->id = Ngap_ProtocolIE_ID_id_Cause; 
+	ie->criticality = Ngap_Criticality_ignore; 
 	ie->value.present = Ngap_NGSetupFailureIEs__value_PR_Cause;
 	ie->value.choice.Cause.present =  Ngap_Cause_PR_radioNetwork;
 	ie->value.choice.Cause.choice.radioNetwork = radioNetwork;
