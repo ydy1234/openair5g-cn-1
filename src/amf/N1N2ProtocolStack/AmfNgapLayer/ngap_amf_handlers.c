@@ -45,7 +45,7 @@ ngap_message_decoded_callback   messages_callback[][3] = {
     {0,0,0}, /*NASNonDeliveryIndication*/
     
     {0,0,0}, /*NGReset*/
-    {ngap_amf_handle_ng_setup_request,0,ngap_amf_handle_ng_setup_failure}, /*NGSetup*/
+    {ngap_amf_handle_ng_setup_request, ngap_amf_handle_ng_setup_response, ngap_amf_handle_ng_setup_failure}, /*NGSetup*/
     {0,0,0}, /*OverloadStart*/
 	{0,0,0}, /*OverloadStop*/
     {0,0,0}, /*Paging*/
@@ -635,6 +635,72 @@ ngap_amf_handle_ng_setup_request(
 
 }
 
+
+int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+		Ngap_NGAP_PDU_t *pdu)
+{
+    printf("\n\n ngap_amf_handle_ng_setup_response ----------decode\n");
+
+	//OAILOG_FUNC_IN (LOG_NGAP);
+    int rc = RETURNok;
+    int i = 0;
+    Ngap_NGSetupResponse_t                  *container = NULL;
+    Ngap_NGSetupResponseIEs_t               *ie = NULL;
+    Ngap_NGSetupResponseIEs_t               *ie_gnb_name = NULL;
+
+    DevAssert (pdu != NULL);
+	
+    container = &pdu->choice.successfulOutcome->value.choice.NGSetupResponse;
+
+	for (i = 0; i < container->protocolIEs.list.count; i++)
+	 {
+        Ngap_NGSetupResponseIEs_t *setupResponseIes_p = NULL;
+        setupResponseIes_p = container->protocolIEs.list.array[i];
+		if(!setupResponseIes_p)
+			continue;
+		switch(setupResponseIes_p->id)
+	    {
+            case Ngap_ProtocolIE_ID_id_AMFName:
+			{
+			    printf("AMFName:%s\n", (char *)(setupResponseIes_p->value.choice.AMFName.buf));
+			}
+			break;
+            case Ngap_ProtocolIE_ID_id_RelativeAMFCapacity:
+			{
+	            printf("RelativeAMFCapacity:%d\n", setupResponseIes_p->value.choice.RelativeAMFCapacity);
+			}
+			break;	
+            case Ngap_ProtocolIE_ID_id_PLMNSupportList:
+			{
+				Ngap_PLMNSupportList_t	 PLMNSupportList = setupResponseIes_p->value.choice.PLMNSupportList;
+				int j  = 0;
+				for(; j< PLMNSupportList.list.count; j++)
+				{
+				    Ngap_PLMNSupportItem_t  *pPlmn = PLMNSupportList.list.array[j];
+					if(!pPlmn)
+					   continue;
+					printf("pLMNIdentity: 0x%x,0x%x,0x%x\n", pPlmn->pLMNIdentity.buf[0],pPlmn->pLMNIdentity.buf[1],pPlmn->pLMNIdentity.buf[2]);
+
+					Ngap_SliceSupportList_t	 sliceSupportList = pPlmn->sliceSupportList;
+					int k = 0;
+					for(; k < sliceSupportList.list.count; k++)
+					{
+                        Ngap_SliceSupportItem_t *pSS  = sliceSupportList.list.array[k];
+						if(!pSS)
+							continue;
+						printf("NSSAI_sST:0x%x\n",pSS->s_NSSAI.sST.buf[0]);
+					}
+				}
+				
+			}
+			break;
+		}
+	 }
+	 
+    return 0;
+}
+
+
 //------------------------------------------------------------------------------------------------------------
 int
 ngap_amf_handle_ng_setup_failure(
@@ -701,7 +767,7 @@ ngap_generate_ng_setup_response(
   gnb_description_t * gnb_association)
 {
 
-
+  
 }
 
 int
