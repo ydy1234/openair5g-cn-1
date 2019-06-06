@@ -19,8 +19,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-//Ngap_SupportedTAList_t       g_SupportedTAList;
-//Ngap_GlobalRANNodeIDList_t   g_glocalRANNodeIDList;
 
 int g_supportTaListCount = 0;
 

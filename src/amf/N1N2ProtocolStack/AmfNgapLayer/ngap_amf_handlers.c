@@ -16,7 +16,7 @@
 #include "sctp_gNB_defs.h"
 #include "Ngap_CriticalityDiagnostics-IE-Item.h"
 #include "Ngap_CriticalityDiagnostics-IE-List.h"
-
+#include "ngap_amf_setup_failure.h"
 
 extern hash_table_ts_t g_ngap_gnb_coll;
 extern uint32_t nb_gnb_associated;
@@ -235,13 +235,11 @@ ngap_amf_generate_ng_setup_failure (
 int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
 		const sctp_stream_id_t stream, Ngap_NGAP_PDU_t *setup_req_pdu)
 {
-   printf("\n\nNGAP_SetupFailure-------------encode\n");
+    printf("\n\nNGAP_SetupFailure-------------encode\n");
+
+	#if 0
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
-	char *local_ip_addr[] = {"192.168.2.122"};
-	char remote_ip_addr[] = "192.168.2.122";
-	//char *local_ip_addr[] = {"127.0.0.1"};
-	//char remote_ip_addr[] = "127.0.0.1";
 	int rc = RETURNok;
 
 	Ngap_NGAP_PDU_t pdu;
@@ -358,15 +356,16 @@ int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
 	{
         printf("ngap_setup_failure send sctp client size:%d, succ \n", length);
 	}
-
-    #if 0
+    #endif
+   
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
-	Ngap_NGAP_PDU_t 			pdu;
+	Ngap_NGAP_PDU_t 			*pdu = NULL;
 	uint8_t * buffer_p = NULL;
 	uint32_t length = 0;
 	int rc = RETURNok;
-		
+
+	#if 0
 	Ngap_NGSetupFailure_t						*ngapSetupFailure = NULL;
 	Ngap_NGSetupFailureIEs_t					*ngapSetupFailureIEs = NULL;
 	memset(&pdu, 0, sizeof(pdu));
@@ -429,11 +428,19 @@ int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
 	criticalityDiagnosticsIEs->typeOfError = 0x86;
 		
 	ASN_SEQUENCE_ADD(&ngapSetupFailureIEs->value.choice.CriticalityDiagnostics.iEsCriticalityDiagnostics->list, &criticalityDiagnosticsIEs);
-	ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
-		
-	//ngap_amf_encode_pdu (&pdu, &buffer_p, &length);
+	//ASN_SEQUENCE_ADD(&ngapSetupFailure->protocolIEs, ngapSetupFailureIEs);
+	#endif
+
+    pdu = make_NGAP_SetupFailure();
+
+    int ret;
+    char errbuf[512];
+    size_t errlen =sizeof(errbuf);
+    ret = asn_check_constraints(&asn_DEF_Ngap_NGAP_PDU, &pdu, errbuf, &errlen);
+    if(ret != 0) {
+        fprintf(stderr,"Constraintvalidationfailed:%s\n", errbuf);
+    }
 	
-			
 	size_t buffer_size = 1000;
     void *buffer = calloc(1,buffer_size);
 	asn_enc_rval_t er;
@@ -471,7 +478,8 @@ int ng_setup_request_to_sendback_failure(const sctp_assoc_id_t assoc_id,
 	{
 		printf("ngap_setup_failure send sctp client size:%d, succ \n", length);
 	}
-    #endif
+    
+    
 }
 
 int
