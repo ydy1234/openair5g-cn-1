@@ -286,6 +286,7 @@ file(GLOB ASN1_C_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf/N1N2ProtocolSta
 file(GLOB NGAP_LAYER_SOURCE_CODE
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf.c
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_common.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_setup_response.c
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_setup_failure.c
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_handlers.c
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_decoder.c

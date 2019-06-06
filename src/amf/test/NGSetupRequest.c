@@ -286,10 +286,8 @@ void encode_pdu_to_aper_and_write_to_stdout(Ngap_NGAP_PDU_t *pdu) {
     }
 }
 
-Ngap_NGAP_PDU_t *make_NGAP_SetupRequest() {
-
-    // prepare PDU message with NGSetupRequest content
-
+Ngap_NGAP_PDU_t *make_NGAP_SetupRequest() 
+{
 	Ngap_NGAP_PDU_t *pdu;
 	pdu = calloc(1, sizeof(Ngap_NGAP_PDU_t));
 
