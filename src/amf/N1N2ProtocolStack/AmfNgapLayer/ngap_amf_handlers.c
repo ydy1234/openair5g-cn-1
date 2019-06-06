@@ -658,7 +658,7 @@ ngap_amf_handle_ng_setup_failure(
     Ngap_NGSetupFailureIEs_t               *ie = NULL;
     Ngap_NGSetupFailureIEs_t               *ie_gnb_name = NULL;
 
-    printf("ngap_amf_handle_ng_setup_Failure\n");
+    printf("ngap_amf_handle_ng_setup_Failure----------------\n");
     DevAssert (pdu != NULL);
 	
     container = &pdu->choice.initiatingMessage->value.choice.NGSetupFailure;
@@ -673,11 +673,12 @@ ngap_amf_handle_ng_setup_failure(
 	    {
 	        case Ngap_ProtocolIE_ID_id_Cause:
 			{
+			    printf("radioNetwork:0x%x\n", setupFailureIes_p->value.choice.Cause.choice.radioNetwork);
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_TimeToWait:
 			{
-				
+		        printf("TimeToWait:0x%x\n", setupFailureIes_p->value.choice.TimeToWait);
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_CriticalityDiagnostics:

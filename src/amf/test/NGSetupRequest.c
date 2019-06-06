@@ -335,6 +335,35 @@ Ngap_NGAP_PDU_t *make_NGAP_SetupRequest() {
     return pdu;
 }
 
+#if 0
+void ngap_recv_from_sctp_server()
+{
+
+    if (pthread_create (&assoc_thread, NULL, &sctp_receiver_thread, (void *)sctp_arg_p) < 0) {
+    OAILOG_ERROR (LOG_SCTP, "pthread_create: %s:%d\n", strerror (errno), errno);
+    return -1;
+    }
+}
+#endif
+sctp_data_t * ngap_connect_sctp_server()
+{
+    int sd = 0;
+    sctp_data_t * sctp_data_p = NULL;
+	char *local_ip_addr[] = {"192.168.2.122"};
+	char remote_ip_addr[] = "192.168.2.122";
+	
+    sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
+  	if (sctp_data_p == NULL)  exit(1);
+  	if(sd  = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p) < 0)
+    {
+        printf("conn sctp server:%s,id:%d, err:%s failed\n",remote_ip_addr,errno, strerror(errno));
+		free(sctp_data_p);
+		sctp_data_p = NULL;
+		return NULL;
+	}
+	
+	return sctp_data_p;
+}
 int main( int argc, char * argv[]) {
     fprintf(stderr, "Capture loopback with wireshark and test with 2 terminals:\n");
     fprintf(stderr, "  terminal 1: $ socat SCTP-LISTEN:38412,reuseaddr,fork STDOUT\n");
@@ -342,6 +371,7 @@ int main( int argc, char * argv[]) {
 
     //uint8_t * buffer = NULL;
 	//uint32_t buffer_size = 0;
+	uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
 	pdu = make_NGAP_SetupRequest();
 
@@ -359,6 +389,7 @@ int main( int argc, char * argv[]) {
     er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
     printf("sctp client send buffer(%x) length(%d)\n",buffer,er.encoded);
 
+    #if 0
     int assoc[1] = {0};
     sctp_data_t * sctp_data_p = NULL;
 	char *local_ip_addr[] = {"192.168.2.122"};
@@ -368,7 +399,14 @@ int main( int argc, char * argv[]) {
     sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
   	if (sctp_data_p == NULL)  exit(1);
   	assoc[0] = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p);
-  	sctp_send_msg (sctp_data_p, 60, 0, buffer,er.encoded);
+    #endif
+
+    sctp_data_t * sctp_data_p = NULL;
+	sctp_data_p = ngap_connect_sctp_server();
+	if(!sctp_data_p)
+		return -1;
+	
+	sctp_send_msg (sctp_data_p, 60, 0, buffer,er.encoded);
   
      
      int                                     flags = 0, n = 0;
@@ -423,9 +461,7 @@ int main( int argc, char * argv[]) {
                ngap_amf_handle_message(0,0,&decoded_pdu);
    			   break;
            }
-      }
-
-
+    }
 	#if 0
     //decode
 	MessagesIds message_id = MESSAGES_ID_MAX;
