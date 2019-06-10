@@ -18,8 +18,12 @@ int encode_authentication_parameter_rand ( AuthenticationParameterRAND  authenti
 
   if (iei > 0) {
     *buffer = iei;
+    printf("encoded rand iei(%x)\n",iei);
     encoded++;
   }
+
+//  *buffer = iei;
+//  encoded++;
 
   if ((encode_result = encode_bstring (authenticationparameterrand, buffer + encoded, len - encoded)) < 0) {
        return encode_result;
@@ -33,7 +37,7 @@ int encode_authentication_parameter_rand ( AuthenticationParameterRAND  authenti
 int decode_authentication_parameter_rand ( AuthenticationParameterRAND * authenticationparameterrand, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
   int                                     decoded = 0;
-  uint8_t                                 ielen = 16;
+  uint8_t                                 ielen = 1;
   int                                     decode_result;
 
   if (iei > 0) {

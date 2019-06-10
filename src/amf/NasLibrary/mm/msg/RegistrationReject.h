@@ -28,12 +28,24 @@
 		EAP_MESSAGE_MAXIMUM_LENGTH + \
 0)
 
+#define REGISTRATION_REJECT_GPRSTIMER2_T3346_VALUE_IEI 0x5f
+#define REGISTRATION_REJECT_GPRSTIMER2_T3346_VALUE_PRESENT (1<<0)
+
+#define REGISTRATION_REJECT_GPRSTIMER2_T3502_VALUE_IEI 0x16
+#define REGISTRATION_REJECT_GPRSTIMER2_T3502_VALUE_PRESENT (1<<1)
+
+#define REGISTRATION_REJECT_EAP_MESSAGE_IEI 0x78
+#define REGISTRATION_REJECT_EAP_MESSAGE_PRESENT (1<<2)
+
 typedef struct registration_reject_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
 	_5GMMCause _5gmmcause;
-	GPRSTimer2 gprstimer2;
+
+        uint8_t presence;
+	GPRSTimer2 t3346;
+        GPRSTimer2 t3502;
 	EAPMessage eapmessage;
 }registration_reject_msg;
 

@@ -10,27 +10,17 @@ int encode_pdu_session_reactivation_result ( PDUSessionReactivationResult pduses
 {
     uint8_t *lenPtr;
     uint32_t encoded = 0;
-    int encode_result;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,PDU_SESSION_REACTIVATION_RESULT_MINIMUM_LENGTH , len);
     
-
-       if( iei >0  )
-       {
-           *buffer=iei;
-               encoded++;
-       }
-
-
+    if( iei >0  ){
+      *buffer=iei;
+      encoded++;
+    }
 
     lenPtr = (buffer + encoded);
     encoded++;
 
-
-
-    if ((encode_result = encode_bstring (pdusessionreactivationresult, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
-        return encode_result;
-    else
-        encoded += encode_result;
+    ENCODE_U16(buffer+encoded, pdusessionreactivationresult, encoded);
 
     *lenPtr = encoded - 1 - ((iei > 0) ? 1 : 0);    
     return encoded;
@@ -38,9 +28,8 @@ int encode_pdu_session_reactivation_result ( PDUSessionReactivationResult pduses
 
 int decode_pdu_session_reactivation_result ( PDUSessionReactivationResult * pdusessionreactivationresult, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-	int decoded=0;
-	uint8_t ielen=0;
-	int decode_result;
+    int decoded=0;
+    uint8_t ielen=0;
 
     if (iei > 0)
     {
@@ -48,16 +37,12 @@ int decode_pdu_session_reactivation_result ( PDUSessionReactivationResult * pdus
         decoded++;
     }
 
-
     ielen = *(buffer + decoded);
     decoded++;
     CHECK_LENGTH_DECODER (len - decoded, ielen);
 
+    DECODE_U16(buffer+decoded, *pdusessionreactivationresult,decoded);
 
-    if((decode_result = decode_bstring (pdusessionreactivationresult, ielen, buffer + decoded, len - decoded)) < 0)
-        return decode_result;
-    else
-        decoded += decode_result;
-            return decoded;
+    return decoded;
 }
 

@@ -18,6 +18,7 @@ int encode_authentication_response_parameter ( AuthenticationResponseParameter a
        {
            *buffer=iei;
                encoded++;
+           printf("encode_authentication_response_parameter iei(%x)\n",iei);
        }
 
 
@@ -27,7 +28,7 @@ int encode_authentication_response_parameter ( AuthenticationResponseParameter a
 
 
 
-    if ((encode_result = encode_bstring (authenticationresponseparameter, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
+    if ((encode_result = encode_bstring (authenticationresponseparameter, buffer + encoded, len - encoded)) < 0)
         return encode_result;
     else
         encoded += encode_result;

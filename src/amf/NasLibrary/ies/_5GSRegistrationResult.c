@@ -8,56 +8,56 @@
 
 int encode__5gs_registration_result ( _5GSRegistrationResult _5gsregistrationresult, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+    printf("encode__5gs_registration_result\n");  
     uint8_t *lenPtr;
     uint32_t encoded = 0;
-    int encode_result;
+    uint8_t bitStream = 0x0;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,_5GS_REGISTRATION_RESULT_MINIMUM_LENGTH , len);
     
 
-       if( iei >0  )
-       {
-           *buffer=iei;
-               encoded++;
-       }
-
-
-
+    if( iei >0  ){
+      *buffer=iei;
+      encoded++;
+    }
     lenPtr = (buffer + encoded);
     encoded++;
-
-
-
-    if ((encode_result = encode_bstring (_5gsregistrationresult, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
-        return encode_result;
-    else
-        encoded += encode_result;
+    if(_5gsregistrationresult.is_SMS_allowed)
+      bitStream |= 0x08;
+    bitStream |= (_5gsregistrationresult.registration_result_value & 0x07);
+    ENCODE_U8(buffer+encoded,bitStream,encoded);
+	
 
     *lenPtr = encoded - 1 - ((iei > 0) ? 1 : 0);    
     return encoded;
+	
+
 }
 
 int decode__5gs_registration_result ( _5GSRegistrationResult * _5gsregistrationresult, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-	int decoded=0;
-	uint8_t ielen=0;
-	int decode_result;
-
+    printf("decode__5gs_registration_result\n");
+    int decoded=0;
+    uint8_t ielen=0;
+    uint8_t bitStream = 0x0;
     if (iei > 0)
     {
         CHECK_IEI_DECODER (iei, *buffer);
         decoded++;
     }
-
-
+ 
     ielen = *(buffer + decoded);
     decoded++;
     CHECK_LENGTH_DECODER (len - decoded, ielen);
-
-
-    if((decode_result = decode_bstring (_5gsregistrationresult, ielen, buffer + decoded, len - decoded)) < 0)
-        return decode_result;
+    DECODE_U8(buffer+decoded,bitStream,decoded);
+	
+    if(bitStream & 0x08)
+      _5gsregistrationresult->is_SMS_allowed = true;
     else
-        decoded += decode_result;
-            return decoded;
+      _5gsregistrationresult->is_SMS_allowed = false;
+	
+    _5gsregistrationresult->registration_result_value = (bitStream & 0x07);
+  
+    return decoded;
+	
 }
 

@@ -8,36 +8,25 @@
 
 int encode_nas_security_algorithms ( NASSecurityAlgorithms nassecurityalgorithms, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-    uint8_t *lenPtr;
-    uint32_t encoded = 0;
-    int encode_result;
+    uint8_t encoded = 0;
+    uint8_t selectedAlgorithm = 0x0;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,NAS_SECURITY_ALGORITHMS_MINIMUM_LENGTH , len);
     
+    if( iei >0  ){
+      *buffer=iei;
+      encoded++;
+    }
 
-       if( iei >0  )
-       {
-           *buffer=iei;
-               encoded++;
-       }
-
-
-
-
-
-    if ((encode_result = encode_bstring (nassecurityalgorithms, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
-        return encode_result;
-    else
-        encoded += encode_result;
-
-
+    selectedAlgorithm = (nassecurityalgorithms.typeOfCipheringAlgorithm << 4) | (nassecurityalgorithms.typeOfIntegrityProtectionAlgorithm);
+    ENCODE_U8(buffer+encoded,selectedAlgorithm,encoded);
+    
     return encoded;
 }
 
 int decode_nas_security_algorithms ( NASSecurityAlgorithms * nassecurityalgorithms, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-	int decoded=0;
-	uint8_t ielen=0;
-	int decode_result;
+    int decoded=0;
+    uint8_t selectedAlgorithm = 0x0;	
 
     if (iei > 0)
     {
@@ -45,13 +34,10 @@ int decode_nas_security_algorithms ( NASSecurityAlgorithms * nassecurityalgorith
         decoded++;
     }
 
+    DECODE_U8(buffer+decoded,selectedAlgorithm,decoded);
+    nassecurityalgorithms->typeOfCipheringAlgorithm = ((selectedAlgorithm & 0xf0)>>4);
+    nassecurityalgorithms->typeOfIntegrityProtectionAlgorithm = (selectedAlgorithm & 0x0f);
 
-
-
-    if((decode_result = decode_bstring (nassecurityalgorithms, ielen, buffer + decoded, len - decoded)) < 0)
-        return decode_result;
-    else
-        decoded += decode_result;
-            return decoded;
+    return decoded;
 }
 

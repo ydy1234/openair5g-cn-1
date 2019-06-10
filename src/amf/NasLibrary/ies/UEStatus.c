@@ -10,27 +10,23 @@ int encode_ue_status ( UEStatus uestatus, uint8_t iei, uint8_t * buffer, uint32_
 {
     uint8_t *lenPtr;
     uint32_t encoded = 0;
-    int encode_result;
+    uint8_t bitStream = 0x0;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,UE_STATUS_MINIMUM_LENGTH , len);
     
-
-       if( iei >0  )
-       {
-           *buffer=iei;
-               encoded++;
-       }
-
-
+    if( iei >0  ){
+      *buffer=iei;
+      encoded++;
+    }
 
     lenPtr = (buffer + encoded);
     encoded++;
 
+    if(uestatus.n1_mode_reg)
+      bitStream |= 0x02;
+    if(uestatus.s1_mode_reg)
+      bitStream |= 0x01;
 
-
-    if ((encode_result = encode_bstring (uestatus, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
-        return encode_result;
-    else
-        encoded += encode_result;
+    ENCODE_U8(buffer+encoded,bitStream,encoded);
 
     *lenPtr = encoded - 1 - ((iei > 0) ? 1 : 0);    
     return encoded;
@@ -38,9 +34,9 @@ int encode_ue_status ( UEStatus uestatus, uint8_t iei, uint8_t * buffer, uint32_
 
 int decode_ue_status ( UEStatus * uestatus, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-	int decoded=0;
-	uint8_t ielen=0;
-	int decode_result;
+    int decoded=0;
+    uint8_t ielen=0;
+    int bitStream = 0x0;
 
     if (iei > 0)
     {
@@ -48,16 +44,21 @@ int decode_ue_status ( UEStatus * uestatus, uint8_t iei, uint8_t * buffer, uint3
         decoded++;
     }
 
-
     ielen = *(buffer + decoded);
     decoded++;
     CHECK_LENGTH_DECODER (len - decoded, ielen);
 
-
-    if((decode_result = decode_bstring (uestatus, ielen, buffer + decoded, len - decoded)) < 0)
-        return decode_result;
+    DECODE_U8(buffer+decoded,bitStream,decoded);
+    if(bitStream & 0x02)
+      uestatus->n1_mode_reg = true;
     else
-        decoded += decode_result;
-            return decoded;
+      uestatus->n1_mode_reg = false;
+
+    if(bitStream & 0x01)
+      uestatus->s1_mode_reg = true;
+    else
+      uestatus->s1_mode_reg = false;
+
+    return decoded;
 }
 

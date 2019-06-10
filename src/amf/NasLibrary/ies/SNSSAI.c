@@ -26,12 +26,12 @@ int encode_snssai ( SNSSAI snssai, uint8_t iei, uint8_t * buffer, uint32_t len  
     encoded++;
 
 
-
+/*
     if ((encode_result = encode_bstring (snssai, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
         return encode_result;
     else
         encoded += encode_result;
-
+*/
     *lenPtr = encoded - 1 - ((iei > 0) ? 1 : 0);    
     return encoded;
 }

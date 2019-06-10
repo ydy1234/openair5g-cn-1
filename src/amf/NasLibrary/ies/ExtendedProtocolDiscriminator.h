@@ -9,7 +9,7 @@
 
 typedef uint8_t  ExtendedProtocolDiscriminator;
 
-int encode_extended_protocol_discriminator ( ExtendedProtocolDiscriminator * extendedprotocoldiscriminator, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
+int encode_extended_protocol_discriminator ( ExtendedProtocolDiscriminator  extendedprotocoldiscriminator, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 int decode_extended_protocol_discriminator ( ExtendedProtocolDiscriminator * extendedprotocoldiscriminator, uint8_t iei, uint8_t * buffer, uint32_t len  ) ;
 
 #endif

@@ -8,6 +8,7 @@
 
 int encode_eap_message ( EAPMessage eapmessage, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+    printf("encode_eap_message\n");
     uint8_t *lenPtr;
     uint32_t encoded = 0;
     int encode_result;
@@ -33,11 +34,11 @@ int encode_eap_message ( EAPMessage eapmessage, uint8_t iei, uint8_t * buffer, u
     else
         encoded += encode_result;
 
-    uint32_t res = encoded - 1 - ((iei > 0) ? 1 : 0);
+    uint32_t res = encoded - 2 - ((iei > 0) ? 1 : 0);
     *lenPtr =res/(1<<8);
     lenPtr++;
     *lenPtr = res%(1<<8);
-
+    
     return encoded;
 }
 

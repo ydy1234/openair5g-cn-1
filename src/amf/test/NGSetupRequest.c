@@ -40,6 +40,8 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+#include "nas_message.h"
+
 Ngap_SupportedTAList_t       g_SupportedTAList;
 Ngap_GlobalRANNodeIDList_t   g_glocalRANNodeIDList;
 
@@ -366,6 +368,8 @@ sctp_data_t * ngap_connect_sctp_server()
 }
 int main( int argc, char * argv[])
 {
+    nas_message_t  nas_msg;
+    
     fprintf(stderr, "Capture loopback with wireshark and test with 2 terminals:\n");
     fprintf(stderr, "  terminal 1: $ socat SCTP-LISTEN:38412,reuseaddr,fork STDOUT\n");
     fprintf(stderr, "  terminal 2: $ ./NGSetupRequest | socat STDIN SCTP-CONNECT:127.0.0.1:38412,end-close\n\n");

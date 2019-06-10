@@ -17,6 +17,7 @@ extern hash_table_ts_t g_ngap_gnb_coll;
 extern uint32_t nb_gnb_associated;
 static const char * const ng_gnb_state_str [] = {"NGAP_INIT", "NGAP_RESETTING", "NGAP_READY", "NGAP_SHUTDOWN"};
 
+extern int g_supportTaListCount;
 
 ngap_message_decoded_callback   messages_callback[][3] = {
     {0,0,0}, /*AMFConfigurationUpdate*/

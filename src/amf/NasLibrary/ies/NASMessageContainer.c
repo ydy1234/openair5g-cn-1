@@ -12,59 +12,57 @@ int encode_nas_message_container ( NASMessageContainer nasmessagecontainer, uint
     uint32_t encoded = 0;
     int encode_result;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,NAS_MESSAGE_CONTAINER_MINIMUM_LENGTH , len);
-    
 
-       if( iei >0  )
-       {
-           *buffer=iei;
-               encoded++;
-       }
-
-
+    if( iei >0){
+      *buffer=iei;
+      encoded++;
+    }
+	printf("encode_nas_message_container: buffer:0x%x\n",*buffer);
 
     lenPtr = (buffer + encoded);
     encoded++;
     encoded++;
 
 
-
     if ((encode_result = encode_bstring (nasmessagecontainer, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
         return encode_result;
     else
         encoded += encode_result;
+	printf("encode_nas_message_container: buffer:0x%x, encode_result:0x%x\n",*buffer, encode_result);
 
-    uint32_t res = encoded - 1 - ((iei > 0) ? 1 : 0);
+    uint32_t res = encoded - 2 - ((iei > 0) ? 1 : 0);
     *lenPtr =res/(1<<8);
     lenPtr++;
     *lenPtr = res%(1<<8);
+	
 
     return encoded;
 }
 
 int decode_nas_message_container ( NASMessageContainer * nasmessagecontainer, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-	int decoded=0;
-	uint8_t ielen=0;
-	int decode_result;
+    int decoded=0;
+    uint8_t ielen=0;
+    int decode_result;
 
+    printf("decode_nas_message_container: buffer:0x%x\n",*buffer);
     if (iei > 0)
     {
         CHECK_IEI_DECODER (iei, *buffer);
         decoded++;
     }
-
-
+    printf("decode_nas_message_container: buffer:0x%x\n",*buffer);
     ielen = *(buffer + decoded);
     decoded++;
     ielen = ( ielen << 8)+*(buffer + decoded);
     decoded++;
     CHECK_LENGTH_DECODER (len - decoded, ielen);
-
-
+    
     if((decode_result = decode_bstring (nasmessagecontainer, ielen, buffer + decoded, len - decoded)) < 0)
         return decode_result;
     else
         decoded += decode_result;
-            return decoded;
+	printf("decode_nas_message_container: buffer:0x%x,decode_result:0x%x\n",*buffer, decode_result);
+    return decoded;
 }
 

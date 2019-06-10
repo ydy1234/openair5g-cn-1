@@ -8,6 +8,7 @@
 
 int encode_message_type ( MessageType messagetype, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+/*
     uint8_t *lenPtr;
     uint32_t encoded = 0;
     int encode_result;
@@ -26,16 +27,14 @@ int encode_message_type ( MessageType messagetype, uint8_t iei, uint8_t * buffer
 
 
     return encoded;
+*/
 }
 
 int decode_message_type ( MessageType * messagetype, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
+/*
 	int decoded=0;
-	uint8_t ielen=0;
 	int decode_result;
-
-
-
 
 
     if((decode_result = decode_bstring (messagetype, ielen, buffer + decoded, len - decoded)) < 0)
@@ -43,5 +42,6 @@ int decode_message_type ( MessageType * messagetype, uint8_t iei, uint8_t * buff
     else
         decoded += decode_result;
             return decoded;
+*/
 }
 

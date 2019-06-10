@@ -11,7 +11,7 @@
 		EXTENDED_PROTOCOL_DISCRIMINATOR_MINIMUM_LENGTH + \
 		SECURITY_HEADER_TYPE_MINIMUM_LENGTH + \
 		MESSAGE_TYPE_MINIMUM_LENGTH + \
-		EAP_MESSAGE_MINIMUM_LENGTH + \
+                EAP_MESSAGE_MINIMUM_LENGTH + \
 0)
 
 /* Maximum length macro. Formed by maximum length of each field */
@@ -19,14 +19,18 @@
 		EXTENDED_PROTOCOL_DISCRIMINATOR_MAXIMUM_LENGTH + \
 		SECURITY_HEADER_TYPE_MAXIMUM_LENGTH + \
 		MESSAGE_TYPE_MAXIMUM_LENGTH + \
-		EAP_MESSAGE_MAXIMUM_LENGTH + \
+                EAP_MESSAGE_MAXIMUM_LENGTH +\
 0)
+
+#define AUTHENTICATION_REJECT_EAP_MESSAGE_IEI 0x78
+#define AUTHENTICATION_REJECT_EAP_MESSAGE_PRESENT (1<<0)
 
 typedef struct authentication_reject_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
-	EAPMessage eapmessage;
+    uint8_t presence;
+    EAPMessage eapmessage;
 }authentication_reject_msg;
 
 

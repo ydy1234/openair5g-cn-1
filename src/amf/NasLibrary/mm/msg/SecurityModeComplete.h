@@ -25,11 +25,18 @@
 		NAS_MESSAGE_CONTAINER_MAXIMUM_LENGTH + \
 0)
 
+#define SECURITY_MODE_COMPLETE_5G_MOBILE_IDENTITY_IEI 0x77
+#define SECURITY_MODE_COMPLETE_5G_MOBILE_IDENTITY_PRESENT (1<<0)
+#define SECURITY_MODE_COMPLETE_NAS_MESSAGE_CONTAINER_IEI 0x71
+#define SECURITY_MODE_COMPLETE_NAS_MESSAGE_CONTAINER_PRESENT (1<<1)
+
+
 typedef struct security_mode_complete_msg_tag{
 	ExtendedProtocolDiscriminator extendedprotocoldiscriminator;
 	SecurityHeaderType securityheadertype;
 	MessageType messagetype;
-	_5GSMobileIdentity _5gsmobileidentity;
+        uint8_t presence;
+	//_5GSMobileIdentity _5gsmobileidentity;
 	NASMessageContainer nasmessagecontainer;
 }security_mode_complete_msg;
 

@@ -8,36 +8,25 @@
 
 int encode_epsnas_security_algorithms ( EPSNASSecurityAlgorithms epsnassecurityalgorithms, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-    uint8_t *lenPtr;
     uint32_t encoded = 0;
-    int encode_result;
+    uint8_t securityAlgorithm = 0x0;
     CHECK_PDU_POINTER_AND_LENGTH_ENCODER (buffer,EPSNAS_SECURITY_ALGORITHMS_MINIMUM_LENGTH , len);
     
+    if( iei >0  ){
+      *buffer=iei;
+      encoded++;
+    }
 
-       if( iei >0  )
-       {
-           *buffer=iei;
-               encoded++;
-       }
-
-
-
-
-
-    if ((encode_result = encode_bstring (epsnassecurityalgorithms, buffer + encoded, len - encoded)) < 0)//加密,实体,首地址,长度
-        return encode_result;
-    else
-        encoded += encode_result;
-
+    securityAlgorithm = ((epsnassecurityalgorithms.typeOfCipheringAlgoithm)<<4) | (epsnassecurityalgorithms.typeOfIntegrityProtectionAlgoithm);
+    ENCODE_U8(buffer+encoded,securityAlgorithm,encoded);
 
     return encoded;
 }
 
 int decode_epsnas_security_algorithms ( EPSNASSecurityAlgorithms * epsnassecurityalgorithms, uint8_t iei, uint8_t * buffer, uint32_t len  ) 
 {
-	int decoded=0;
-	uint8_t ielen=0;
-	int decode_result;
+    int decoded=0;
+    uint8_t securityAlgorithm = 0x0;;
 
     if (iei > 0)
     {
@@ -45,13 +34,10 @@ int decode_epsnas_security_algorithms ( EPSNASSecurityAlgorithms * epsnassecurit
         decoded++;
     }
 
-
-
-
-    if((decode_result = decode_bstring (epsnassecurityalgorithms, ielen, buffer + decoded, len - decoded)) < 0)
-        return decode_result;
-    else
-        decoded += decode_result;
-            return decoded;
+    DECODE_U8(buffer+decoded,securityAlgorithm,decoded);
+    epsnassecurityalgorithms->typeOfCipheringAlgoithm = ((securityAlgorithm&0x70)>>4);
+    epsnassecurityalgorithms->typeOfIntegrityProtectionAlgoithm = (securityAlgorithm&0x07);
+  
+    return decoded;
 }
 
