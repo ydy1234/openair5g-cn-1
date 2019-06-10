@@ -20,7 +20,7 @@ memb_Ngap_gNB_ID_constraint_1(const asn_TYPE_descriptor_t *td, const void *sptr,
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-	
+	printf("000000000000000000000000000 st->size:%d,st->bits_unused:%d\n",st->size,st->bits_unused);
 	if(st->size > 0) {
 		/* Size in bits */
 		size = 8 * st->size - (st->bits_unused & 0x07);

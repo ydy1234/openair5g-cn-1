@@ -19,7 +19,6 @@ Ngap_AMFSetID_constraint(const asn_TYPE_descriptor_t *td, const void *sptr,
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-	
 	if(st->size > 0) {
 		/* Size in bits */
 		size = 8 * st->size - (st->bits_unused & 0x07);
@@ -34,6 +33,7 @@ Ngap_AMFSetID_constraint(const asn_TYPE_descriptor_t *td, const void *sptr,
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: constraint failed (%s:%d)",
 			td->name, __FILE__, __LINE__);
+		printf("9999999999999999  size:%d\n", size);
 		return -1;
 	}
 }

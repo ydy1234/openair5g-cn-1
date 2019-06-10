@@ -407,8 +407,12 @@ Ngap_InitialUEMessage_IEs_t *make_RRCEstablishmentCause_ie(Ngap_RRCEstablishment
 void fill_aMFSetID(Ngap_AMFSetID_t *aMFSetID, uint8_t setid, uint32_t len)
 {
     aMFSetID->buf = calloc(len, sizeof(uint8_t));
+	memset(aMFSetID->buf, 0, len );
 	memcpy(aMFSetID->buf, &setid, len);
 	aMFSetID->size =  len;
+	aMFSetID->bits_unused = 0x0E;
+
+	printf("aMFSetID:aMFSetID->size:%d,0x%x,0x%x\n", aMFSetID->size, aMFSetID->buf[0],aMFSetID->buf[1]);
 }
 //aMFPointer
 void fill_aMFPointer(Ngap_AMFPointer_t *aMFPointer, uint8_t ap, uint32_t len)
@@ -433,7 +437,7 @@ Ngap_InitialUEMessage_IEs_t *make_FiveG_S_TMSI_ie()
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_FiveG_S_TMSI;
     
-    uint8_t setid[] = {0x79};
+    uint8_t setid[] = {0x00,0x08};
 	uint8_t aMFPointer[] = {0x80};
 	fill_aMFSetID(&ie->value.choice.FiveG_S_TMSI.aMFSetID, setid, sizeof(setid)/ sizeof(setid[0]));
     
@@ -443,20 +447,39 @@ Ngap_InitialUEMessage_IEs_t *make_FiveG_S_TMSI_ie()
 	return ie;
 }
 
-void fill_AMFSetID(Ngap_AMFSetID_t *AMFSetID, uint8_t *setID, uint32_t len)
+void fill_AMFSetID(Ngap_AMFSetID_t *aMFSetID, uint8_t setid, uint32_t len)
 {
-    uint32_t tmp = 100;
-    INT32_TO_BIT_STRING(tmp, AMFSetID);
+
+    aMFSetID->buf = calloc(len, sizeof(uint8_t));
+	memset(aMFSetID->buf, 0, len );
+	memcpy(aMFSetID->buf, &setid, len);
+	aMFSetID->size =  len;
+	aMFSetID->bits_unused = 0x0E;
+
+	printf("aMFSetID:aMFSetID->size:%d,0x%x,0x%x\n", aMFSetID->size, aMFSetID->buf[0],aMFSetID->buf[1]);
+
+	#if 0
+    //uint32_t amf_ID = htonl(index);
+	//uint8_t tmp = 1;
+	printf("1111111111111 sizeof(index):%d, 0x%x\n", sizeof(index), index);
+	AMFSetID->buf = calloc(2, sizeof(uint8_t));
+	memset(AMFSetID->buf,0, 2);
+	AMFSetID->size = 2;
+	memcpy(AMFSetID->buf, &index, 2);
+	AMFSetID->bits_unused = 0x0E;
+    #endif
+	//printf("1111111111111 sizeof(index):%d, 0x%x\n", sizeof(index), index);
+	
+    //uint32_t tmp = 0x0400;
+    //INT32_TO_BIT_STRING(tmp, AMFSetID);
 
     //AMFSetID->buf = calloc(len, sizeof(uint8_t));
-	
     //memcpy(AMFSetID->buf, setID, len);
 	//AMFSetID->size = len;
 	
-	
-	//printf("AMFSetID:0x%x\n",AMFSetID->buf[0]);
+	//printf("AMFSetID:0x%x,0x%x,0x%x,0x%x\n",AMFSetID->buf[0],AMFSetID->buf[1],AMFSetID->buf[2],AMFSetID->buf[3]);
 }
-Ngap_InitialUEMessage_IEs_t * make_AMFSetID_ie(uint8_t *setID, uint32_t len)
+Ngap_InitialUEMessage_IEs_t * make_AMFSetID_ie(uint8_t setid, uint32_t len)
 {
 	Ngap_InitialUEMessage_IEs_t *ie = NULL;
 	ie  = calloc(1, sizeof(Ngap_InitialUEMessage_IEs_t));
@@ -466,7 +489,7 @@ Ngap_InitialUEMessage_IEs_t * make_AMFSetID_ie(uint8_t *setID, uint32_t len)
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_AMFSetID;
 
-    fill_AMFSetID(&ie->value.choice.AMFSetID, setID, len);
+    fill_AMFSetID(&ie->value.choice.AMFSetID, setid, len);
 	
 	return ie;
 }
@@ -529,6 +552,7 @@ Ngap_InitialUEMessage_IEs_t * make_NAS_PDU_ie(unsigned char *data)
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_NAS_PDU;
 	reg_request(data);
+	//uint8_t buf[] = {0x01};
 	OCTET_STRING_fromBuf (&ie->value.choice.NAS_PDU, data, BUFF_LEN); 
 	
     return ie;
@@ -591,9 +615,12 @@ Ngap_NGAP_PDU_t *make_NGAP_InitialUEMessage()
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
 	
 	//Ngap_AMFSetID_t	 AMFSetID;
-	uint8_t amfsetid[] = {0x81};
-	ie = make_AMFSetID_ie(amfsetid, sizeof(amfsetid)/sizeof(amfsetid[0]));
+	
+	uint8_t setid[] = {0x00,0x08};
+	ie = make_AMFSetID_ie(setid, sizeof(setid)/sizeof(setid[0]));
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
+
+    //printf("222222222222 0x%x,0x%x\n",ie->value.choice.AMFSetID.buf[0],ie->value.choice.AMFSetID.buf[1]);
 	
 	//Ngap_UEContextRequest_t	 UEContextRequest;
 	ie = make_UEContextRequest_ie(0x82);
