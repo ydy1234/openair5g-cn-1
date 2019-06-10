@@ -77,7 +77,7 @@ int init_ng_setup_request_param()
 void
 send_NGAP_SetupRequest()
 {
-    printf("\n\nNGAP_SetupRequest-------------encode\n");
+    printf("NGAP_SetupRequest-------------encode\n");
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
 	char *local_ip_addr[] = {"192.168.2.122"};
@@ -229,7 +229,7 @@ send_NGAP_SetupRequest()
              continue;
           }
           if (flags & MSG_NOTIFICATION)
-  		{
+  		  {
              union sctp_notification                *snp = (union sctp_notification *)buffer;
          
              switch (snp->sn_header.sn_type) {
@@ -372,7 +372,7 @@ send_NGAP_SetupFailure()
     #endif
 
 }
-
+#if 0
 int send_NGAP_Initial_UE_Message()
 {
     printf("\n\nNGAP_Initial_UE_Message-------------encode\n");
@@ -421,6 +421,8 @@ int send_NGAP_Initial_UE_Message()
 	
     return  0;
 }
+#endif
+
 int send_NGAP_Uplink_Nas_Transport()
 {
     printf("\n\nNGAP_Uplink_Nas_Transport-------------encode\n");

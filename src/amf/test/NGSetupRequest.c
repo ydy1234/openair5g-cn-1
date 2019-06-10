@@ -28,7 +28,7 @@
 #include "Ngap_CriticalityDiagnostics-IE-List.h"
 #include "Ngap_ProtocolIE-Field.h"
 #include "Ngap_UserLocationInformationEUTRA.h"
-
+#include "ngap_amf_initial_ue_message.h"
 #include "ngap_amf.h"
 #include "amf_app.h"
 #include "log.h"
