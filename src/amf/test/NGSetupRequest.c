@@ -15,6 +15,7 @@
 #include "Ngap_UnsuccessfulOutcome.h"
 #endif
 
+#include "ngap_amf_initial_ue_message.h"
 
 #include "bstrlib.h"
 #include "intertask_interface_types.h"
@@ -28,7 +29,7 @@
 #include "Ngap_CriticalityDiagnostics-IE-List.h"
 #include "Ngap_ProtocolIE-Field.h"
 #include "Ngap_UserLocationInformationEUTRA.h"
-#include "ngap_amf_initial_ue_message.h"
+
 #include "ngap_amf.h"
 #include "amf_app.h"
 #include "log.h"
@@ -378,7 +379,8 @@ int main( int argc, char * argv[])
 	//uint32_t buffer_size = 0;
 	uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
-	pdu = make_NGAP_SetupRequest();
+	//pdu = make_NGAP_SetupRequest();
+	pdu =  make_NGAP_InitialUEMessage();
 
     // debug
     asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);

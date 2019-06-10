@@ -1,0 +1,4 @@
+#ifndef _NGAP_UPLINK_NAS_TRANSPORT_H_
+#define _NGAP_UPLINK_NAS_TRANSPORT_H_
+
+#endif
