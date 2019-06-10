@@ -800,6 +800,9 @@ ngap_amf_handle_ng_initial_ue_message(
     const sctp_stream_id_t stream,
 	Ngap_NGAP_PDU_t *pdu)
 {
+
+    printf("ngap_amf_handle_ng_initial_ue_message--------start\n");
+
     //OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
     Ngap_NGSetupFailureIEs_t * ngInitialUeMsg = NULL;

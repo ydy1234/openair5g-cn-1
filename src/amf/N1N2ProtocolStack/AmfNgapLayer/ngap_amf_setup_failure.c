@@ -134,6 +134,7 @@ Ngap_NGAP_PDU_t *make_NGAP_SetupFailure()
 	Ngap_NGSetupFailureIEs_t     *ie = NULL;
 	
     pdu = calloc(1, sizeof(Ngap_NGAP_PDU_t));
+	memset(pdu, 0, sizeof(Ngap_NGAP_PDU_t));
    
 	pdu->present = Ngap_NGAP_PDU_PR_unsuccessfulOutcome;
 	pdu->choice.unsuccessfulOutcome = calloc(1, sizeof(Ngap_UnsuccessfulOutcome_t));

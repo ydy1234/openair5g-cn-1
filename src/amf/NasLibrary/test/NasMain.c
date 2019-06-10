@@ -2,13 +2,15 @@
 #include <stdlib.h>
 
 #include "nas_message.h"
-//#include "mm_msg.h"
+#include "mm_msg.h"
 #include "bstrlib.h"
 #include "mmData.h"
 #include "common_types.h"
 #include "common_defs.h"
+
 //add-test
 #define BUF_LEN 512
+
 int auth_request()
 {
      printf("AUTHENTICATION_REQUEST------------ start\n");
