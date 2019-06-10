@@ -35,6 +35,8 @@
 
 #define BUFF_LEN  1024
 
+#include "conversions.h"
+
 void reg_request(unsigned char *data)
 {
     
@@ -443,15 +445,16 @@ Ngap_InitialUEMessage_IEs_t *make_FiveG_S_TMSI_ie()
 
 void fill_AMFSetID(Ngap_AMFSetID_t *AMFSetID, uint8_t *setID, uint32_t len)
 {
-    //INT32_TO_BIT_STRING(tmp, *AMFSetID);
+    uint32_t tmp = 100;
+    INT32_TO_BIT_STRING(tmp, AMFSetID);
 
-    AMFSetID->buf = calloc(len, sizeof(uint8_t));
+    //AMFSetID->buf = calloc(len, sizeof(uint8_t));
 	
-    memcpy(AMFSetID->buf, setID, len);
-	AMFSetID->size = len;
+    //memcpy(AMFSetID->buf, setID, len);
+	//AMFSetID->size = len;
 	
 	
-	printf("AMFSetID:0x%x\n",AMFSetID->buf[0]);
+	//printf("AMFSetID:0x%x\n",AMFSetID->buf[0]);
 }
 Ngap_InitialUEMessage_IEs_t * make_AMFSetID_ie(uint8_t *setID, uint32_t len)
 {
