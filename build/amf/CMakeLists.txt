@@ -294,6 +294,7 @@ file(GLOB NGAP_LAYER_SOURCE_CODE
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_ta.c
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_nas_procedures.c
     ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_initial_ue_message.c
+    ${OPENAIR5GCN_DIR}/src/amf/N1N2ProtocolStack/AmfNgapLayer/ngap_amf_uplink_nas_transport.c
     )
 file(GLOB NGAP_LIB_SOURCE_CODE
     NGAP_C_DIR/*.c)

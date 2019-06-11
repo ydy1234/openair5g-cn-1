@@ -42,6 +42,8 @@
 #include <arpa/inet.h>
 
 #include "nas_message.h"
+#include "ngap_amf_uplink_nas_transport.h"
+
 
 Ngap_SupportedTAList_t       g_SupportedTAList;
 Ngap_GlobalRANNodeIDList_t   g_glocalRANNodeIDList;
@@ -380,7 +382,8 @@ int main( int argc, char * argv[])
 	uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
 	//pdu = make_NGAP_SetupRequest();
-	pdu =  make_NGAP_InitialUEMessage();
+	//pdu =  make_NGAP_InitialUEMessage();
+	 pdu = make_NGAP_UplinkNasTransport();
 
     // debug
     asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
@@ -402,6 +405,7 @@ int main( int argc, char * argv[])
 		return -1;
 	
 	sctp_send_msg (sctp_data_p, 60, 0, buffer,er.encoded);
+	
   
     int                                     flags = 0, n = 0;
     #define SCTP_RECV_BUFFER_SIZE  1024
