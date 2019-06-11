@@ -33,11 +33,11 @@
 #include  "common_defs.h"
 
 
-#define BUFF_LEN  1024
+#define BUFF_LEN  256
 
 #include "conversions.h"
 
-void reg_request(unsigned char *data)
+void reg_request(uint8_t *data, uint32_t  bufLen)
 {
     
 	printf("REGISTRATION_REQUEST------------ start\n");
@@ -157,9 +157,10 @@ void reg_request(unsigned char *data)
 	//complete sercurity context
 	  
 	int length = BUFF_LEN;
-	//unsigned char data[BUF_LEN] = {'\0'};
+	//unsigned char *data = calloc(BUFF_LEN, sizeof(unsigned char));
+	//memset(data, 0, BUF_LEN *sizeof(unsigned char));
 	  
-	bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
+	//bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 	
 	#if 0
 		printf("1 start nas_message_encode \n");
@@ -245,10 +246,16 @@ void reg_request(unsigned char *data)
 	 
 	printf("nasmessagecontainer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
-	bytes = nas_message_encode (data, &nas_msg, sizeof(data)/*don't know the size*/, security);
+	bytes = nas_message_encode (data, &nas_msg, bufLen/*don't know the size*/, security);
+
+	int i  = 0;
+	for(; i<30; i++)
+		printf("encode 0x%x\n", data[i]);
+
 	
 	//info->data = data;
-	//info->slen = sizeof(data);
+	//memcpy(info->data, data, BUFF_LEN * sizeof(unsigned char ) -1);
+	//info->slen = BUFF_LEN * sizeof(unsigned char )  -1 ;
 }
 
 //RAN_UE_NGAP_ID
@@ -274,7 +281,7 @@ Ngap_InitialUEMessage_IEs_t  *make_RAN_UE_NGAP_ID_ie(Ngap_RAN_UE_NGAP_ID_t  RAN_
 
 void fill_eUTRA_with_CGI_with_pLMNIdentity(Ngap_PLMNIdentity_t *pLMNIdentity)
 {
-     uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
+    uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
 	OCTET_STRING_fromBuf(pLMNIdentity, (const char*)plmn, 3);
 
 	printf("pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
@@ -285,6 +292,7 @@ void fill_eUTRA_with_CGI_with_eUTRACellIdentity(Ngap_EUTRACellIdentity_t	 *eUTRA
 	eUTRACellIdentity->buf = calloc(4, sizeof(uint8_t));
 	eUTRACellIdentity->size = 4;
 	memcpy(eUTRACellIdentity->buf, &ei, 4);
+	eUTRACellIdentity->bits_unused = 0x04;
 
     printf("eUTRACellIdentity: 0x%x,0x%x,0x%x,0x%x\n",
 	eUTRACellIdentity->buf[0],eUTRACellIdentity->buf[1],
@@ -388,8 +396,9 @@ Ngap_UserLocationInformation_t *make_UserLocationInformation_ie()
     return ie;
 }
 
-Ngap_InitialUEMessage_IEs_t *make_RRCEstablishmentCause_ie(Ngap_RRCEstablishmentCause_t	 RRCEstablishmentCause)
+Ngap_InitialUEMessage_IEs_t *make_RRCEstablishmentCause_ie(e_Ngap_RRCEstablishmentCause	 cause)
 {
+    #if 0
     Ngap_InitialUEMessage_IEs_t *ie = NULL;
     ie  = calloc(1, sizeof(Ngap_InitialUEMessage_IEs_t));
 	memset(ie, 0, sizeof(Ngap_InitialUEMessage_IEs_t));
@@ -400,7 +409,20 @@ Ngap_InitialUEMessage_IEs_t *make_RRCEstablishmentCause_ie(Ngap_RRCEstablishment
     ie->value.choice.RRCEstablishmentCause = RRCEstablishmentCause;
 
     printf("RRCEstablishmentCause:%ld\n", ie->value.choice.RRCEstablishmentCause);
+    #endif
+
+    Ngap_InitialUEMessage_IEs_t *ie = NULL;
+    ie = calloc(1, sizeof(Ngap_InitialUEMessage_IEs_t));
+	memset(ie, 0, sizeof(Ngap_InitialUEMessage_IEs_t));
+	
+    ie->id = Ngap_ProtocolIE_ID_id_RRCEstablishmentCause;
+	ie->criticality = Ngap_Criticality_reject;
+	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_RRCEstablishmentCause;
+	ie->value.choice.RRCEstablishmentCause = cause;
+	printf("RRCEstablishmentCause:0x%x\n", ie->value.choice.RRCEstablishmentCause);
+	
 	return ie;
+	
 }
 //FiveG_S_TMSI
 //aMFSetID
@@ -418,8 +440,10 @@ void fill_aMFSetID(Ngap_AMFSetID_t *aMFSetID, uint8_t setid, uint32_t len)
 void fill_aMFPointer(Ngap_AMFPointer_t *aMFPointer, uint8_t ap, uint32_t len)
 {
 	aMFPointer->buf = calloc(len, sizeof(uint8_t));
+	memset(aMFPointer->buf, 0, sizeof(len));
 	memcpy(aMFPointer->buf, &ap, len);
 	aMFPointer->size =  len;
+	aMFPointer->bits_unused = 0x02;
 }
 
 //fiveG_TMSI
@@ -438,18 +462,17 @@ Ngap_InitialUEMessage_IEs_t *make_FiveG_S_TMSI_ie()
 	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_FiveG_S_TMSI;
     
     uint8_t setid[] = {0x00,0x08};
-	uint8_t aMFPointer[] = {0x80};
+	uint8_t aMFPointer[] = {0x08};
 	fill_aMFSetID(&ie->value.choice.FiveG_S_TMSI.aMFSetID, setid, sizeof(setid)/ sizeof(setid[0]));
     
     fill_aMFPointer(&ie->value.choice.FiveG_S_TMSI.aMFPointer, aMFPointer, sizeof(aMFPointer)/sizeof(aMFPointer[0]));
   
-	fill_fiveG_TMSI(&ie->value.choice.FiveG_S_TMSI.fiveG_TMSI, "test_tmsi");
+	fill_fiveG_TMSI(&ie->value.choice.FiveG_S_TMSI.fiveG_TMSI, "tmsi");
 	return ie;
 }
 
 void fill_AMFSetID(Ngap_AMFSetID_t *aMFSetID, uint8_t setid, uint32_t len)
 {
-
     aMFSetID->buf = calloc(len, sizeof(uint8_t));
 	memset(aMFSetID->buf, 0, len );
 	memcpy(aMFSetID->buf, &setid, len);
@@ -493,7 +516,7 @@ Ngap_InitialUEMessage_IEs_t * make_AMFSetID_ie(uint8_t setid, uint32_t len)
 	
 	return ie;
 }
-Ngap_InitialUEMessage_IEs_t * make_UEContextRequest_ie(Ngap_UEContextRequest_t	 UEContextRequest)
+Ngap_InitialUEMessage_IEs_t * make_UEContextRequest_ie(e_Ngap_UEContextRequest	 UEContextRequest)
 {
 	Ngap_InitialUEMessage_IEs_t *ie = NULL;
 	ie	= calloc(1, sizeof(Ngap_InitialUEMessage_IEs_t));
@@ -542,7 +565,7 @@ Ngap_InitialUEMessage_IEs_t *  make_AllowedNSSAI_ie()
 
 	return ie;
 }
-Ngap_InitialUEMessage_IEs_t * make_NAS_PDU_ie(unsigned char *data)
+Ngap_InitialUEMessage_IEs_t * make_NAS_PDU_ie()
 {
 	Ngap_InitialUEMessage_IEs_t *ie = NULL;
 	ie	= calloc(1, sizeof(Ngap_InitialUEMessage_IEs_t));
@@ -551,9 +574,14 @@ Ngap_InitialUEMessage_IEs_t * make_NAS_PDU_ie(unsigned char *data)
 	ie->id = Ngap_ProtocolIE_ID_id_NAS_PDU;
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_NAS_PDU;
-	reg_request(data);
-	//uint8_t buf[] = {0x01};
-	OCTET_STRING_fromBuf (&ie->value.choice.NAS_PDU, data, BUFF_LEN); 
+
+	//ie->value.choice.NAS_PDU = bfromcstralloc(BUFF_LEN, "\0");
+
+	uint8_t  *data = calloc(BUFF_LEN, sizeof(uint8_t ));
+	memset(data, 0, BUFF_LEN );
+	reg_request(data, BUFF_LEN );
+	
+	OCTET_STRING_fromBuf (&ie->value.choice.NAS_PDU, data,  BUFF_LEN); 
 	
     return ie;
 }
@@ -591,14 +619,18 @@ Ngap_NGAP_PDU_t *make_NGAP_InitialUEMessage()
 	pdu->choice.initiatingMessage->value.present = Ngap_InitiatingMessage__value_PR_InitialUEMessage;
 	ngapInitialUeMsg = &pdu->choice.initiatingMessage->value.choice.InitialUEMessage;
 
-
+    
 	//RAN_UE_NGAP_ID
 	ie  = make_RAN_UE_NGAP_ID_ie(0x80);
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
 
+	
 	//Ngap_NAS_PDU_t	 NAS_PDU
-	unsigned char data[BUFF_LEN] = {0};
-	ie  = make_NAS_PDU_ie(data);
+	//unsigned char data[BUFF_LEN] = {0};
+
+    //bstring  info;// = bfromcstralloc(BUFF_LEN, "\0");//info the nas_message_encode result
+	
+	ie  = make_NAS_PDU_ie();
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
 	
 	//Ngap_UserLocationInformation_t	 UserLocationInformation;
@@ -607,12 +639,14 @@ Ngap_NGAP_PDU_t *make_NGAP_InitialUEMessage()
 
 	
 	//Ngap_RRCEstablishmentCause_t	 RRCEstablishmentCause;
-	ie  = make_RRCEstablishmentCause_ie(0x79);
+	ie  = make_RRCEstablishmentCause_ie(Ngap_RRCEstablishmentCause_emergency);
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
+
 	
 	//Ngap_FiveG_S_TMSI_t	 FiveG_S_TMSI;
 	ie = make_FiveG_S_TMSI_ie();
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
+
 	
 	//Ngap_AMFSetID_t	 AMFSetID;
 	
@@ -620,27 +654,32 @@ Ngap_NGAP_PDU_t *make_NGAP_InitialUEMessage()
 	ie = make_AMFSetID_ie(setid, sizeof(setid)/sizeof(setid[0]));
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
 
-    //printf("222222222222 0x%x,0x%x\n",ie->value.choice.AMFSetID.buf[0],ie->value.choice.AMFSetID.buf[1]);
-	
+   
 	//Ngap_UEContextRequest_t	 UEContextRequest;
-	ie = make_UEContextRequest_ie(0x82);
+	ie = make_UEContextRequest_ie(Ngap_UEContextRequest_requested);
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
 	
 	//Ngap_AllowedNSSAI_t	 AllowedNSSAI;
 	ie = make_AllowedNSSAI_ie();
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
 
-   
     #if 0
+    int i  =  0;
+	for(; i<30; i++)
+		printf("test 0x%x\n", info->data[i]);
+   
+   
 	MessagesIds message_id = MESSAGES_ID_MAX;
     Ngap_NGAP_PDU_t decoded_pdu = {0};
      
 	bstring b = blk2bstr(data, sizeof(data));
 	 
 	printf("NGAP_Initial_UE_Message-------------decode\n");
+
+    
 	
-    ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
-    ngap_amf_handle_message(0,0,&decoded_pdu);
+    //ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+    //ngap_amf_handle_message(0,0,&decoded_pdu);
     #endif
 
 	printf("\n\nNGAP_Initial_UE_Message encode----------- end\n");

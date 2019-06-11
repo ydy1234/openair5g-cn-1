@@ -26,7 +26,6 @@ Ngap_EUTRACellIdentity_constraint(const asn_TYPE_descriptor_t *td, const void *s
 	} else {
 		size = 0;
 	}
-	
 	if((size == 28)) {
 		/* Constraint check succeeded */
 		return 0;
