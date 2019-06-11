@@ -832,8 +832,53 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
 								Ngap_NGAP_PDU_t *pdu)
 {
+    printf("ngap_amf_handle_ng_downlink_nas_transport-----\n");
 
-    printf("ngap_amf_handle_ng_downlink_nas_transport\n");
+	 //OAILOG_FUNC_IN (LOG_NGAP);
+    int rc = RETURNok;
+    
+    int i = 0;
+    Ngap_DownlinkNASTransport_t                  *container = NULL;
+    Ngap_DownlinkNASTransport_IEs_t               *ie = NULL;
+    bstring nas_msg;
+    DevAssert (pdu != NULL);
+	
+    container = &pdu->choice.initiatingMessage->value.choice.DownlinkNASTransport;
+	
+	for (i = 0; i < container->protocolIEs.list.count; i++)
+	{
+        Ngap_DownlinkNASTransport_IEs_t *downlinkNasTransportIes_p = NULL;
+        downlinkNasTransportIes_p = container->protocolIEs.list.array[i];
+		if(!downlinkNasTransportIes_p)
+			continue;
+		switch(downlinkNasTransportIes_p->id)
+	    {
+	     case Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID:
+		 {
+		 	printf("Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID------\n");
+		 }
+		 break;
+         case Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
+		 {
+		 	printf("Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID------\n");
+		 }
+		 break;
+         case Ngap_ProtocolIE_ID_id_NAS_PDU:
+		 {
+		 	printf("Ngap_ProtocolIE_ID_id_NAS_PDU------\n");
+			nas_msg =  blk2bstr(downlinkNasTransportIes_p->value.choice.NAS_PDU.buf,downlinkNasTransportIes_p->value.choice.NAS_PDU.size);
+			printf("nas_msg size:%d\n", nas_msg->slen);
+			int i  = 0;
+			for(; i < nas_msg->slen; i++)
+			{
+               printf("0x%x ", nas_msg->data[i]);
+			}
+		 }
+		 break;
+		 default:
+		 	printf("unknown protocol:%d\n", downlinkNasTransportIes_p->id);
+		}
+	}
     return 0;
 }
 

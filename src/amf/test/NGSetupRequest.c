@@ -381,9 +381,9 @@ int main( int argc, char * argv[])
 	//uint32_t buffer_size = 0;
 	uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
-	//pdu = make_NGAP_SetupRequest();
+	pdu = make_NGAP_SetupRequest();
 	//pdu =  make_NGAP_InitialUEMessage();
-	 pdu = make_NGAP_UplinkNasTransport();
+	//pdu = make_NGAP_UplinkNasTransport();
 
     // debug
     asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
@@ -421,7 +421,7 @@ int main( int argc, char * argv[])
         from_len = (socklen_t) sizeof (struct sockaddr_in);
         memset ((void *)&sinfo, 0, sizeof (struct sctp_sndrcvinfo));
         n = sctp_recvmsg (sd, (void *)recvBuffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
-         
+        printf("recv size:%d\n", n);
         if (n < 0)
 		{
 		    

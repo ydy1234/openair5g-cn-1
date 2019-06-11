@@ -276,9 +276,9 @@ Ngap_UserLocationInformation_t *uplink_make_UserLocationInformation_ie()
 
 Ngap_UplinkNASTransport_IEs_t *make_NAS_PDU()
 {
-   Ngap_InitialUEMessage_IEs_t *ie = NULL;
-	ie	= calloc(1, sizeof(Ngap_InitialUEMessage_IEs_t));
-	memset(ie, 0, sizeof(Ngap_InitialUEMessage_IEs_t));
+    Ngap_UplinkNASTransport_IEs_t *ie = NULL;
+	ie	= calloc(1, sizeof(Ngap_UplinkNASTransport_IEs_t));
+	memset(ie, 0, sizeof(Ngap_UplinkNASTransport_IEs_t));
 			
 	ie->id = Ngap_ProtocolIE_ID_id_NAS_PDU;
 	ie->criticality = Ngap_Criticality_reject;
