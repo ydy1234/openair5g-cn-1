@@ -801,7 +801,7 @@ ngap_amf_handle_ng_initial_ue_message(
 	Ngap_NGAP_PDU_t *pdu)
 {
 
-    printf("ngap_amf_handle_ng_initial_ue_message--------start\n");
+    printf("ngap_amf_handle_ng_initial_ue_message 0000000000000000000000--------start\n");
 
     //OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
@@ -834,6 +834,50 @@ ngap_amf_handle_ng_initial_ue_message(
 	        case Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
 			{
 				printf("RAN_UE_NGAP_ID:0x%x\n",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
+			}
+			break;
+			
+            case Ngap_ProtocolIE_ID_id_NAS_PDU:
+			{
+				printf("Ngap_ProtocolIE_ID_id_NAS_PDU----------------------\n");
+			    int len  = initialUeMsgIEs_p->value.choice.NAS_PDU.size;
+				printf("len:%d\n");
+				int i = 0;
+				for(; i< len; i++)
+				 printf("0x%x ", initialUeMsgIEs_p->value.choice.NAS_PDU.buf[i]);
+				 if(len % 20 == 0)
+				 	printf("\n");
+				
+			}
+			break;
+            case Ngap_ProtocolIE_ID_id_UserLocationInformation:
+			{
+				printf("Ngap_ProtocolIE_ID_id_UserLocationInformation\n");
+			}
+			break;
+            case Ngap_ProtocolIE_ID_id_RRCEstablishmentCause:
+			{
+				printf("Ngap_ProtocolIE_ID_id_RRCEstablishmentCause\n");
+			}
+			break;
+			case Ngap_ProtocolIE_ID_id_FiveG_S_TMSI:
+			{
+				printf("Ngap_ProtocolIE_ID_id_FiveG_S_TMSI\n");
+			}
+			break;
+            case Ngap_ProtocolIE_ID_id_AMFSetID:
+			{
+				printf("Ngap_ProtocolIE_ID_id_AMFSetID\n");
+			}
+			break;
+            case Ngap_ProtocolIE_ID_id_UEContextRequest:
+			{
+				printf("Ngap_ProtocolIE_ID_id_UEContextRequest\n");
+			}
+			break;
+            case Ngap_ProtocolIE_ID_id_AllowedNSSAI:
+			{
+				printf("Ngap_ProtocolIE_ID_id_AllowedNSSAI\n");
 			}
 			break;
             default:
