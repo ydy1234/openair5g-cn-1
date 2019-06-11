@@ -18,6 +18,7 @@
 #include "Ngap_CriticalityDiagnostics-IE-List.h"
 #include "ngap_amf_setup_failure.h"
 #include "ngap_amf_setup_response.h"
+#include "ngap_amf_downlink_nas_transport.h"
 
 extern hash_table_ts_t g_ngap_gnb_coll;
 extern uint32_t nb_gnb_associated;
@@ -337,9 +338,50 @@ int ng_setup_request_to_send_failure(const sctp_assoc_id_t assoc_id,
 int ng_setup_request_to_send_downlink_nas_transport(const sctp_assoc_id_t assoc_id,
 		const sctp_stream_id_t stream, Ngap_NGAP_PDU_t *downlink_nas_transport_pdu)
 {
-    printf("NGAP_send_downlink_nas_transport-------------encode\n");
+	printf("NGAP_send_downlink_nas_transport-------------encode\n");
 
-	
+	int assoc[1];
+	sctp_data_t * sctp_data_p = NULL;
+	Ngap_NGAP_PDU_t 		*pdu = NULL; 
+	uint8_t * buffer_p = NULL;
+	uint32_t length = 0;
+	int rc = RETURNok;
+	int ret;
+	char errbuf[512] = {0};
+	pdu = make_NGAP_DownlinkNasTransport();
+		
+			
+	size_t errlen = sizeof(errbuf);
+	ret = asn_check_constraints(&asn_DEF_Ngap_NGAP_PDU, pdu, errbuf, &errlen);
+	if(ret != 0) {
+		fprintf(stderr,"Constraintvalidationfailed:%s\n", errbuf);
+	}
+			
+	size_t buffer_size = 1000;
+	void *buffer = calloc(1,buffer_size);
+	asn_enc_rval_t er;
+					
+	er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
+	if(er.encoded < 0)
+	{
+		printf("encode failued\n");
+		return -1;
+	}
+					  
+	bstring b = blk2bstr(buffer, er.encoded);
+							
+	printf("ng_setup_request_to_send_downlink_nas_transportassoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, er.encoded); 
+	rc =  ngap_amf_itti_send_sctp_request (&b, assoc_id, stream, 0);
+					
+	if(rc != RETURNok)
+	{
+		printf("ng_setup_request_to_send_downlink_nas_transport send sctp client failed\n"); 
+	}
+	else
+	{
+		printf("ng_setup_request_to_send_downlink_nas_transport send sctp client size:%d, succ \n", length);
+	}	  
+
 	return 0;
 }
 
@@ -504,7 +546,8 @@ ngap_amf_handle_ng_setup_request(
 	 }
 
 	 //ng_setup_request_to_send_failure(assoc_id, stream, pdu);
-	 ng_setup_request_to_send_response(assoc_id, stream, pdu);
+	 //ng_setup_request_to_send_response(assoc_id, stream, pdu);
+	 ng_setup_request_to_send_downlink_nas_transport(assoc_id, stream, pdu);
 	 return 0;
 
 
