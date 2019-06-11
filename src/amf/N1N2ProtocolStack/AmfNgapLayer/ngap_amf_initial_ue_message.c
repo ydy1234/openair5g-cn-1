@@ -247,12 +247,7 @@ void reg_request(uint8_t *data, uint32_t  bufLen)
 	printf("nasmessagecontainer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, bufLen/*don't know the size*/, security);
-
-	int i  = 0;
-	for(; i<30; i++)
-		printf("encode 0x%x\n", data[i]);
-
-	
+    
 	//info->data = data;
 	//memcpy(info->data, data, BUFF_LEN * sizeof(unsigned char ) -1);
 	//info->slen = BUFF_LEN * sizeof(unsigned char )  -1 ;
@@ -398,19 +393,6 @@ Ngap_UserLocationInformation_t *make_UserLocationInformation_ie()
 
 Ngap_InitialUEMessage_IEs_t *make_RRCEstablishmentCause_ie(e_Ngap_RRCEstablishmentCause	 cause)
 {
-    #if 0
-    Ngap_InitialUEMessage_IEs_t *ie = NULL;
-    ie  = calloc(1, sizeof(Ngap_InitialUEMessage_IEs_t));
-	memset(ie, 0, sizeof(Ngap_InitialUEMessage_IEs_t));
-
-	ie->id = Ngap_ProtocolIE_ID_id_RRCEstablishmentCause;
-	ie->criticality = Ngap_Criticality_reject;
-	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_RRCEstablishmentCause;
-    ie->value.choice.RRCEstablishmentCause = RRCEstablishmentCause;
-
-    printf("RRCEstablishmentCause:%ld\n", ie->value.choice.RRCEstablishmentCause);
-    #endif
-
     Ngap_InitialUEMessage_IEs_t *ie = NULL;
     ie = calloc(1, sizeof(Ngap_InitialUEMessage_IEs_t));
 	memset(ie, 0, sizeof(Ngap_InitialUEMessage_IEs_t));
@@ -480,27 +462,6 @@ void fill_AMFSetID(Ngap_AMFSetID_t *aMFSetID, uint8_t setid, uint32_t len)
 	aMFSetID->bits_unused = 0x0E;
 
 	printf("aMFSetID:aMFSetID->size:%d,0x%x,0x%x\n", aMFSetID->size, aMFSetID->buf[0],aMFSetID->buf[1]);
-
-	#if 0
-    //uint32_t amf_ID = htonl(index);
-	//uint8_t tmp = 1;
-	printf("1111111111111 sizeof(index):%d, 0x%x\n", sizeof(index), index);
-	AMFSetID->buf = calloc(2, sizeof(uint8_t));
-	memset(AMFSetID->buf,0, 2);
-	AMFSetID->size = 2;
-	memcpy(AMFSetID->buf, &index, 2);
-	AMFSetID->bits_unused = 0x0E;
-    #endif
-	//printf("1111111111111 sizeof(index):%d, 0x%x\n", sizeof(index), index);
-	
-    //uint32_t tmp = 0x0400;
-    //INT32_TO_BIT_STRING(tmp, AMFSetID);
-
-    //AMFSetID->buf = calloc(len, sizeof(uint8_t));
-    //memcpy(AMFSetID->buf, setID, len);
-	//AMFSetID->size = len;
-	
-	//printf("AMFSetID:0x%x,0x%x,0x%x,0x%x\n",AMFSetID->buf[0],AMFSetID->buf[1],AMFSetID->buf[2],AMFSetID->buf[3]);
 }
 Ngap_InitialUEMessage_IEs_t * make_AMFSetID_ie(uint8_t setid, uint32_t len)
 {
@@ -626,10 +587,6 @@ Ngap_NGAP_PDU_t *make_NGAP_InitialUEMessage()
 
 	
 	//Ngap_NAS_PDU_t	 NAS_PDU
-	//unsigned char data[BUFF_LEN] = {0};
-
-    //bstring  info;// = bfromcstralloc(BUFF_LEN, "\0");//info the nas_message_encode result
-	
 	ie  = make_NAS_PDU_ie();
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
 	
