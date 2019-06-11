@@ -903,52 +903,6 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 	Ngap_NGAP_PDU_t *pdu)
 {
     printf("ngap_amf_handle_ng_uplink_nas_transport-----\n");
-
-	 //OAILOG_FUNC_IN (LOG_NGAP);
-    int rc = RETURNok;
-    
-    int i = 0;
-    Ngap_UplinkNASTransport_t                  *container = NULL;
-    Ngap_UplinkNASTransport_IEs_t               *ie = NULL;
-  
-    DevAssert (pdu != NULL);
-	
-    container = &pdu->choice.initiatingMessage->value.choice.UplinkNASTransport;
-	
-	for (i = 0; i < container->protocolIEs.list.count; i++)
-	{
-        Ngap_UplinkNASTransport_IEs_t *uplinkNasTransportIes_p = NULL;
-        uplinkNasTransportIes_p = container->protocolIEs.list.array[i];
-		if(!uplinkNasTransportIes_p)
-			continue;
-		switch(uplinkNasTransportIes_p->id)
-	    {
-	     case  Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID:
-		 {
-		 	printf("Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID---------\n");
-		 }
-		 break;
-         case  Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
-		 {
-		 	printf("Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID---------\n");
-		 }
-		 break;
-         case Ngap_ProtocolIE_ID_id_NAS_PDU:
-		 {
-		 	printf("Ngap_ProtocolIE_ID_id_NAS_PDU---------\n");
-		 }
-		 break;
-         case  Ngap_ProtocolIE_ID_id_UserLocationInformation:
-		 {
-		 	printf("Ngap_ProtocolIE_ID_id_UserLocationInformation---------\n");
-		 }
-		 break;
-		}
-	}
-
-    return  0;
-
-
     return  0;
 }
 
