@@ -335,6 +335,8 @@ file(GLOB SRCS
     ${OPENAIR5GCN_DIR}/src/amf/utils/obj_hashtable.c
     ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_app.c
     ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_config.c
+    ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_app_defs.c
+    ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_app_itti_messaging.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_decoder.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_encoder.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_xer_print.c

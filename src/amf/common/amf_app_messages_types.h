@@ -6,7 +6,7 @@
 
 
 typedef struct itti_amf_app_initial_ue_message_s {
-  sctp_assoc_id_t     sctp_assoc_id; // key stored in MME_APP for MME_APP forward NAS response to S1AP
+  sctp_assoc_id_t     sctp_assoc_id; // key stored in MME_APP for MME_APP forward NAS response to NGAP
   uint32_t            gnb_id; 
   amf_ue_ngap_id_t    amf_ue_ngap_id;
   ran_ue_ngap_id_t    ran_ue_ngap_id;

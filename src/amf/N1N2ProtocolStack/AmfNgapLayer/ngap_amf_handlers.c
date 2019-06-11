@@ -817,6 +817,9 @@ ngap_amf_handle_ng_initial_ue_message(
     Ngap_InitialUEMessage_t                  *container = NULL;
     Ngap_InitialUEMessage_IEs_t               *ie = NULL;
     Ngap_InitialUEMessage_IEs_t               *ie_gnb_name = NULL;
+    uint8_t * nas_buf = NULL;
+    uint8_t nas_size = 0;
+    bstring nas_msg;
 
     printf("ngap_amf_handle_ng_initial_ue_msg\n");
     DevAssert (pdu != NULL);
@@ -839,15 +842,17 @@ ngap_amf_handle_ng_initial_ue_message(
 			
             case Ngap_ProtocolIE_ID_id_NAS_PDU:
 			{
+                                nas_msg =  blk2bstr(initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size);
+#if 1
 				printf("Ngap_ProtocolIE_ID_id_NAS_PDU----------------------\n");
 			    int len  = initialUeMsgIEs_p->value.choice.NAS_PDU.size;
-				printf("len:%d\n");
+				printf("len:%d\n",len);
 				int i = 0;
 				for(; i< len; i++)
 				 printf("0x%x ", initialUeMsgIEs_p->value.choice.NAS_PDU.buf[i]);
 				 if(len % 20 == 0)
 				 	printf("\n");
-				
+#endif	
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_UserLocationInformation:
@@ -887,6 +892,8 @@ ngap_amf_handle_ng_initial_ue_message(
 		    break;
 		}
 	 }
+    //ngap_amf_itti_amf_app_initial_ue_message(assoc_id,10,initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID,100,initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size,NULL,NULL,0,NULL,NULL,NULL,NULL);
+    ngap_amf_itti_amf_app_initial_ue_message(assoc_id,10,100,100,bdata(nas_msg),blength(nas_msg),NULL,NULL,0,NULL,NULL,NULL,NULL);
      return 0;
 }
 

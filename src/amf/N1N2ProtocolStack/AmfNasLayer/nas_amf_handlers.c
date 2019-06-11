@@ -5,6 +5,7 @@
 #include "common_types.h"
 
 int amf_handle_mm_msg_registration_request(registration_request_msg * registration_request){
+  printf("function in amf_handle_mm_msg_registration_request\n");
 }
 
 

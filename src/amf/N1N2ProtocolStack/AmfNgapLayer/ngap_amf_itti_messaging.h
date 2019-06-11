@@ -17,6 +17,11 @@ int ngap_amf_itti_send_sctp_request(STOLEN_REF bstring *payload,
                                     const sctp_stream_id_t stream,
                                     const amf_ue_ngap_id_t ue_id);
 
+int ngap_amf_itti_nas_uplink_data_ind(const amf_ue_ngap_id_t ue_id,
+                                      STOLEN_REF bstring *payload,
+                                      const tai_t      const* tai,
+                                      const cgi_t     const* cgi);
+
 static inline void ngap_amf_itti_amf_app_initial_ue_message(
   const sctp_assoc_id_t   assoc_id,
   const uint32_t          gnb_id,
@@ -32,6 +37,7 @@ static inline void ngap_amf_itti_amf_app_initial_ue_message(
   const void      const*  ueContextRequest,
   const void      const*  allowedNSSAI)
 {
+  printf("ngap_amf_itti_amf_app_initial_ue_message\n");
   MessageDef  * message_p = NULL;
   OAILOG_FUNC_IN(LOG_NGAP);
   AssertFatal((nas_msg_length<1000),"Bad length for NAS message %lu",nas_msg_length);
@@ -42,8 +48,8 @@ static inline void ngap_amf_itti_amf_app_initial_ue_message(
   AMF_APP_INITIAL_UE_MESSAGE(message_p).ran_ue_ngap_id       = ran_ue_ngap_id;
   AMF_APP_INITIAL_UE_MESSAGE(message_p).amf_ue_ngap_id       = amf_ue_ngap_id;
   AMF_APP_INITIAL_UE_MESSAGE(message_p).nas                  = blk2bstr(nas_msg,nas_msg_length);
-  AMF_APP_INITIAL_UE_MESSAGE(message_p).tai                  = *tai;
-  AMF_APP_INITIAL_UE_MESSAGE(message_p).cgi                  = *cgi;
+  //AMF_APP_INITIAL_UE_MESSAGE(message_p).tai                  = *tai;
+  //AMF_APP_INITIAL_UE_MESSAGE(message_p).cgi                  = *cgi;
   //AMF_APP_INITIAL_UE_MESSAGE(message_p).as_cause             = rrc_cause + 1;
   //AMF_APP_INITIAL_UE_MESSAGE(message_p)
   itti_send_msg_to_task(TASK_AMF_APP, INSTANCE_DEFAULT, message_p);

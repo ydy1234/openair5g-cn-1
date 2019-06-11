@@ -32,6 +32,7 @@ void *amf_app_thread (
 
     switch (ITTI_MSG_ID (received_message_p)) {
       case AMF_APP_INITIAL_UE_MESSAGE:{
+        amf_app_handle_initial_ue_message (&AMF_APP_INITIAL_UE_MESSAGE (received_message_p));
         }
         break;
     }

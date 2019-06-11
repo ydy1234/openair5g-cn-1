@@ -38,5 +38,6 @@ typedef struct {
   uint32_t               nb_s1u_bearers_established_since_last_stat;
 } amf_app_desc_t;
 
+void amf_app_handle_initial_ue_message       (itti_amf_app_initial_ue_message_t * const conn_est_ind_pP);
 
 #endif
