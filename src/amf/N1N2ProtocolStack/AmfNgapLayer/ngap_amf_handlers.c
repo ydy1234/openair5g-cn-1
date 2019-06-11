@@ -330,8 +330,20 @@ int ng_setup_request_to_send_failure(const sctp_assoc_id_t assoc_id,
 		printf("ngap_setup_failure send sctp client size:%d, succ \n", length);
 	}
     
-    
+    return  0;
 }
+
+
+int ng_setup_request_to_send_downlink_nas_transport(const sctp_assoc_id_t assoc_id,
+		const sctp_stream_id_t stream, Ngap_NGAP_PDU_t *downlink_nas_transport_pdu)
+{
+    printf("NGAP_send_downlink_nas_transport-------------encode\n");
+
+	
+	return 0;
+}
+
+
 
 int
 ngap_amf_handle_ng_setup_request(
@@ -910,7 +922,7 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
     int i = 0;
     Ngap_UplinkNASTransport_t                  *container = NULL;
     Ngap_UplinkNASTransport_IEs_t               *ie = NULL;
-  
+    bstring nas_msg;
     DevAssert (pdu != NULL);
 	
     container = &pdu->choice.initiatingMessage->value.choice.UplinkNASTransport;
@@ -936,6 +948,7 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
          case Ngap_ProtocolIE_ID_id_NAS_PDU:
 		 {
 		 	printf("Ngap_ProtocolIE_ID_id_NAS_PDU---------\n");
+			nas_msg =  blk2bstr(uplinkNasTransportIes_p->value.choice.NAS_PDU.buf,uplinkNasTransportIes_p->value.choice.NAS_PDU.size);
 		 }
 		 break;
          case  Ngap_ProtocolIE_ID_id_UserLocationInformation:
@@ -945,9 +958,6 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 		 break;
 		}
 	}
-
-    return  0;
-
 
     return  0;
 }
