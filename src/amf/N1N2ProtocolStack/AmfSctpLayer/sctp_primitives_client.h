@@ -60,6 +60,9 @@ int sctp_send_msg(sctp_data_t *sctp_data_p, const uint16_t ppid, const sctp_stre
                   const uint8_t * const buffer, const size_t length);
 
 
+int ngap_sctp_send_msg(int fd, const uint16_t ppid, const sctp_stream_id_t stream,
+                  const uint8_t * const buffer, const size_t length);
+
 
 /** \brief Properly disconnect the peer
  * \param assoc_id The SCTP association ID

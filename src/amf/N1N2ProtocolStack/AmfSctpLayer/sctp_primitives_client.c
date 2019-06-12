@@ -41,6 +41,32 @@
 
 /* Send buffer to SCTP association */
 int
+ngap_sctp_send_msg (
+  const int fd,
+  const uint16_t ppid,
+  const sctp_stream_id_t stream,
+  const uint8_t * buffer,
+  const size_t length)
+{
+  DevAssert (buffer != NULL);
+  //DevAssert (sctp_data_p != NULL);
+
+  /*
+   * Send message on specified stream of the sd association
+   * * * * NOTE: PPID should be defined in network order
+   */
+  if (sctp_sendmsg (fd, (const void *)buffer, length, NULL, 0, htonl (ppid), 0, stream, 0, 0) < 0) {
+    OAILOG_ERROR (LOG_SCTP, "Sctp_sendmsg failed: %s\n", strerror (errno));
+    return -1;
+  }
+
+  OAILOG_DEBUG (LOG_SCTP, "Successfully sent %d bytes on stream %d\n", length, stream);
+  return 0;
+}
+
+
+/* Send buffer to SCTP association */
+int
 sctp_send_msg (
   sctp_data_t * sctp_data_p,
   const uint16_t ppid,

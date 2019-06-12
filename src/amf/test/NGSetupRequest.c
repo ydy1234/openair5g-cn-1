@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+#include <sys/epoll.h>
+
 
 #include "Ngap_ProtocolIE-Field.h"
 #include "Ngap_NGAP-PDU.h"
@@ -38,11 +43,10 @@
 
 
 #include "sctp_gNB_defs.h"
-#include <unistd.h>
-#include <arpa/inet.h>
 
 #include "nas_message.h"
 #include "ngap_amf_uplink_nas_transport.h"
+#include "sctp_primitives_server.h"
 
 
 Ngap_SupportedTAList_t       g_SupportedTAList;
@@ -340,26 +344,58 @@ Ngap_NGAP_PDU_t *make_NGAP_SetupRequest() {
     return pdu;
 }
 
-#if 0
-void ngap_recv_from_sctp_server()
-{
+#define BASE_PORT 36400
+#define CONNECT_SCTP_SERVER_PORT (BASE_PORT+12)
 
-    if (pthread_create (&assoc_thread, NULL, &sctp_receiver_thread, (void *)sctp_arg_p) < 0) {
-    OAILOG_ERROR (LOG_SCTP, "pthread_create: %s:%d\n", strerror (errno), errno);
-    return -1;
-    }
+#define NGAP_MAX_NUM 32
+#define NGAP_MAX_FD_SIZE 1024
+
+struct epoll_event stEvents[NGAP_MAX_NUM];
+struct epoll_event event;
+
+
+int g_ngap_epoll_fd = 0;
+int g_ngap_sctp_server_fd = -1;
+
+int ngap_epoll_init(int fdsize)
+{
+    g_ngap_epoll_fd  = epoll_create(fdsize);
+    return 0;
 }
-#endif
-sctp_data_t * ngap_connect_sctp_server()
+static void ngap_epoll_event_add(int epollfd,int fd,int state)
+{
+    struct epoll_event ev;
+    ev.events = state;
+    ev.data.fd = fd;
+    epoll_ctl(epollfd,EPOLL_CTL_ADD,fd,&ev);
+}
+
+static void ngap_epoll_event_del(int epollfd,int fd,int state)
+{
+    struct epoll_event ev;
+    ev.events = state;
+    ev.data.fd = fd;
+    epoll_ctl(epollfd,EPOLL_CTL_DEL,fd,&ev);
+}
+
+static void ngap_epoll_event_mod(int epollfd, int fd,int state)
+{
+    struct epoll_event ev;
+    ev.events = state;
+    ev.data.fd = fd;
+    epoll_ctl(epollfd,EPOLL_CTL_MOD,fd,&ev);
+}
+
+sctp_data_t * ngap_connect_sctp_server( )
 {
     int sd = 0;
     sctp_data_t * sctp_data_p = NULL;
 	char *local_ip_addr[] = {"192.168.2.122"};
-	char remote_ip_addr[] = "192.168.2.122";
+	char  remote_ip_addr[] = "192.168.2.122";
 	
     sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
   	if (sctp_data_p == NULL)  exit(1);
-  	if(sd  = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p) < 0)
+  	if(sd  = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, CONNECT_SCTP_SERVER_PORT, SOCK_STREAM, sctp_data_p) < 0)
     {
         printf("conn sctp server:%s,id:%d, err:%s failed\n",remote_ip_addr,errno, strerror(errno));
 		free(sctp_data_p);
@@ -369,6 +405,178 @@ sctp_data_t * ngap_connect_sctp_server()
 	
 	return sctp_data_p;
 }
+
+int ngap_amf_connect_sctp_server()
+{
+    int sctp_server_fd = -1;
+    //connect sctp server
+    sctp_data_t * sctp_data_p = NULL;
+	sctp_data_p = ngap_connect_sctp_server();
+	if(!sctp_data_p)
+	{
+	    printf("connect sctp server port %d failed\n", CONNECT_SCTP_SERVER_PORT);
+	    return -1;
+	}
+
+    sctp_server_fd  = sctp_data_p->sd;
+	
+	free(sctp_data_p);
+	sctp_data_p = NULL;
+
+	return  sctp_server_fd;
+}
+
+#define SCTP_RECV_BUFFER_SIZE  2048
+void ngap_sctp_read_server_data(int fd)
+{
+    int                                     flags = 0, recvSize = 0;
+    //socklen_t								from_len = 0;
+    int								        from_len = 0;
+    struct sctp_sndrcvinfo					sinfo = {0};
+    struct sockaddr_in 					    addr = {0};
+    char 								    recvBuffer[SCTP_RECV_BUFFER_SIZE] = {0};
+
+    memset ((void *)&addr, 0, sizeof (struct sockaddr_in));
+    from_len = (socklen_t) sizeof (struct sockaddr_in);
+    memset ((void *)&sinfo, 0, sizeof (struct sctp_sndrcvinfo));
+    recvSize = sctp_recvmsg (fd, (void *)recvBuffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
+    printf("recv size:%d\n", recvSize);
+    if (recvSize < 0)
+    {
+        OAILOG_DEBUG (LOG_SCTP, "An error occured during read\n");
+        OAILOG_ERROR (LOG_SCTP, "sctp_recvmsg: %s:%d\n", strerror (errno), errno);
+        //continue;
+        return NULL;
+    }
+    if (flags & MSG_NOTIFICATION)
+    {  		    
+        union sctp_notification  *snp = (union sctp_notification *)recvBuffer;
+        switch (snp->sn_header.sn_type) 
+		{
+            case SCTP_SHUTDOWN_EVENT:
+			{
+               OAILOG_DEBUG (LOG_SCTP, "SCTP_SHUTDOWN_EVENT received\n");
+               //return sctp_handle_com_down((sctp_assoc_id_t) snp->sn_shutdown_event.sse_assoc_id);
+            }
+            case SCTP_ASSOC_CHANGE: 
+			{
+               OAILOG_DEBUG(LOG_SCTP, "SCTP association change event received\n");
+               //return handle_assoc_change(sd, ppid, &snp->sn_assoc_change);
+            }
+            default: 
+			{
+               OAILOG_WARNING(LOG_SCTP, "Unhandled notification type %u\n", snp->sn_header.sn_type);
+               break;
+            }
+        }
+    }
+    else
+    {
+         MessagesIds message_id = MESSAGES_ID_MAX;
+         Ngap_NGAP_PDU_t decoded_pdu = {0};
+         uint8_t * buffer_p = NULL;
+         bstring b = blk2bstr(recvBuffer, recvSize);
+          
+          	 
+         printf("NGAP_SetupRequest-------------decode, length:%d\n", recvSize);
+         ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
+         ngap_amf_handle_message(0,0,&decoded_pdu);
+   	     //break;
+    }
+    return 0;
+}
+void *sctp_socket_thread (void *args_p)
+{
+    int iRet = -1;
+	int iFd  = -1;
+	int i  = 0;
+	
+    //epoll init   
+    ngap_epoll_init(NGAP_MAX_FD_SIZE);
+
+    //sctp connect server
+	g_ngap_sctp_server_fd = ngap_amf_connect_sctp_server();
+	if(g_ngap_sctp_server_fd == -1)
+	{
+	   sleep(2);  //reconn
+       g_ngap_sctp_server_fd = ngap_amf_connect_sctp_server();
+	   if(g_ngap_sctp_server_fd == -1)
+	   	{
+	        return -1;
+	   	}
+	}
+	
+	//other add;
+
+	//epoll add 
+    ngap_epoll_event_add(g_ngap_epoll_fd, g_ngap_sctp_server_fd, EPOLLERR| EPOLLIN | EPOLLHUP);	
+
+	while(true)
+    {
+        iRet = epoll_wait(g_ngap_epoll_fd, stEvents, NGAP_MAX_NUM, -1);
+        if (-1 == iRet)
+        {
+            //sleep(1);
+            usleep(100000); //100ms
+            continue;
+        }
+        //t = time(NULL);
+        for (i = 0;i < iRet; i++)
+        {
+            iFd = stEvents[i].data.fd;
+            if (!(stEvents[i].events & EPOLLIN))
+            {
+                if ((stEvents[i].events & EPOLLHUP))
+                {
+                    epoll_ctl(g_ngap_epoll_fd, EPOLL_CTL_DEL, iFd, &event);
+                    printf(" ngap del %d from epoll .\n",  iFd);
+                    close(iFd);
+					//reconn sctp server, add event ?
+                }
+                
+                continue;
+            }
+	        if(g_ngap_sctp_server_fd == iFd)
+	        {
+                ngap_sctp_read_server_data(iFd);
+			}
+        }
+	}
+
+    return NULL;
+}
+
+int  ngap_create_socket_thread(sctp_data_t *sctp_arg_p)
+{
+    static pthread_t         sctp_thread = 0;
+    if (pthread_create (&sctp_thread, NULL, &sctp_socket_thread, (void *)sctp_arg_p) < 0) 
+	{
+        OAILOG_ERROR (LOG_SCTP, "pthread_create: %s:%d\n", strerror (errno), errno);
+        return -1;
+    }
+    return 0;
+}
+#if 0
+sctp_data_t * ngap_connect_sctp_server( )
+{
+    int sd = 0;
+    sctp_data_t * sctp_data_p = NULL;
+	char *local_ip_addr[] = {"192.168.2.122"};
+	char  remote_ip_addr[] = "192.168.2.122";
+	
+    sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
+  	if (sctp_data_p == NULL)  exit(1);
+  	if(sd  = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, CONNECT_SCTP_SERVER_PORT, SOCK_STREAM, sctp_data_p) < 0)
+    {
+        printf("conn sctp server:%s,id:%d, err:%s failed\n",remote_ip_addr,errno, strerror(errno));
+		free(sctp_data_p);
+		sctp_data_p = NULL;
+		return NULL;
+	}
+	
+	return sctp_data_p;
+}
+#endif
 int main( int argc, char * argv[])
 {
     nas_message_t  nas_msg;
@@ -379,6 +587,24 @@ int main( int argc, char * argv[])
 
     //uint8_t * buffer = NULL;
 	//uint32_t buffer_size = 0;
+
+    #if 0
+    sctp_data_t * sctp_data_p = NULL;
+	sctp_data_p = ngap_connect_sctp_server();
+	if(!sctp_data_p)
+		return -1;
+	//ngap_recv_from_sctp_server(sctp_data_p);
+    #endif
+
+    ngap_create_socket_thread(NULL);
+	printf("init socket, wait........\n");
+	sleep(5);  //init socket;
+	if(g_ngap_sctp_server_fd < 0)
+	{
+	   printf("init sctp server port %d failed, exit\n", CONNECT_SCTP_SERVER_PORT);
+       exit(0);
+	}
+	
 	uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
 	pdu = make_NGAP_SetupRequest();
@@ -398,15 +624,11 @@ int main( int argc, char * argv[])
 
     er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
     printf("sctp client send buffer(%x) length(%d)\n",buffer,er.encoded);
+	
+    ngap_sctp_send_msg(g_ngap_sctp_server_fd, 60, 0, buffer,er.encoded);
 
-    sctp_data_t * sctp_data_p = NULL;
-	sctp_data_p = ngap_connect_sctp_server();
-	if(!sctp_data_p)
-		return -1;
-	
-	sctp_send_msg (sctp_data_p, 60, 0, buffer,er.encoded);
-	
-  
+	#if 0
+	//sctp_send_msg (sctp_data_p, 60, 0, buffer,er.encoded);
     int                                     flags = 0, n = 0;
     #define SCTP_RECV_BUFFER_SIZE  1024
     //socklen_t								from_len = 0;
@@ -462,6 +684,8 @@ int main( int argc, char * argv[])
    			   break;
            }
     }
+	#endif
+	
 	#if 0
     //decode
 	MessagesIds message_id = MESSAGES_ID_MAX;
@@ -471,7 +695,10 @@ int main( int argc, char * argv[])
     ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
     ngap_amf_handle_message(0,0,&decoded_pdu);
     #endif
-	
+	while(1)
+	{
+        sleep(10);
+	}
 	
     ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
 }
