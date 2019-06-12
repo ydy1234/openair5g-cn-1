@@ -440,14 +440,15 @@ void ngap_sctp_read_server_data(int fd)
     from_len = (socklen_t) sizeof (struct sockaddr_in);
     memset ((void *)&sinfo, 0, sizeof (struct sctp_sndrcvinfo));
     recvSize = sctp_recvmsg (fd, (void *)recvBuffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
-    printf("recv size:%d\n", recvSize);
-    if (recvSize < 0)
+    
+    if (recvSize <= 0)
     {
         OAILOG_DEBUG (LOG_SCTP, "An error occured during read\n");
         OAILOG_ERROR (LOG_SCTP, "sctp_recvmsg: %s:%d\n", strerror (errno), errno);
         //continue;
         return NULL;
     }
+	printf("recv size:%d\n", recvSize);
     if (flags & MSG_NOTIFICATION)
     {  		    
         union sctp_notification  *snp = (union sctp_notification *)recvBuffer;
@@ -533,7 +534,6 @@ void *sctp_socket_thread (void *args_p)
                     close(iFd);
 					//reconn sctp server, add event ?
                 }
-                
                 continue;
             }
 	        if(g_ngap_sctp_server_fd == iFd)
@@ -607,9 +607,9 @@ int main( int argc, char * argv[])
 	
 	uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
-	pdu = make_NGAP_SetupRequest();
+	//pdu = make_NGAP_SetupRequest();
 	//pdu =  make_NGAP_InitialUEMessage();
-	//pdu = make_NGAP_UplinkNasTransport();
+	pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_SECUTIRY_MODE_REJECT);
 
     // debug
     asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
