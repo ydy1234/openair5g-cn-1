@@ -112,6 +112,32 @@ const char                             *ngap_direction2String[] = {
   "UnSuccessfull outcome",      /* successfull outcome */
 };
 
+
+void test_ngap_amf_itti_nas_uplink_data_ind(bstring *nas_msg)
+{
+	tai_t	tai;
+    tai.plmn.mcc_digit2 = 1;
+	tai.plmn.mcc_digit1 = 1;
+	tai.plmn.mcc_digit3 = 1;
+	tai.plmn.mcc_digit3 = 1;
+	tai.plmn.mcc_digit2 = 2;
+	tai.plmn.mcc_digit1 = 1;
+	tai.tac = 0x80;
+					
+	cgi_t  cgi;
+	cgi.plmn.mcc_digit2 = 1;
+	cgi.plmn.mcc_digit1 = 1;
+	cgi.plmn.mcc_digit3 = 1;
+	cgi.plmn.mcc_digit3 = 1;
+	cgi.plmn.mcc_digit2 = 2;
+	cgi.plmn.mcc_digit1 = 1;
+	cgi.cell_identity.gnb_id = 0x04 ; 
+	cgi.cell_identity.cell_id = 0x04; 
+	cgi.cell_identity.empty = 0x04; 
+			  
+	ngap_amf_itti_nas_uplink_data_ind(60, nas_msg, &tai, &cgi);
+}
+
 int
 ngap_amf_handle_message(
     const sctp_assoc_id_t assoc_id,
@@ -856,7 +882,7 @@ ngap_amf_handle_ng_initial_ue_message(
 	Ngap_NGAP_PDU_t *pdu)
 {
 
-    printf("ngap_amf_handle_ng_initial_ue_message 0000000000000000000000--------start\n");
+    printf("ngap_amf_handle_ng_initial_ue_message --------start\n");
 
     //OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
@@ -897,9 +923,11 @@ ngap_amf_handle_ng_initial_ue_message(
 			
             case Ngap_ProtocolIE_ID_id_NAS_PDU:
 			{
-                                nas_msg =  blk2bstr(initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size);
-#if 1
+                nas_msg =  blk2bstr(initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size);
+
 				printf("Ngap_ProtocolIE_ID_id_NAS_PDU----------------------\n");
+#if 0
+
 			    int len  = initialUeMsgIEs_p->value.choice.NAS_PDU.size;
 				printf("len:%d\n",len);
 				int i = 0;
@@ -908,6 +936,7 @@ ngap_amf_handle_ng_initial_ue_message(
 				 if(len % 20 == 0)
 				 	printf("\n");
 #endif	
+                test_ngap_amf_itti_nas_uplink_data_ind(&nas_msg);                
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_UserLocationInformation:
@@ -992,6 +1021,7 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 		 {
 		 	printf("Ngap_ProtocolIE_ID_id_NAS_PDU---------\n");
 			nas_msg =  blk2bstr(uplinkNasTransportIes_p->value.choice.NAS_PDU.buf,uplinkNasTransportIes_p->value.choice.NAS_PDU.size);
+			test_ngap_amf_itti_nas_uplink_data_ind(&nas_msg);
 		 }
 		 break;
          case  Ngap_ProtocolIE_ID_id_UserLocationInformation:
