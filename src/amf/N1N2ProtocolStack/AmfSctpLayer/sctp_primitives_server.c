@@ -268,6 +268,8 @@ static int sctp_send_msg (
   printf("in sctp_send_msg\n");
   sctp_association_t              *assoc_desc = NULL;
 
+  printf("sctp_assoc_id_t:%u\n", sctp_assoc_id);
+  
   DevAssert (*payload);
   printf("after DevAssert (*payload)\n");
   if ((assoc_desc = sctp_is_assoc_in_list (sctp_assoc_id)) == NULL) {
@@ -288,7 +290,7 @@ static int sctp_send_msg (
 
   OAILOG_DEBUG (LOG_SCTP, "[%d][%d] Sending buffer %p of %d bytes on stream %d with ppid %d\n",
       assoc_desc->sd, sctp_assoc_id, bdata(*payload), blength(*payload), stream, assoc_desc->ppid);
-
+ 
   /*
    * Send message_p on specified stream of the sd association
    */

@@ -14,7 +14,7 @@
 #define BUFFER_LEN 256
 void downlink_nas_transport_with_authentication_request(uint8_t *data)
 {
-	printf("AUTHENTICATION_REQUEST------------ start\n");
+	
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
 	  
@@ -101,6 +101,7 @@ void downlink_nas_transport_with_authentication_request(uint8_t *data)
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, BUFFER_LEN/*don't know the size*/, security);
 
+	printf("authentication_request encode finished !!!\n");
 }
 
 
@@ -346,9 +347,7 @@ int downlink_nas_transport_with_security_mode_command(uint8_t *data)
 int amf_handle_mm_msg_authentication_response(authentication_response_msg * authentication_response)
 {
     printf(" amf_handle_mm_msg_authentication_response-------------start\n");
-
-    return 0;
-	
+    
     //authentication result
     uint8_t  *data = calloc(BUFFER_LEN, sizeof(uint8_t));
 	memset(data, 0, BUFFER_LEN );
