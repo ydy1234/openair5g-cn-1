@@ -13,6 +13,12 @@
 #include "ngap_amf_nas_procedures.h"
 #include "Ngap_NGAP-PDU.h"
 
+
+#include "ngap_amf_initial_ue_message.h"
+#include "ngap_amf_uplink_nas_transport.h"
+
+
+extern int g_ngap_sctp_server_fd;
 extern hash_table_ts_t g_ngap_gnb_coll;
 extern uint32_t nb_gnb_associated;
 static const char * const ng_gnb_state_str [] = {"NGAP_INIT", "NGAP_RESETTING", "NGAP_READY", "NGAP_SHUTDOWN"};
@@ -105,6 +111,60 @@ const char                             *ngap_direction2String[] = {
   "Successfull outcome",        /* successfull outcome */
   "UnSuccessfull outcome",      /* successfull outcome */
 };
+
+typedef  enum  NGAP_AMF_MSG_TYPE_STATE_MACHINE
+{
+    NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE,
+	NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE
+	
+} e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t;
+
+int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
+{
+
+    uint32_t ppid =  60;
+	Ngap_NGAP_PDU_t *pdu = NULL;
+	//pdu = make_NGAP_SetupRequest();
+
+    switch(msgType)
+    {
+      case NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE:
+	  {
+	  	 pdu =  make_NGAP_InitialUEMessage();
+	  }
+	  break;
+	  case NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE:
+	  {
+	  	 pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);
+	  }
+	  break;
+	  default:
+	  	printf("ngap amf state machine unknown msg type:%d\n", msgType);
+	  break;
+
+	}
+
+	if(!pdu)
+		return -1;
+
+    // debug print
+    asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
+
+    //check valid
+    check_NGAP_pdu_constraints(pdu);
+   
+	//encode
+    size_t buffer_size = 1000;
+    void *buffer = calloc(1,buffer_size);
+    asn_enc_rval_t er;
+
+    er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
+  
+	
+    ngap_sctp_send_msg(g_ngap_sctp_server_fd, 60, 0, buffer,er.encoded);
+	printf("sctp client send  buffer(%x) length(%d)\n", buffer,er.encoded);
+    return  0;
+}
 
 int
 ngap_amf_handle_message(
@@ -640,7 +700,7 @@ ngap_amf_handle_ng_setup_request(
 int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
 		Ngap_NGAP_PDU_t *pdu)
 {
-    printf("\n\n ngap_amf_handle_ng_setup_response ----------decode\n");
+    printf("ngap_amf_handle_ng_setup_response ----------decode\n");
 
 	//OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
@@ -697,6 +757,14 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
 			break;
 		}
 	 }
+
+    //state machine
+    
+    //send to initial ue msg
+    //make_NGAP_InitialUEMessage()
+    ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE);
+	
+	//ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, encodePdu);
 	 
     return 0;
 }

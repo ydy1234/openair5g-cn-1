@@ -20,8 +20,6 @@
 #include "Ngap_UnsuccessfulOutcome.h"
 #endif
 
-#include "ngap_amf_initial_ue_message.h"
-
 #include "bstrlib.h"
 #include "intertask_interface_types.h"
 #include "ngap_amf_encoder.h"
@@ -35,6 +33,9 @@
 #include "Ngap_ProtocolIE-Field.h"
 #include "Ngap_UserLocationInformationEUTRA.h"
 
+
+
+
 #include "ngap_amf.h"
 #include "amf_app.h"
 #include "log.h"
@@ -45,7 +46,6 @@
 #include "sctp_gNB_defs.h"
 
 #include "nas_message.h"
-#include "ngap_amf_uplink_nas_transport.h"
 #include "sctp_primitives_server.h"
 
 
@@ -426,7 +426,8 @@ int ngap_amf_connect_sctp_server()
 	return  sctp_server_fd;
 }
 
-#define SCTP_RECV_BUFFER_SIZE  2048
+
+#define SCTP_RECV_BUFFER_SIZE  4096
 void ngap_sctp_read_server_data(int fd)
 {
     int                                     flags = 0, recvSize = 0;
@@ -577,6 +578,7 @@ sctp_data_t * ngap_connect_sctp_server( )
 	return sctp_data_p;
 }
 #endif
+
 int main( int argc, char * argv[])
 {
     nas_message_t  nas_msg;
@@ -588,6 +590,7 @@ int main( int argc, char * argv[])
     //uint8_t * buffer = NULL;
 	//uint32_t buffer_size = 0;
 
+    ngap_create_socket_thread(NULL);
     #if 0
     sctp_data_t * sctp_data_p = NULL;
 	sctp_data_p = ngap_connect_sctp_server();
@@ -596,8 +599,9 @@ int main( int argc, char * argv[])
 	//ngap_recv_from_sctp_server(sctp_data_p);
     #endif
 
-    ngap_create_socket_thread(NULL);
+    //ngap_create_socket_thread(NULL);
 	printf("init socket, wait........\n");
+	
 	sleep(5);  //init socket;
 	if(g_ngap_sctp_server_fd < 0)
 	{
@@ -607,9 +611,9 @@ int main( int argc, char * argv[])
 	
 	uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
-	//pdu = make_NGAP_SetupRequest();
-	//pdu =  make_NGAP_InitialUEMessage();
-	pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_SECUTIRY_MODE_REJECT);
+	pdu = make_NGAP_SetupRequest();
+	//pdu = make_NGAP_InitialUEMessage();
+	//pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);
 
     // debug
     asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
@@ -627,6 +631,35 @@ int main( int argc, char * argv[])
 	
     ngap_sctp_send_msg(g_ngap_sctp_server_fd, 60, 0, buffer,er.encoded);
 
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
+    #if 0   
+    pdu = make_NGAP_InitialUEMessage();
+
+	//pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);
+
+    // debug
+    asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
+
+    check_NGAP_pdu_constraints(pdu);
+    //encode_pdu_to_aper_and_write_to_stdout(pdu);
+
+	//encode
+    //size_t buffer_size = 1000;
+    //void *buffer = calloc(1,buffer_size);
+    //asn_enc_rval_t er;
+    memset(buffer, 0, buffer_size);
+
+    er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
+    printf("sctp client send buffer(%x) length(%d)\n",buffer,er.encoded);
+	
+    ngap_sctp_send_msg(g_ngap_sctp_server_fd, 60, 0, buffer,er.encoded);
+    #endif
+	
+	while(1)
+	{
+      sleep(10);
+	}
+    
 	#if 0
 	//sctp_send_msg (sctp_data_p, 60, 0, buffer,er.encoded);
     int                                     flags = 0, n = 0;
@@ -643,7 +676,7 @@ int main( int argc, char * argv[])
         from_len = (socklen_t) sizeof (struct sockaddr_in);
         memset ((void *)&sinfo, 0, sizeof (struct sctp_sndrcvinfo));
         n = sctp_recvmsg (sd, (void *)recvBuffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
-        printf("recv size:%d\n", n);
+        printf("recv size:%d,from_len:%d\n", n,from_len);
         if (n < 0)
 		{
 		    
@@ -695,10 +728,6 @@ int main( int argc, char * argv[])
     ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
     ngap_amf_handle_message(0,0,&decoded_pdu);
     #endif
-	while(1)
-	{
-        sleep(10);
-	}
 	
-    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
+    //ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
 }

@@ -559,9 +559,7 @@ void add_NGInitialUeMessage_ie(Ngap_InitialUEMessage_t *ngapInitialUeMsg, Ngap_I
 
 Ngap_NGAP_PDU_t *make_NGAP_InitialUEMessage()
 {
-    printf("\n\nNGAP_Initial_UE_Message encode----------- start\n");
-
-	Ngap_NGAP_PDU_t              *pdu = NULL;
+	Ngap_NGAP_PDU_t       *pdu = NULL;
 	sctp_data_t * sctp_data_p = NULL;
 	uint8_t * buffer_p = NULL;
 	uint32_t length = 0;
@@ -585,12 +583,12 @@ Ngap_NGAP_PDU_t *make_NGAP_InitialUEMessage()
 	ie  = make_RAN_UE_NGAP_ID_ie(0x80);
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
 
-	
 	//Ngap_NAS_PDU_t	 NAS_PDU
 	ie  = make_NAS_PDU_ie();
 	add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
+
 	
-	//Ngap_UserLocationInformation_t	 UserLocationInformation;
+	Ngap_UserLocationInformation_t	 UserLocationInformation;
     ie = make_UserLocationInformation_ie();
     add_NGInitialUeMessage_ie(ngapInitialUeMsg, ie);
 
@@ -639,7 +637,7 @@ Ngap_NGAP_PDU_t *make_NGAP_InitialUEMessage()
     //ngap_amf_handle_message(0,0,&decoded_pdu);
     #endif
 
-	printf("\n\nNGAP_Initial_UE_Message encode----------- end\n");
+	printf("NGAP_Initial_UE_Message packet----------- finished  !!!\n");
     return  pdu;   
 }
 
