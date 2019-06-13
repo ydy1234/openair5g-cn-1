@@ -442,7 +442,7 @@ static inline int sctp_read_from_socket (int sd, uint32_t ppid)
   socklen_t                               from_len = 0;
   struct sctp_sndrcvinfo                  sinfo = {0};
   struct sockaddr_in6                     addr = {0};
-  uint8_t                                 buffer[SCTP_RECV_BUFFER_SIZE];
+  uint8_t                                 buffer[SCTP_RECV_BUFFER_SIZE * 4];
 
   if (sd < 0) {
     return -1;
@@ -451,7 +451,7 @@ static inline int sctp_read_from_socket (int sd, uint32_t ppid)
   memset ((void *)&addr, 0, sizeof (struct sockaddr_in6));
   from_len = (socklen_t) sizeof (struct sockaddr_in6);
   memset ((void *)&sinfo, 0, sizeof (struct sctp_sndrcvinfo));
-  n = sctp_recvmsg (sd, (void *)buffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
+  n = sctp_recvmsg (sd, (void *)buffer, SCTP_RECV_BUFFER_SIZE *4, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
 
   #if 0
         printf("sctp server recv buffer length(%d)\nbuffer:\t",n);
