@@ -128,8 +128,8 @@ ngap_generate_downlink_nas_transport (
     ue_ref = ngap_is_ue_amf_id_in_list (ue_id);
   }     
   // finally!
-  //if (!ue_ref) {
-  if (ue_ref) {
+  if (!ue_ref) {
+  //if (ue_ref) {
     /*
      * If the UE-associated logical S1-connection is not established,
      * * * * the AMF shall allocate a unique AMF UE NGAP ID to be used for the UE.
@@ -160,7 +160,7 @@ ngap_generate_downlink_nas_transport (
     Ngap_AMF_UE_NGAP_ID_t amf_ue_ngap_id;
     memset(&amf_ue_ngap_id, 0 , sizeof(Ngap_AMF_UE_NGAP_ID_t));
     amf_ue_ngap_id.buf = (uint8_t*)calloc(1,4*sizeof(uint8_t));
-    *amf_ue_ngap_id.buf = 100;//ue_ref->amf_ue_ngap_id; 
+    *amf_ue_ngap_id.buf = 80;//(int)ue_ref->amf_ue_ngap_id; 
     amf_ue_ngap_id.size = 4;//4 octets
     ngapDownlinkNASTransportIEs->value.choice.AMF_UE_NGAP_ID = amf_ue_ngap_id;
     ASN_SEQUENCE_ADD(&ngapDownlinkNASTransport->protocolIEs, ngapDownlinkNASTransportIEs);
@@ -170,7 +170,7 @@ ngap_generate_downlink_nas_transport (
     ngapDownlinkNASTransportIEs->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_RAN_UE_NGAP_ID;  
     Ngap_RAN_UE_NGAP_ID_t ran_ue_ngap_id_ie;
     memset(&ran_ue_ngap_id_ie, 0 , sizeof(Ngap_RAN_UE_NGAP_ID_t));
-    ran_ue_ngap_id_ie = 100;//ue_ref->ran_ue_ngap_id; 
+    ran_ue_ngap_id_ie = ue_ref->ran_ue_ngap_id; 
     ngapDownlinkNASTransportIEs->value.choice.RAN_UE_NGAP_ID = ran_ue_ngap_id_ie;
     ASN_SEQUENCE_ADD(&ngapDownlinkNASTransport->protocolIEs, ngapDownlinkNASTransportIEs);
 //NAS-PDU IE
@@ -191,7 +191,7 @@ ngap_generate_downlink_nas_transport (
         for(;i<er.encoded;buffer+=sizeof(uint8_t),i++)
           printf("%x",*((uint8_t*)buffer));
         printf("\n");
-
+#if 0
              {
                MessagesIds message_id = MESSAGES_ID_MAX;
                Ngap_NGAP_PDU_t decoded_pdu = {0};
@@ -204,6 +204,7 @@ ngap_generate_downlink_nas_transport (
                //ngap_amf_handle_message(0,0,&decoded_pdu);
              }
 #endif
+#endif
 
 #if 0
     if(ngap_amf_encode_pdu (&pdu, &buffer_p, &length) < 0){
@@ -214,10 +215,22 @@ ngap_generate_downlink_nas_transport (
     //            ue_id, (amf_ue_ngap_id_t)ue_ref->amf_ue_ngap_id, (ran_ue_ngap_id_t)ue_ref->ran_ue_ngap_id);
     bstring b = blk2bstr(buffer_p,er.encoded);
     printf("ngap_amf_itti_send_sctp_request\n");
-    printf("assoc_id from ran_ue_ngap_id(%d)\n",ran_ue_ngap_id);
-    ngap_amf_itti_send_sctp_request (&b , ran_ue_ngap_id, 1, ran_ue_ngap_id);
-    //ngap_amf_itti_send_sctp_request (&b , ue_ref->gnb->sctp_assoc_id, ue_ref->sctp_stream_send, ue_ref->amf_ue_ngap_id);
+    printf("assoc_id (%d)\n",ue_ref->gnb->sctp_assoc_id);
+    //ngap_amf_itti_send_sctp_request (&b , ran_ue_ngap_id, 1, ran_ue_ngap_id);
+    ngap_amf_itti_send_sctp_request (&b , ue_ref->gnb->sctp_assoc_id, ue_ref->sctp_stream_send, ue_ref->amf_ue_ngap_id);
   }
 
   OAILOG_FUNC_RETURN (LOG_NGAP, RETURNok);
+}
+
+void      
+ngap_handle_amf_ue_id_notification (
+  const itti_amf_app_ngap_amf_ue_id_notification_t * const notification_p)
+{           
+          
+  OAILOG_FUNC_IN (LOG_NGAP);
+  DevAssert (notification_p != NULL);
+  ngap_notified_new_ue_amf_ngap_id_association (
+                          notification_p->sctp_assoc_id, notification_p->ran_ue_ngap_id, notification_p->amf_ue_ngap_id);
+  OAILOG_FUNC_OUT (LOG_NGAP);
 }

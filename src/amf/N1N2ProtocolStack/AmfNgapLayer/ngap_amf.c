@@ -112,6 +112,11 @@ ngap_amf_thread (
             &NGAP_NAS_DL_DATA_REQ (received_message_p).nas_msg);
         }
         break;
+        case AMF_APP_NGAP_AMF_UE_ID_NOTIFICATION:{
+          ngap_handle_amf_ue_id_notification(&AMF_APP_NGAP_AMF_UE_ID_NOTIFICATION(received_message_p));
+        }
+        break;
+
       }
     itti_free (ITTI_MSG_ORIGIN_ID (received_message_p), received_message_p);
     received_message_p = NULL;
@@ -265,4 +270,25 @@ ngap_new_ue (
   // Increment number of UE
   gnb_ref->nb_ue_associated++;
   return ue_ref;
+}
+
+void ngap_notified_new_ue_amf_ngap_id_association (
+    const sctp_assoc_id_t  sctp_assoc_id,
+    const ran_ue_ngap_id_t ran_ue_ngap_id,
+    const amf_ue_ngap_id_t amf_ue_ngap_id)
+{ 
+  gnb_description_t   *gnb_ref =  ngap_is_gnb_assoc_id_in_list (sctp_assoc_id);
+  if (gnb_ref) {
+    ue_description_t   *ue_ref = ngap_is_ue_gnb_id_in_list (gnb_ref,ran_ue_ngap_id);
+    if (ue_ref) {     
+      ue_ref->amf_ue_ngap_id = amf_ue_ngap_id;
+      hashtable_rc_t  h_rc = hashtable_ts_insert (&g_ngap_amf_id2assoc_id_coll, (const hash_key_t) amf_ue_ngap_id, (void *)(uintptr_t)sctp_assoc_id);
+      OAILOG_DEBUG(LOG_NGAP, "Associated  sctp_assoc_id %d, ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT ", amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT ":%s \n",
+          sctp_assoc_id, ran_ue_ngap_id, amf_ue_ngap_id, hashtable_rc_code2string(h_rc));
+      return; 
+    }
+    OAILOG_DEBUG(LOG_NGAP, "Could not find  ue  with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT "\n", ran_ue_ngap_id);
+    return;
+  }
+  OAILOG_DEBUG(LOG_NGAP, "Could not find  gNB with sctp_assoc_id %d \n", sctp_assoc_id);
 }   

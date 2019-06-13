@@ -884,28 +884,44 @@ ngap_amf_handle_ng_initial_ue_message(
 
     printf("ngap_amf_handle_ng_initial_ue_message --------start\n");
 
-    //OAILOG_FUNC_IN (LOG_NGAP);
+    OAILOG_FUNC_IN (LOG_NGAP);
+
     int rc = RETURNok;
+
     Ngap_NGSetupFailureIEs_t * ngInitialUeMsg = NULL;
-	Ngap_NGSetupFailureIEs_t * ngInitialUeMsgIEs_p = NULL;
-    gnb_description_t   * gnb_association = NULL;
-    uint32_t              gnb_id = 0;
-    char                 *gnb_name = NULL;
-    int				      gnb_name_size = 0;
+    Ngap_NGSetupFailureIEs_t * ngInitialUeMsgIEs_p = NULL;
+
     int                   ta_ret = 0;
     uint32_t              max_gnb_connected = 0;
     int i = 0;
+
     Ngap_InitialUEMessage_t                  *container = NULL;
     Ngap_InitialUEMessage_IEs_t               *ie = NULL;
     Ngap_InitialUEMessage_IEs_t               *ie_gnb_name = NULL;
-    uint8_t * nas_buf = NULL;
-    uint8_t nas_size = 0;
+
     bstring nas_msg;
+    ran_ue_ngap_id_t                          ran_ue_ngap_id;
+    gnb_description_t   * gnb_ref = NULL;
+    uint32_t              gnb_id = 0;
+    char                 *gnb_name = NULL;
+    int				      gnb_name_size = 0;
+    ue_description_t     *ue_ref = NULL;
 
     printf("ngap_amf_handle_ng_initial_ue_msg\n");
     DevAssert (pdu != NULL);
 	
     container = &pdu->choice.initiatingMessage->value.choice.InitialUEMessage;
+
+/********************** is gnb in list ************************************************/
+
+    if ((gnb_ref = ngap_is_gnb_assoc_id_in_list (assoc_id)) == NULL) {
+      OAILOG_ERROR (LOG_NGAP, "Unknown gNB on assoc_id %d\n", assoc_id);
+      OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
+    }  
+
+/**************************************************************************************/
+
+/********************** prase available parameters ************************************/
 	
 	for (i = 0; i < container->protocolIEs.list.count; i++)
 	{
@@ -917,26 +933,16 @@ ngap_amf_handle_ng_initial_ue_message(
 	    {
 	        case Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
 			{
-				printf("RAN_UE_NGAP_ID:0x%x\n",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
+                          ran_ue_ngap_id = initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID;
+			  printf("RAN_UE_NGAP_ID:0x%x\n",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
 			}
 			break;
 			
             case Ngap_ProtocolIE_ID_id_NAS_PDU:
 			{
-                nas_msg =  blk2bstr(initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size);
-
-				printf("Ngap_ProtocolIE_ID_id_NAS_PDU----------------------\n");
-#if 0
-
-			    int len  = initialUeMsgIEs_p->value.choice.NAS_PDU.size;
-				printf("len:%d\n",len);
-				int i = 0;
-				for(; i< len; i++)
-				 printf("0x%x ", initialUeMsgIEs_p->value.choice.NAS_PDU.buf[i]);
-				 if(len % 20 == 0)
-				 	printf("\n");
-#endif	
-                test_ngap_amf_itti_nas_uplink_data_ind(&nas_msg);                
+                          nas_msg =  blk2bstr(initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size);
+			  printf("Ngap_ProtocolIE_ID_id_NAS_PDU----------------------\n");
+                          //test_ngap_amf_itti_nas_uplink_data_ind(&nas_msg);                
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_UserLocationInformation:
@@ -976,6 +982,37 @@ ngap_amf_handle_ng_initial_ue_message(
 		    break;
 		}
 	 }
+
+/******************************************************************/
+/*******************  context handle ******************************/
+    #if 1
+      ran_ue_ngap_id  = 0x90;
+    #endif
+    OAILOG_INFO (LOG_NGAP, "Received NGAP INITIAL_UE_MESSAGE RAN_UE_NGAP_ID " RAN_UE_NGAP_ID_FMT "\n", ran_ue_ngap_id);
+    ue_ref = ngap_is_ue_gnb_id_in_list(gnb_ref,ran_ue_ngap_id);
+    if(ue_ref == NULL){
+      if ((ue_ref = ngap_new_ue (assoc_id, ran_ue_ngap_id)) == NULL) {
+        OAILOG_ERROR (LOG_NGAP, "NGAP:Initial UE Message- Failed to allocate NGAP UE Context, gNBUeNGAPId:" RAN_UE_NGAP_ID_FMT "\n", ran_ue_ngap_id);
+        OAILOG_FUNC_RETURN (LOG_NGAP, RETURNerror);
+      }
+
+      ue_ref->ran_ue_ngap_id = ran_ue_ngap_id;
+      ue_ref->amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+ 
+      ue_ref->sctp_stream_recv = stream;     
+      ue_ref->sctp_stream_send = ue_ref->gnb->next_sctp_stream;
+      ue_ref->gnb->next_sctp_stream += 1;
+      if (ue_ref->gnb->next_sctp_stream >= ue_ref->gnb->instreams) {
+        ue_ref->gnb->next_sctp_stream = 1;
+      }
+
+    }
+
+
+
+/******************************************************************/
+
+
     //ngap_amf_itti_amf_app_initial_ue_message(assoc_id,10,initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID,100,initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size,NULL,NULL,0,NULL,NULL,NULL,NULL);
     ngap_amf_itti_amf_app_initial_ue_message(assoc_id,10,100,100,bdata(nas_msg),blength(nas_msg),NULL,NULL,0,NULL,NULL,NULL,NULL);
      return 0;
@@ -987,8 +1024,7 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 	Ngap_NGAP_PDU_t *pdu)
 {
     printf("ngap_amf_handle_ng_uplink_nas_transport-----\n");
-
-	 //OAILOG_FUNC_IN (LOG_NGAP);
+    OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
     
     int i = 0;

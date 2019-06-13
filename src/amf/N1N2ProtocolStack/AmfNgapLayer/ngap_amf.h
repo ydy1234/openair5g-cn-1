@@ -75,3 +75,8 @@ ue_description_t* ngap_is_ue_amf_id_in_list(const amf_ue_ngap_id_t amf_ue_ngap_i
 
 ue_description_t* ngap_new_ue(const sctp_assoc_id_t sctp_assoc_id, ran_ue_ngap_id_t ran_ue_ngap_id);
 
+void ngap_notified_new_ue_amf_ngap_id_association (
+    const sctp_assoc_id_t  sctp_assoc_id,
+    const ran_ue_ngap_id_t ran_ue_ngap_id,
+    const amf_ue_ngap_id_t amf_ue_ngap_id);
+

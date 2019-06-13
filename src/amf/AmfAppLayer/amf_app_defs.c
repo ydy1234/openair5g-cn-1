@@ -5,8 +5,14 @@
 #include "common_types.h"
 #include "amf_app_defs.h" 
 #include "common_defs.h"
+#include "log.h"
+
+static void notify_ngap_new_ue_amf_ngap_id_association (amf_ue_ngap_id_t amf_ue_ngap_id,ran_ue_ngap_id_t ran_ue_ngap_id, sctp_assoc_id_t sctp_assoc_id);
 
 void amf_app_handle_initial_ue_message       (itti_amf_app_initial_ue_message_t * const conn_est_ind_pP){
+
+  notify_ngap_new_ue_amf_ngap_id_association(0x80,0x90,conn_est_ind_pP->sctp_assoc_id);
+
   int i = 0;
   bstring nas_msg = conn_est_ind_pP->nas;
   printf("gnb id(%d)\n",conn_est_ind_pP->gnb_id);
@@ -26,4 +32,23 @@ void amf_app_handle_initial_ue_message       (itti_amf_app_initial_ue_message_t 
   itti_send_msg_to_task (TASK_NAS_AMF, INSTANCE_DEFAULT, message_p);
 #endif
 
+}
+
+
+static void notify_ngap_new_ue_amf_ngap_id_association (amf_ue_ngap_id_t amf_ue_ngap_id,ran_ue_ngap_id_t ran_ue_ngap_id, sctp_assoc_id_t sctp_assoc_id)
+{
+  MessageDef                             *message_p = NULL;
+  itti_amf_app_ngap_amf_ue_id_notification_t *notification_p = NULL;
+
+  OAILOG_FUNC_IN (LOG_AMF_APP);
+  message_p = itti_alloc_new_message (TASK_AMF_APP, AMF_APP_NGAP_AMF_UE_ID_NOTIFICATION);
+  notification_p = &message_p->ittiMsg.amf_app_ngap_amf_ue_id_notification;
+  memset (notification_p, 0, sizeof (itti_amf_app_ngap_amf_ue_id_notification_t));
+  notification_p->ran_ue_ngap_id = ran_ue_ngap_id;
+  notification_p->amf_ue_ngap_id = amf_ue_ngap_id;
+  notification_p->sctp_assoc_id  = sctp_assoc_id;
+
+  itti_send_msg_to_task (TASK_NGAP, INSTANCE_DEFAULT, message_p);
+  OAILOG_DEBUG (LOG_AMF_APP, " Sent AMF_APP_NGAP_AMF_UE_ID_NOTIFICATION to NGAP for UE Id %u\n", notification_p->amf_ue_ngap_id);
+  OAILOG_FUNC_OUT (LOG_AMF_APP);
 }
