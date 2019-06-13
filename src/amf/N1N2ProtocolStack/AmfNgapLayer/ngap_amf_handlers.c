@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include "nas_message.h"
 #include "ngap_amf_handlers.h"
 #include "log.h"
 #include "ngap_amf.h"
@@ -115,8 +116,9 @@ const char                             *ngap_direction2String[] = {
 typedef  enum  NGAP_AMF_MSG_TYPE_STATE_MACHINE
 {
     NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE,
-	NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE
-	
+	NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE,
+	NGAP_AMF_MSG_TYPE_SECURITY_MODE_COMPLETE,
+	NGAP_AMF_MSG_TYPE_SECURITY_MODE_REJECT
 } e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t;
 
 int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
@@ -138,10 +140,19 @@ int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
 	  	 pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);
 	  }
 	  break;
-	  default:
-	  	printf("ngap amf state machine unknown msg type:%d\n", msgType);
+	  case NGAP_AMF_MSG_TYPE_SECURITY_MODE_COMPLETE:
+	  {
+	  	 make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_SECUTIRY_MODE_COMPLETE);
+	  }
 	  break;
-
+	  case NGAP_AMF_MSG_TYPE_SECURITY_MODE_REJECT:
+	  {
+	  	 make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_SECUTIRY_MODE_REJECT);
+	  }
+	  break;
+	  default:
+	  	 printf("ngap amf state machine unknown msg type:%d\n", msgType);
+	  break;
 	}
 
 	if(!pdu)
@@ -936,11 +947,51 @@ int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, co
 		 	printf("Ngap_ProtocolIE_ID_id_NAS_PDU------\n");
 			nas_msg =  blk2bstr(downlinkNasTransportIes_p->value.choice.NAS_PDU.buf,downlinkNasTransportIes_p->value.choice.NAS_PDU.size);
 			printf("nas_msg size:%d\n", nas_msg->slen);
+          
+		    //nas_msg->header.message_type = AUTHENTICATION_REQUEST;
+
+            if(!nas_msg || !nas_msg->data)
+            {
+               printf("nsg data is NULL\n");
+			   continue;
+			}
+			
+			nas_message_t  *nasMsg = NULL;
+	        memset (nasMsg,	0, sizeof (nas_message_t));
+	        nasMsg = (nas_message_t  *)nas_msg->data;
+			
+	        MM_msg * mm_msg = &nasMsg->plain.mm;
+			if(!mm_msg)
+			{
+               printf("downlink nas transport mm msg is NULL\n");
+			   continue;
+			}
+				
+	        switch (mm_msg->header.message_type)
+	        {
+			    case AUTHENTICATION_REQUEST:
+				{
+				    ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);	
+				}
+				break;
+				case SECURITY_MODE_COMMAND:
+				{
+					ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_SECURITY_MODE_COMPLETE);
+					//sleep(3);
+					//ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_SECURITY_MODE_REJECT);	
+				}
+				break;
+				default:
+				    printf("downlink nas transport unknown msg type:%d\n", mm_msg->header.message_type);
+				break;	
+	        }
+			#if 0
 			int i  = 0;
 			for(; i < nas_msg->slen; i++)
 			{
                printf("0x%x ", nas_msg->data[i]);
 			}
+			#endif
 		 }
 		 break;
 		 default:
