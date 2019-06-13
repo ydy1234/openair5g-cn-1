@@ -338,7 +338,7 @@ int downlink_nas_transport_with_security_mode_command(uint8_t *data)
 	 printf("abba buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.security_mode_command.abba)->data));
 
 	 //bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
-	 bytes = nas_message_encode (data, &nas_msg, sizeof(data)/*don't know the size*/, security);
+	 bytes = nas_message_encode (data, &nas_msg, BUFFER_LEN/*don't know the size*/, security);
 
      return  0;
 }
@@ -357,6 +357,7 @@ int amf_handle_mm_msg_authentication_response(authentication_response_msg * auth
 	nas_msg =  blk2bstr(data, BUFFER_LEN);
 	
     amf_app_itti_send_ngap_dl_nas_transport_request(0x80, 0x90, nas_msg);
+
 	
 	sleep(3);
    
