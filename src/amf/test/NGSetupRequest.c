@@ -480,7 +480,7 @@ void ngap_sctp_read_server_data(int fd)
          bstring b = blk2bstr(recvBuffer, recvSize);
           
           	 
-         printf("NGAP_SetupRequest-------------decode, length:%d\n", recvSize);
+         //printf("NGAP_SetupRequest-------------decode, length:%d\n", recvSize);
          ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
          ngap_amf_handle_message(0,0,&decoded_pdu);
    	     //break;

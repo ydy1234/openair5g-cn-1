@@ -145,7 +145,7 @@ void uplink_nas_transport_with_auth_response(uint8_t *data)
 
 void uplink_nas_transport_with_security_mode_complete(uint8_t *data)
 {
-	printf("SECURITY_MODE_COMPLETE------------ start\n");
+	
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
 	  
@@ -219,6 +219,8 @@ void uplink_nas_transport_with_security_mode_complete(uint8_t *data)
 	
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, UPLINK_BUFF_LEN /*don't know the size*/, security);
+
+	printf("SECURITY_MODE_COMPLETE encode finished!!!------------------\n");
 
 }
 void uplink_nas_transport_with_security_mode_reject(uint8_t *data)
@@ -457,6 +459,7 @@ Ngap_UplinkNASTransport_IEs_t *make_NAS_PDU(UPLINK_NAS_TRANSPORT_WITH_NAS_MSG_TY
 	   	  printf("uplink nas transport unknown protocol:%d\n", nasMsgType);
 	   break;
 	}
+	
 	OCTET_STRING_fromBuf (&ie->value.choice.NAS_PDU, data,  UPLINK_BUFF_LEN); 
 
 	return ie;
