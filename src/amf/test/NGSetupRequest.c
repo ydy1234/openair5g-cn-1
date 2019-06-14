@@ -99,6 +99,7 @@ void fill_tAC(Ngap_TAC_t *item, unsigned int tac) {
     uint32_t tAC = htonl(tac);
     const char *ptr = (void *)&tAC;
     OCTET_STRING_fromBuf(item, ptr + 1, 3);
+	OAILOG_DEBUG (LOG_NGAP,"tAC:0x%x,0x%x,0x%x",item->buf[0],item->buf[1],item->buf[2]);
 }
 
 void fill_GlobalRANNodeID_with_GlobalGNBID(Ngap_GlobalRANNodeID_t *ngap_GlobalRANNodeID) {
@@ -109,8 +110,12 @@ void fill_GlobalRANNodeID_with_GlobalGNBID(Ngap_GlobalRANNodeID_t *ngap_GlobalRA
 	fill_pLMNIdentity(&globalGNB_ID->pLMNIdentity, "208", "89");
     fill_gNB_ID(&globalGNB_ID->gNB_ID, 513);
     //asn_fprint(stderr, &asn_DEF_Ngap_GlobalRANNodeID, ngap_GlobalRANNodeID);
-}
 
+	OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:0x%x,0x%x,0x%x",globalGNB_ID->pLMNIdentity.buf[0],globalGNB_ID->pLMNIdentity.buf[1],globalGNB_ID->pLMNIdentity.buf[2]);
+	OAILOG_DEBUG (LOG_NGAP,"gNB_ID:0x%x,0x%x,0x%x,0x%x",
+	globalGNB_ID->gNB_ID.choice.gNB_ID.buf[0],globalGNB_ID->gNB_ID.choice.gNB_ID.buf[1],
+	globalGNB_ID->gNB_ID.choice.gNB_ID.buf[2],globalGNB_ID->gNB_ID.choice.gNB_ID.buf[3]);
+}
 typedef struct {
     int sst;
     int sd;
@@ -121,12 +126,14 @@ Ngap_SliceSupportItem_t *make_sliceSupportItem(const snssai_t slice) {
     item = calloc (1, sizeof(Ngap_SliceSupportItem_t));
     const char sst = slice.sst;
     OCTET_STRING_fromBuf(&item->s_NSSAI.sST, &sst, 1);
+	OAILOG_DEBUG (LOG_NGAP,"s_NSSAI.sST:0x%x",item->s_NSSAI.sST.buf[0]);
     if (slice.sd >= 0 ) {
         uint32_t sd = ntohl(slice.sd);
         const char *sd_ptr = (const char *)&sd + 1;
         Ngap_SD_t *sD = calloc(1, sizeof(Ngap_SD_t));
         item->s_NSSAI.sD = sD;
         OCTET_STRING_fromBuf(sD, sd_ptr, 3);
+		OAILOG_DEBUG (LOG_NGAP,"s_NSSAI.sD:0x%x,0x%x,0x%x",item->s_NSSAI.sD->buf[0],item->s_NSSAI.sD->buf[1],item->s_NSSAI.sD->buf[2]);
     }
     return item;
 }
@@ -137,6 +144,7 @@ Ngap_BroadcastPLMNItem_t *make_Ngap_BroadcastPLMNItem(const char *mcc, const cha
     Ngap_BroadcastPLMNItem_t *item;
     item = calloc (1, sizeof(Ngap_BroadcastPLMNItem_t));
 	fill_pLMNIdentity(&item->pLMNIdentity, mcc, mnc);
+	OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:0x%x,0x%x,0x%x",item->pLMNIdentity.buf[0],item->pLMNIdentity.buf[1],item->pLMNIdentity.buf[2]);
     Ngap_SliceSupportItem_t *sliceSupportItem;
     int i;
     for (i=0; i<slice_list_len; i++) {
@@ -176,6 +184,8 @@ Ngap_NGSetupRequestIEs_t *make_GlobalRANNodeID_ie() {
 
     fill_GlobalRANNodeID_with_GlobalGNBID(&ie->value.choice.GlobalRANNodeID);
     //asn_fprint(stderr, &asn_DEF_Ngap_NGSetupRequestIEs, ie);
+
+	
     return ie;
 }
 
@@ -187,7 +197,8 @@ Ngap_NGSetupRequestIEs_t *make_RANNodeName_ie(const char *name) {
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_NGSetupRequestIEs__value_PR_RANNodeName;
 	OCTET_STRING_fromBuf (&ie->value.choice.RANNodeName, name, strlen (name));
- return ie;
+	OAILOG_DEBUG (LOG_NGAP,"RANNodeName:%s", name);
+    return ie;
 }
 
 Ngap_NGSetupRequestIEs_t *make_DefaultPagingDRX_ie(e_Ngap_PagingDRX drx ) {
@@ -198,6 +209,8 @@ Ngap_NGSetupRequestIEs_t *make_DefaultPagingDRX_ie(e_Ngap_PagingDRX drx ) {
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_NGSetupRequestIEs__value_PR_PagingDRX;
 	ie->value.choice.PagingDRX = drx;
+	
+	OAILOG_DEBUG (LOG_NGAP,"PagingDRX:0x%x",ie->value.choice.PagingDRX);
     return ie;
 }
 
@@ -256,58 +269,6 @@ void check_NGAP_pdu_constraints(Ngap_NGAP_PDU_t *pdu) {
 }
 #include  "bstrlib.h"
 #include  "intertask_interface_types.h"
-
-void encode_pdu_to_aper_and_write_to_stdout(Ngap_NGAP_PDU_t *pdu) {
-    size_t buffer_size = 1000;
-    void *buffer = calloc(1,buffer_size);
-    asn_enc_rval_t er;
-
-    er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
-    printf("sctp client send buffer(%x) length(%d)\n",buffer,er.encoded);
-
-
-	MessagesIds message_id = MESSAGES_ID_MAX;
-    Ngap_NGAP_PDU_t decoded_pdu = {0};
-
-	  
-	bstring b = blk2bstr(buffer, buffer_size);
-
-	 
-	printf("NGAP_SetupRequest-------------decode, length:%d\n", buffer_size);
-    ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
-    ngap_amf_handle_message(0,0,&decoded_pdu);
-
-   #if 0
-        Ngap_NGAP_PDU_t  decoded_pdu;
-        Ngap_NGAP_PDU_t * ppdu = &decoded_pdu;
-        asn_dec_rval_t rc = asn_decode(NULL,ATS_ALIGNED_CANONICAL_PER,&asn_DEF_Ngap_NGAP_PDU,(void**)&ppdu,buffer,er.encoded);
-        printf("decode result(%d)\n",rc);
-        printf("decoded message present(%d)\n",decoded_pdu.present);
-        switch(decoded_pdu.present){
-          case Ngap_NGAP_PDU_PR_initiatingMessage:
-            printf("precedureCode(%d)\n",decoded_pdu.choice.initiatingMessage->procedureCode);
-            printf("message type(%d)\n",decoded_pdu.choice.initiatingMessage->value.present);
-        }  
-   #endif
-
-#if 0
-    int assoc[1];
-    sctp_data_t * sctp_data_p = NULL;
-    char *local_ip_addr[] = {"10.112.43.231"};
-    char remote_ip_addr[] = "10.112.43.231";
-    sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
-    if (sctp_data_p == NULL)  exit(1);
-    assoc[0] = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, 36412, SOCK_STREAM, sctp_data_p);
-    sctp_send_msg (sctp_data_p, 60, 0, buffer,er.encoded);
-#endif
-    if ( er.encoded > -1 ) {
-        int len;
-        len = write(1, buffer, er.encoded);
-        fprintf(stderr,"encoder returned %ld bytes, wrote %d bytes!\n", er.encoded, len);
-    } else {
-        fprintf(stderr,"encoding to aper failed !\n");
-    }
-}
 
 Ngap_NGAP_PDU_t *make_NGAP_SetupRequest() {
 
@@ -390,8 +351,8 @@ sctp_data_t * ngap_connect_sctp_server( )
 {
     int sd = 0;
     sctp_data_t * sctp_data_p = NULL;
-	char *local_ip_addr[] = {"10.112.43.231"};
-	char  remote_ip_addr[] = "10.112.43.231";
+	char *local_ip_addr[] = {"192.168.2.122"};
+	char  remote_ip_addr[] = "192.168.2.122";
 	
     sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
   	if (sctp_data_p == NULL)  exit(1);
@@ -449,7 +410,7 @@ void ngap_sctp_read_server_data(int fd)
         //continue;
         return NULL;
     }
-	printf("recv size:%d\n", recvSize);
+	OAILOG_DEBUG(LOG_SCTP,"recv size:%d\n", recvSize);
     if (flags & MSG_NOTIFICATION)
     {  		    
         union sctp_notification  *snp = (union sctp_notification *)recvBuffer;
@@ -479,8 +440,6 @@ void ngap_sctp_read_server_data(int fd)
          uint8_t * buffer_p = NULL;
          bstring b = blk2bstr(recvBuffer, recvSize);
           
-          	 
-         //printf("NGAP_SetupRequest-------------decode, length:%d\n", recvSize);
          ngap_amf_decode_pdu(&decoded_pdu, b,  &message_id);
          ngap_amf_handle_message(0,0,&decoded_pdu);
    	     //break;
@@ -531,7 +490,7 @@ void *sctp_socket_thread (void *args_p)
                 if ((stEvents[i].events & EPOLLHUP))
                 {
                     epoll_ctl(g_ngap_epoll_fd, EPOLL_CTL_DEL, iFd, &event);
-                    printf(" ngap del %d from epoll .\n",  iFd);
+                    //printf(" ngap del %d from epoll .\n",  iFd);
                     close(iFd);
 					//reconn sctp server, add event ?
                 }
@@ -552,7 +511,7 @@ int  ngap_create_socket_thread(sctp_data_t *sctp_arg_p)
     static pthread_t         sctp_thread = 0;
     if (pthread_create (&sctp_thread, NULL, &sctp_socket_thread, (void *)sctp_arg_p) < 0) 
 	{
-        OAILOG_ERROR (LOG_SCTP, "pthread_create: %s:%d\n", strerror (errno), errno);
+        OAILOG_ERROR (LOG_SCTP, "pthread_create: %s:%d", strerror (errno), errno);
         return -1;
     }
     return 0;
@@ -581,14 +540,13 @@ sctp_data_t * ngap_connect_sctp_server( )
 
 int main( int argc, char * argv[])
 {
+    CHECK_INIT_RETURN (OAILOG_INIT (LOG_SPGW_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
+	OAILOG_DEBUG(LOG_NGAP, "initial fake gnb......");
     nas_message_t  nas_msg;
     
-    fprintf(stderr, "Capture loopback with wireshark and test with 2 terminals:\n");
-    fprintf(stderr, "  terminal 1: $ socat SCTP-LISTEN:38412,reuseaddr,fork STDOUT\n");
-    fprintf(stderr, "  terminal 2: $ ./NGSetupRequest | socat STDIN SCTP-CONNECT:127.0.0.1:38412,end-close\n\n");
-
-    //uint8_t * buffer = NULL;
-	//uint32_t buffer_size = 0;
+    //fprintf(stderr, "Capture loopback with wireshark and test with 2 terminals:\n");
+    //fprintf(stderr, "  terminal 1: $ socat SCTP-LISTEN:38412,reuseaddr,fork STDOUT\n");
+    //fprintf(stderr, "  terminal 2: $ ./NGSetupRequest | socat STDIN SCTP-CONNECT:127.0.0.1:38412,end-close\n\n");
 
     ngap_create_socket_thread(NULL);
     #if 0
@@ -600,12 +558,12 @@ int main( int argc, char * argv[])
     #endif
 
     //ngap_create_socket_thread(NULL);
-	printf("init socket, wait........\n");
+	OAILOG_DEBUG(LOG_NGAP,"initial socket, wait......");
 	
 	sleep(5);  //init socket;
 	if(g_ngap_sctp_server_fd < 0)
 	{
-	   printf("init sctp server port %d failed, exit\n", CONNECT_SCTP_SERVER_PORT);
+	   OAILOG_ERROR(LOG_NGAP,"init sctp server port %d failed, exit", CONNECT_SCTP_SERVER_PORT);
        exit(0);
 	}
 	
@@ -627,7 +585,7 @@ int main( int argc, char * argv[])
     asn_enc_rval_t er;
 
     er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
-    printf("sctp client send buffer(%x) length(%d)\n",buffer,er.encoded);
+    OAILOG_ERROR(LOG_NGAP,"sctp client send buffer(%x) length(%d)",buffer,er.encoded);
 	
     ngap_sctp_send_msg(g_ngap_sctp_server_fd, 60, 0, buffer,er.encoded);
 

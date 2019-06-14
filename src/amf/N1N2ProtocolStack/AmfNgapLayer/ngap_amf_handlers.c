@@ -184,6 +184,8 @@ int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
 	
     ngap_sctp_send_msg(g_ngap_sctp_server_fd, 60, 0, buffer,er.encoded);
 	printf("sctp client send  buffer(%x) length(%d)\n", buffer,er.encoded);
+	
+	ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
     return  0;
 }
 
@@ -205,11 +207,11 @@ ngap_amf_handle_message(
       procedureCode = pdu->choice.unsuccessfulOutcome->procedureCode;
       break;
 	default:
-	  printf("ngap_amf_handle_message unknown protocol %d\n",present);
+	  OAILOG_DEBUG(LOG_SCTP,"ngap_amf_handle_message unknown protocol %d\n",present);
 	  return -1;
   }
 
-  printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);
+  OAILOG_DEBUG (LOG_SCTP,"ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);
   if ((procedureCode > (sizeof (messages_callback) / (3 * sizeof (ngap_message_decoded_callback)))) || (present > Ngap_NGAP_PDU_PR_unsuccessfulOutcome)) {
     //OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] Either procedureCode %d or direction %d exceed expected\n", assoc_id, (int)pdu->choice.initiatingMessage->procedureCode, (int)pdu->present);
     return -1;  
@@ -219,7 +221,7 @@ ngap_amf_handle_message(
     //OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] No handler for procedureCode %d in %s\n", assoc_id, (int)pdu->choice.initiatingMessage->procedureCode, ngap_direction2String[(int)pdu->present]);
     return -2;
   }     
-  printf("procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);    
+  OAILOG_DEBUG (LOG_SCTP,"procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);    
   return (*messages_callback[procedureCode][present - 1]) (assoc_id, stream, pdu);
  
 }
@@ -423,17 +425,7 @@ ngap_amf_handle_ng_setup_request(
     const sctp_stream_id_t stream,
 	Ngap_NGAP_PDU_t *pdu){
 
-    #if 0
-    if(g_NG_ENG_CONNECTED >= MAX_NG_ENG_CONNECTED)
-    {
-       ng_setup_request_to_sendback_failure();
-	   return -1;
-       //return NG SETUP FAILURE;
-	}
-    g_NG_ENG_CONNECTED++;
-	#endif
-
-    //OAILOG_FUNC_IN (LOG_NGAP);
+    OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
     Ngap_NGSetupRequestIEs_t * ngSetupRequest_p = NULL;
 	Ngap_NGSetupRequestIEs_t * ngSetupRequestIEs_p = NULL;
@@ -448,7 +440,7 @@ ngap_amf_handle_ng_setup_request(
     Ngap_NGSetupRequestIEs_t               *ie = NULL;
     Ngap_NGSetupRequestIEs_t               *ie_gnb_name = NULL;
 
-    printf("ngap_amf_handle_ng_setup_request\n");
+    OAILOG_DEBUG (LOG_NGAP,"ngap_amf_handle_ng_setup_request");
     DevAssert (pdu != NULL);
 	
     container = &pdu->choice.initiatingMessage->value.choice.NGSetupRequest;
@@ -473,12 +465,12 @@ ngap_amf_handle_ng_setup_request(
 				{
 				    case Ngap_GlobalRANNodeID_PR_NOTHING:
 					{
-						 printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID nothing------------\n");
+						 OAILOG_DEBUG (LOG_NGAP,"Ngap_ProtocolIE_ID_id_GlobalRANNodeID nothing");
 				    }
 					break;
 				    case Ngap_GlobalRANNodeID_PR_globalGNB_ID:
 					{
-						 printf("Ngap_GlobalRANNodeID_PR_globalGNB_ID----------\n");
+						 OAILOG_DEBUG (LOG_NGAP,"Ngap_GlobalRANNodeID_PR_globalGNB_ID");
 
 						 #if 0
                          if(ng_setup_request_find_GlobalRANNodeID(ngap_GlobalRANNodeID)  == -1)
@@ -496,7 +488,7 @@ ngap_amf_handle_ng_setup_request(
 	                            unsigned long  size = ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.size;
 						        uint8_t gNB_ID[size];
 								memcpy(gNB_ID, ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.buf, size);
-								printf("gNB_ID: 0x%x,0x%x,0x%x,0x%x\n",gNB_ID[0],gNB_ID[1],gNB_ID[2],gNB_ID[3]);
+								OAILOG_DEBUG (LOG_NGAP,"gNB_ID: 0x%x,0x%x,0x%x,0x%x",gNB_ID[0],gNB_ID[1],gNB_ID[2],gNB_ID[3]);
 	                        }
 							break;
 							
@@ -517,7 +509,7 @@ ngap_amf_handle_ng_setup_request(
 					break;
 					default:
 					{
-						printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID,unknown protocol IE id(%d)\n",ngap_GlobalRANNodeID->present);
+						OAILOG_DEBUG (LOG_NGAP,"Ngap_ProtocolIE_ID_id_GlobalRANNodeID,unknown protocol IE id(%d)",ngap_GlobalRANNodeID->present);
 					}		
                     break;
 				}
@@ -525,7 +517,7 @@ ngap_amf_handle_ng_setup_request(
 			break;
             case Ngap_ProtocolIE_ID_id_RANNodeName:
 			{
-				printf("len:%d,RANNodeName:%s\n",setupRequestIes_p->value.choice.RANNodeName.size, setupRequestIes_p->value.choice.RANNodeName.buf);
+				OAILOG_DEBUG (LOG_NGAP,"len:%d,RANNodeName:%s",setupRequestIes_p->value.choice.RANNodeName.size, setupRequestIes_p->value.choice.RANNodeName.buf);
             }		
             break;
             case Ngap_ProtocolIE_ID_id_SupportedTAList:
@@ -538,7 +530,7 @@ ngap_amf_handle_ng_setup_request(
 					if(!supportTA)
 						continue;
 					
-				    printf("TAC",supportTA->tAC.buf);
+				    OAILOG_DEBUG (LOG_NGAP,"TAC",supportTA->tAC.buf);
 
 					int j = 0;
 					for(; j< supportTA->broadcastPLMNList.list.count; j++)
@@ -721,9 +713,9 @@ ngap_amf_handle_ng_setup_request(
 int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
 		Ngap_NGAP_PDU_t *pdu)
 {
-    printf("ngap_amf_handle_ng_setup_response ----------decode\n");
-
-	//OAILOG_FUNC_IN (LOG_NGAP);
+    OAILOG_FUNC_IN (LOG_NGAP);
+    OAILOG_DEBUG (LOG_NGAP,"ngap_amf_handle_ng_setup_response ----------decode\n");
+	
     int rc = RETURNok;
     int i = 0;
     Ngap_NGSetupResponse_t                  *container = NULL;
@@ -744,12 +736,12 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
 	    {
             case Ngap_ProtocolIE_ID_id_AMFName:
 			{
-			    printf("AMFName:%s\n", (char *)(setupResponseIes_p->value.choice.AMFName.buf));
+			    OAILOG_DEBUG (LOG_NGAP,"AMFName:%s\n", (char *)(setupResponseIes_p->value.choice.AMFName.buf));
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_RelativeAMFCapacity:
 			{
-	            printf("RelativeAMFCapacity:%d\n", setupResponseIes_p->value.choice.RelativeAMFCapacity);
+	            OAILOG_DEBUG (LOG_NGAP,"RelativeAMFCapacity:%d\n", setupResponseIes_p->value.choice.RelativeAMFCapacity);
 			}
 			break;	
             case Ngap_ProtocolIE_ID_id_PLMNSupportList:
@@ -761,7 +753,7 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
 				    Ngap_PLMNSupportItem_t  *pPlmn = PLMNSupportList.list.array[j];
 					if(!pPlmn)
 					   continue;
-					printf("pLMNIdentity: 0x%x,0x%x,0x%x\n", pPlmn->pLMNIdentity.buf[0],pPlmn->pLMNIdentity.buf[1],pPlmn->pLMNIdentity.buf[2]);
+					OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pPlmn->pLMNIdentity.buf[0],pPlmn->pLMNIdentity.buf[1],pPlmn->pLMNIdentity.buf[2]);
 
 					Ngap_SliceSupportList_t	 sliceSupportList = pPlmn->sliceSupportList;
 					int k = 0;
@@ -770,19 +762,17 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
                         Ngap_SliceSupportItem_t *pSS  = sliceSupportList.list.array[k];
 						if(!pSS)
 							continue;
-						printf("NSSAI_sST:0x%x\n",pSS->s_NSSAI.sST.buf[0]);
+						OAILOG_DEBUG (LOG_NGAP,"NSSAI_sST:0x%x\n",pSS->s_NSSAI.sST.buf[0]);
 					}
 				}
-				
 			}
 			break;
 		}
 	 }
 
     //state machine
-    
     //send to initial ue msg
-    //make_NGAP_InitialUEMessage()
+
     ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE);
 	
 	//ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, encodePdu);
