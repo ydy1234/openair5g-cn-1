@@ -104,6 +104,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 endif()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_boolean_option(LOG_OAI True "Thread safe logging API")
+  add_boolean_option(DEBUG_IS_ON True "Thread safe logging API")
+  add_boolean_option(TRACE_IS_ON True "Thread safe logging API")
 endif()
 
 ###############################################################################

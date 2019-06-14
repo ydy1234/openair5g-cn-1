@@ -94,7 +94,7 @@ static void amf_config_init (amf_config_t * config_pP)
   //config_pP->served_tai.plmn_mnc[0] = PLMN_MNC;
   //config_pP->served_tai.plmn_mnc_len[0] = PLMN_MNC_LEN;
   //config_pP->served_tai.tac[0] = PLMN_TAC;
-  //config_pP->ngap_config.outcome_drop_timer_sec = S1AP_OUTCOME_TIMER_DEFAULT;
+  //config_pP->ngap_config.outcome_drop_timer_sec = NGAP_OUTCOME_TIMER_DEFAULT;
 }
 
 
@@ -164,11 +164,11 @@ static int amf_config_parse_file (amf_config_t * config_pP)
       }
       if (config_setting_lookup_string (setting, LOG_CONFIG_STRING_SCTP_LOG_LEVEL, (const char **)&astring))
         config_pP->log_config.sctp_log_level = OAILOG_LEVEL_STR2INT (astring);
-      if (config_setting_lookup_string (setting, LOG_CONFIG_STRING_S1AP_LOG_LEVEL, (const char **)&astring))
+      if (config_setting_lookup_string (setting, LOG_CONFIG_STRING_NGAP_LOG_LEVEL, (const char **)&astring))
         config_pP->log_config.ngap_log_level = OAILOG_LEVEL_STR2INT (astring);
       if (config_setting_lookup_string (setting, LOG_CONFIG_STRING_NAS_LOG_LEVEL, (const char **)&astring))
         config_pP->log_config.nas_log_level = OAILOG_LEVEL_STR2INT (astring);
-      if (config_setting_lookup_string (setting, LOG_CONFIG_STRING_MME_APP_LOG_LEVEL, (const char **)&astring))
+      if (config_setting_lookup_string (setting, LOG_CONFIG_STRING_AMF_APP_LOG_LEVEL, (const char **)&astring))
         config_pP->log_config.amf_app_log_level = OAILOG_LEVEL_STR2INT (astring);
       if (config_setting_lookup_string (setting, LOG_CONFIG_STRING_UTIL_LOG_LEVEL, (const char **)&astring))
         config_pP->log_config.util_log_level = OAILOG_LEVEL_STR2INT (astring);

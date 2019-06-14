@@ -61,7 +61,7 @@ static void *nas_intertask_interface (void *args_p)
           bdestroy(NGAP_UL_DATA_IND(received_message_p).nas_msg);
           if (decoder_rc < TLV_FATAL_ERROR) {
             //*emm_cause = EMM_CAUSE_PROTOCOL_ERROR;
-            OAILOG_FUNC_RETURN (LOG_NAS_EMM, decoder_rc);
+            OAILOG_FUNC_RETURN (LOG_NAS, decoder_rc);
           } else if (decoder_rc == TLV_UNEXPECTED_IEI) {
             //*emm_cause = EMM_CAUSE_IE_NOT_IMPLEMENTED;
             printf("\nSource COde Modified\n");

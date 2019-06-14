@@ -55,11 +55,11 @@ extern int fd_g_debug_lvl;
 #define LOG_CONFIG_STRING_GTPV1U_LOG_LEVEL               "GTPV1U_LOG_LEVEL"
 #define LOG_CONFIG_STRING_GTPV2C_LOG_LEVEL               "GTPV2C_LOG_LEVEL"
 #define LOG_CONFIG_STRING_ITTI_LOG_LEVEL                 "ITTI_LOG_LEVEL"
-#define LOG_CONFIG_STRING_MME_APP_LOG_LEVEL              "MME_APP_LOG_LEVEL"
+#define LOG_CONFIG_STRING_AMF_APP_LOG_LEVEL              "AMF_APP_LOG_LEVEL"
 #define LOG_CONFIG_STRING_MSC_LOG_LEVEL                  "MSC_LOG_LEVEL"
 #define LOG_CONFIG_STRING_NAS_LOG_LEVEL                  "NAS_LOG_LEVEL"
 #define LOG_CONFIG_STRING_S11_LOG_LEVEL                  "S11_LOG_LEVEL"
-#define LOG_CONFIG_STRING_S1AP_LOG_LEVEL                 "S1AP_LOG_LEVEL"
+#define LOG_CONFIG_STRING_NGAP_LOG_LEVEL                 "NGAP_LOG_LEVEL"
 #define LOG_CONFIG_STRING_S6A_LOG_LEVEL                  "S6A_LOG_LEVEL"
 #define LOG_CONFIG_STRING_SCTP_LOG_LEVEL                 "SCTP_LOG_LEVEL"
 #define LOG_CONFIG_STRING_SPGW_APP_LOG_LEVEL             "SPGW_APP_LOG_LEVEL"
@@ -68,8 +68,8 @@ extern int fd_g_debug_lvl;
 
 typedef enum {
   MIN_LOG_ENV = 0,
-  LOG_MME_ENV = MIN_LOG_ENV,
-  //LOG_MME_GW_ENV,
+  LOG_AMF_ENV = MIN_LOG_ENV,
+  //LOG_AMF_GW_ENV,
   //LOG_SPGW_ENV,
   MAX_LOG_ENV
 } log_env_t;
@@ -97,7 +97,7 @@ typedef enum {
   LOG_NGAP,
   LOG_AMF_APP,
   LOG_NAS,
-  //LOG_NAS_EMM,
+  //LOG_NAS_E,
   //LOG_NAS_ESM,
   //LOG_SPGW_APP,
   //LOG_S11,
@@ -139,16 +139,16 @@ typedef struct log_config_s {
   log_level_t   gtpv1u_log_level;   /*!< \brief GTPv1-U ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
   log_level_t   gtpv2c_log_level;   /*!< \brief GTPv2-C ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
   log_level_t   sctp_log_level;     /*!< \brief SCTP ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
-  log_level_t   ngap_log_level;     /*!< \brief S1AP ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
+  log_level_t   ngap_log_level;     /*!< \brief NGAP ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
   log_level_t   nas_log_level;      /*!< \brief NAS ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
-  log_level_t   amf_app_log_level;  /*!< \brief MME-APP ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
+  log_level_t   amf_app_log_level;  /*!< \brief AMF-APP ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
   log_level_t   spgw_app_log_level; /*!< \brief SP-GW ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
   log_level_t   s11_log_level;      /*!< \brief S11 ITTI task log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
   log_level_t   s6a_log_level;      /*!< \brief S6a layer log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
   log_level_t   util_log_level;     /*!< \brief Misc utilities log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
   log_level_t   msc_log_level;      /*!< \brief MSC utility log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
   log_level_t   itti_log_level;     /*!< \brief ITTI layer log level starting from OAILOG_LEVEL_EMERGENCY up to MAX_LOG_LEVEL (no log) */
-  uint8_t       asn1_verbosity_level; /*!< \brief related to asn1c generated code for S1AP verbosity level */
+  uint8_t       asn1_verbosity_level; /*!< \brief related to asn1c generated code for NGAP verbosity level */
   bool          color;              /*!< \brief use of ANSI styling codes or no */
 } log_config_t;
 
