@@ -9,12 +9,13 @@
 #include "mmData.h"
 #include "common_defs.h"
 #include "OCTET_STRING.h"
-
+#include "log.h"
 
 #define BUFFER_LEN 256
 void downlink_nas_transport_with_authentication_request(uint8_t *data)
 {
 	
+       OAILOG_DEBUG (LOG_NAS,"AUTHENTICATION_REQUEST encode dump ------------------");
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
 	  
@@ -80,26 +81,24 @@ void downlink_nas_transport_with_authentication_request(uint8_t *data)
 	
 
 
-	#if 0
-	printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
+	OAILOG_DEBUG (LOG_NAS,"nas header encode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	nas_msg.header.extended_protocol_discriminator,
 	nas_msg.header.security_header_type,
 	nas_msg.header.sequence_number,
 	nas_msg.header.message_authentication_code);
 
 	
-	printf("message type:0x%x\n",mm_msg->header.message_type);
-	printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
-	printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
-	printf("abba buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.abba)->data));
-	printf("rand buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
-	printf("autn buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
-	printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.eapmessage)->data));
-	#endif
+	OAILOG_DEBUG (LOG_NAS,"message type:0x%x",mm_msg->header.message_type);
+	OAILOG_DEBUG (LOG_NAS,"naskey tsc:0x%x",mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
+	OAILOG_DEBUG (LOG_NAS,"naskey tsc:0x%x",mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
+	OAILOG_DEBUG (LOG_NAS,"abba buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_request.abba)->data));
+	OAILOG_DEBUG (LOG_NAS,"rand buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
+	OAILOG_DEBUG (LOG_NAS,"autn buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
+	OAILOG_DEBUG (LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_request.eapmessage)->data));
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, BUFFER_LEN/*don't know the size*/, security);
 
-	printf("authentication_request encode finished !!!\n");
+	OAILOG_DEBUG (LOG_NAS,"authentication_request encode finished !!!");
 }
 
 
@@ -123,7 +122,7 @@ int amf_handle_mm_msg_registration_request(registration_request_msg * registrati
 
 int downlink_nas_transport_with_authentication_result(uint8_t *data)
 {
-     //printf("AUTHENTICATION_RESULT------------ start\n");
+       OAILOG_DEBUG (LOG_NAS,"AUTHENTICATION_RESULT encode dump ------------------");
      int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	 int bytes = 0;
    
@@ -191,21 +190,21 @@ int downlink_nas_transport_with_authentication_result(uint8_t *data)
 	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 
 
-     #if 0
-     printf("encode-----------------\n");
-	 printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
+     
+     
+	 OAILOG_DEBUG (LOG_NAS,"nas header encode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	 nas_msg.header.extended_protocol_discriminator,
 	 nas_msg.header.security_header_type,
 	 nas_msg.header.sequence_number,
 	 nas_msg.header.message_authentication_code);
 
-	 printf("message type:0x%x\n",mm_msg->header.message_type);
-	 printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_result.naskeysetidentifier.tsc);
-	 printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_result.naskeysetidentifier.naskeysetidentifier);
-	 printf("abba buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_result.abba)->data));
-	 printf("presence:0x%x\n", mm_msg->specific_msg.authentication_result.presence);
-	 printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_result.eapmessage)->data));
-     #endif
+	 OAILOG_DEBUG (LOG_NAS,"message type:0x%x",mm_msg->header.message_type);
+	 OAILOG_DEBUG (LOG_NAS,"naskey tsc:0x%x",mm_msg->specific_msg.authentication_result.naskeysetidentifier.tsc);
+	 OAILOG_DEBUG (LOG_NAS,"naskey tsc:0x%x",mm_msg->specific_msg.authentication_result.naskeysetidentifier.naskeysetidentifier);
+	 OAILOG_DEBUG (LOG_NAS,"abba buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_result.abba)->data));
+	 OAILOG_DEBUG (LOG_NAS,"presence:0x%x", mm_msg->specific_msg.authentication_result.presence);
+	 OAILOG_DEBUG (LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_result.eapmessage)->data));
+     
 
 	 //bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	 bytes = nas_message_encode (data, &nas_msg, BUFFER_LEN/*don't know the size*/, security);
@@ -214,8 +213,8 @@ int downlink_nas_transport_with_authentication_result(uint8_t *data)
 
 int downlink_nas_transport_with_security_mode_command(uint8_t *data)
 {
-     //printf("SECURITY_MODE_COMMAND------------ start\n");
-     int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
+         OAILOG_DEBUG (LOG_NAS,"SECURITY_MODE_COMMAND encode dump----------------");
+         int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	 int bytes = 0;
    
 	 nas_message_t	nas_msg;
@@ -293,40 +292,39 @@ int downlink_nas_transport_with_security_mode_command(uint8_t *data)
    
 	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 	 
-	 #if 0
-     printf("encode-------------------------\n");
-	 printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
+	 
+    
+	 OAILOG_DEBUG (LOG_NAS,"nas header encode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	 nas_msg.header.extended_protocol_discriminator,
 	 nas_msg.header.security_header_type,
 	 nas_msg.header.sequence_number,
 	 nas_msg.header.message_authentication_code);
 
-	 printf("message type:0x%x\n",mm_msg->header.message_type);
-	 printf("nassecurityalgorithms,typeOfCipheringAlgorithm:0x%x,typeOfIntegrityProtectionAlgorithm:0x%x\n",
+	 OAILOG_DEBUG (LOG_NAS,"message type:0x%x",mm_msg->header.message_type);
+	 OAILOG_DEBUG (LOG_NAS,"nassecurityalgorithms,typeOfCipheringAlgorithm:0x%x,typeOfIntegrityProtectionAlgorithm:0x%x",
 	    mm_msg->specific_msg.security_mode_command.nassecurityalgorithms.typeOfCipheringAlgorithm,
 		mm_msg->specific_msg.security_mode_command.nassecurityalgorithms.typeOfIntegrityProtectionAlgorithm );
-	 printf("naskeysetidentifier,tsc:0x%x,naskeysetidentifier:0x%x\n",
+	 OAILOG_DEBUG (LOG_NAS,"naskeysetidentifier,tsc:0x%x,naskeysetidentifier:0x%x",
 		mm_msg->specific_msg.security_mode_command.naskeysetidentifier.tsc,
 		mm_msg->specific_msg.security_mode_command.naskeysetidentifier.naskeysetidentifier);
-	 printf("uesecuritycapability.nea:0x%x,nia:0x%x\n",		
+	 OAILOG_DEBUG (LOG_NAS,"uesecuritycapability.nea:0x%x,nia:0x%x",		
 		mm_msg->specific_msg.security_mode_command.uesecuritycapability.nea,
 		mm_msg->specific_msg.security_mode_command.uesecuritycapability.nia);
 
-	 printf("presence:0x%x\n",mm_msg->specific_msg.security_mode_command.presence);
+	 OAILOG_DEBUG (LOG_NAS,"presence:0x%x",mm_msg->specific_msg.security_mode_command.presence);
 	 
-	 printf("imeisvrequest:0x%x\n",mm_msg->specific_msg.security_mode_command.imeisvrequest);
+	 OAILOG_DEBUG (LOG_NAS,"imeisvrequest:0x%x",mm_msg->specific_msg.security_mode_command.imeisvrequest);
 
-	 printf("epsnassecurityalgorithms, typeOfCipheringAlgoithm:0x%x,typeOfIntegrityProtectionAlgoithm:0x%x\n",
+	 OAILOG_DEBUG (LOG_NAS,"epsnassecurityalgorithms, typeOfCipheringAlgoithm:0x%x,typeOfIntegrityProtectionAlgoithm:0x%x",
 		mm_msg->specific_msg.security_mode_command.epsnassecurityalgorithms.typeOfCipheringAlgoithm,
 		mm_msg->specific_msg.security_mode_command.epsnassecurityalgorithms.typeOfIntegrityProtectionAlgoithm); 
 
-	 printf("additional5gsecurityinformation,hdp:0x%x,rinmr:0x%x\n",
+	  OAILOG_DEBUG (LOG_NAS,"additional5gsecurityinformation,hdp:0x%x,rinmr:0x%x",
 		mm_msg->specific_msg.security_mode_command.additional5gsecurityinformation.hdp,
 		mm_msg->specific_msg.security_mode_command.additional5gsecurityinformation.rinmr);
 
-     printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.security_mode_command.eapmessage)->data));
-	 printf("abba buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.security_mode_command.abba)->data));
-     #endif
+        OAILOG_DEBUG (LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.security_mode_command.eapmessage)->data));
+	 OAILOG_DEBUG (LOG_NAS,"abba buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.security_mode_command.abba)->data));
 	 //bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	 bytes = nas_message_encode (data, &nas_msg, BUFFER_LEN/*don't know the size*/, security);
 
@@ -375,6 +373,69 @@ int amf_handle_mm_msg_security_mode_reject(security_mode_reject_msg *security_mo
     return 0;
 }
 
+int decode_registration_request_dump(nas_message_t decoded_nas_msg)
+{
+
+        OAILOG_DEBUG (LOG_NAS,"decode registration_request dump-----------------");
+	OAILOG_DEBUG (LOG_NAS,"nas header  decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
+			decoded_nas_msg.header.extended_protocol_discriminator,
+			decoded_nas_msg.header.security_header_type,
+			decoded_nas_msg.header.sequence_number,
+			decoded_nas_msg.header.message_authentication_code);
+
+	MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
+	OAILOG_DEBUG (LOG_NAS,"message type:0x%x",decoded_mm_msg->header.message_type);
+	OAILOG_DEBUG (LOG_NAS,"naskey tsc:0x%x",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
+	OAILOG_DEBUG (LOG_NAS,"naskey tsc:0x%x",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
+	OAILOG_DEBUG (LOG_NAS,"abba buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.abba)->data));
+	OAILOG_DEBUG (LOG_NAS,"rand buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
+	OAILOG_DEBUG (LOG_NAS,"autn buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
+	OAILOG_DEBUG (LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.eapmessage)->data));
+
+
+	return 0;
+}
+int  decode_authentication_response_dump(nas_message_t   decoded_nas_msg)
+{
+
+         OAILOG_DEBUG (LOG_NAS,"decode authentication_response dump-----------------");
+         OAILOG_DEBUG (LOG_NAS,"nas header  decode extended_protocol_discriminator:0x%x,security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
+	 decoded_nas_msg.header.extended_protocol_discriminator,
+	 decoded_nas_msg.header.security_header_type,
+	 decoded_nas_msg.header.sequence_number,
+	 decoded_nas_msg.header.message_authentication_code);
+
+	 MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
+	 
+	 OAILOG_DEBUG (LOG_NAS,"message type:0x%x",decoded_mm_msg->header.message_type);
+	 OAILOG_DEBUG (LOG_NAS,"presence:0x%x",decoded_mm_msg->specific_msg.authentication_response.presence);
+	 OAILOG_DEBUG (LOG_NAS,"param:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_response.authenticationresponseparameter)->data));
+	 OAILOG_DEBUG (LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_response.eapmessage)->data));
+
+ 
+         return  0;
+}
+
+
+int  decode_security_mode_complete_dump(nas_message_t  decoded_nas_msg)
+{
+        OAILOG_DEBUG (LOG_NAS,"decode security_mode_complete dump-----------------");
+	OAILOG_DEBUG (LOG_NAS,"nas header  decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
+			decoded_nas_msg.header.extended_protocol_discriminator,
+			decoded_nas_msg.header.security_header_type,
+			decoded_nas_msg.header.sequence_number,
+			decoded_nas_msg.header.message_authentication_code);
+
+	MM_msg * mm_msg = &decoded_nas_msg.plain.mm;
+	OAILOG_DEBUG (LOG_NAS,"message type:0x%x", mm_msg->header.message_type);
+
+
+	OAILOG_DEBUG (LOG_NAS,"presence:0x%x",mm_msg->specific_msg.security_mode_complete.presence);
+	OAILOG_DEBUG (LOG_NAS,"nasmessagecontainer:0x%x",*(unsigned char *)((mm_msg->specific_msg.security_mode_complete.nasmessagecontainer)->data));
+
+        
+	return  0;
+}
 int amf_handle_nas_mm_message(nas_message_t * nas_msg, tai_t tai, cgi_t cgi, nas_message_decode_status_t * decode_status)
 {
   MM_msg *mmMsg = &(nas_msg->plain.mm);
@@ -382,16 +443,19 @@ int amf_handle_nas_mm_message(nas_message_t * nas_msg, tai_t tai, cgi_t cgi, nas
   {
     case REGISTRATION_REQUEST:
 	{
-        amf_handle_mm_msg_registration_request(&mmMsg->specific_msg.registration_request);
+               //decode_registration_request_dump(*nas_msg);
+               amf_handle_mm_msg_registration_request(&mmMsg->specific_msg.registration_request);
     }
     break; 
 	case AUTHENTICATION_RESPONSE:
 	{
+                //decode_authentication_response_dump(*nas_msg);
 		amf_handle_mm_msg_authentication_response(&mmMsg->specific_msg.authentication_response);
 	}
 	break;
 	case SECURITY_MODE_COMPLETE:
 	{
+                //decode_security_mode_complete_dump(*nas_msg);
 		amf_handle_mm_msg_security_mode_complete(&mmMsg->specific_msg.security_mode_complete);
 	}
 	break;
