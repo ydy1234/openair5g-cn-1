@@ -160,7 +160,7 @@ ngap_amf_handle_message(
 	  return -1;
   }
 
-  printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);
+  //printf("ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);
   if ((procedureCode > (sizeof (messages_callback) / (3 * sizeof (ngap_message_decoded_callback)))) || (present > Ngap_NGAP_PDU_PR_unsuccessfulOutcome)) {
     //OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] Either procedureCode %d or direction %d exceed expected\n", assoc_id, (int)pdu->choice.initiatingMessage->procedureCode, (int)pdu->present);
     return -1;  
@@ -170,8 +170,8 @@ ngap_amf_handle_message(
     //OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] No handler for procedureCode %d in %s\n", assoc_id, (int)pdu->choice.initiatingMessage->procedureCode, ngap_direction2String[(int)pdu->present]);
     return -2;
   }     
-  printf("procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);    
-  printf("assoc_id(%d)\n",assoc_id);    
+  //printf("procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);    
+  //printf("assoc_id(%d)\n",assoc_id);    
   return (*messages_callback[procedureCode][present - 1]) (assoc_id, stream, pdu);
  
 }
@@ -263,9 +263,7 @@ ngap_amf_generate_ng_setup_failure (
 	
 int ng_setup_request_to_send_response(const sctp_assoc_id_t assoc_id,
 			const sctp_stream_id_t stream, Ngap_NGAP_PDU_t *setup_req_pdu)
-{
-    printf("\n\nng_setup_request_to_send_response-------------encode\n");
-		
+{	
     int assoc[1];
     sctp_data_t * sctp_data_p = NULL;
     Ngap_NGAP_PDU_t 		*pdu = NULL; 
@@ -290,7 +288,7 @@ int ng_setup_request_to_send_response(const sctp_assoc_id_t assoc_id,
 	er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
 	if(er.encoded < 0)
 	{
-		printf("encode failued\n");
+		//printf("encode failued\n");
 		return -1;
 	}
 				  
@@ -301,19 +299,20 @@ int ng_setup_request_to_send_response(const sctp_assoc_id_t assoc_id,
 				
 	if(rc != RETURNok)
 	{
-		printf("ng_setup_request_to_send_response send sctp client failed\n"); 
+		//printf("ng_setup_request_to_send_response send sctp client failed\n"); 
 	}
 	else
 	{
-		printf("ng_setup_request_to_send_response send sctp client size:%d, succ \n", length);
-	}	  
+		//printf("ng_setup_request_to_send_response send sctp client size:%d, succ \n", length);
+	}	 
+	return 0;
 }
 	
 
 int ng_setup_request_to_send_failure(const sctp_assoc_id_t assoc_id,
 		const sctp_stream_id_t stream, Ngap_NGAP_PDU_t *setup_req_pdu)
 {
-    printf("\n\nNGAP_SetupFailure-------------encode\n");
+    //printf("\n\nNGAP_SetupFailure-------------encode\n");
 	
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
@@ -339,22 +338,22 @@ int ng_setup_request_to_send_failure(const sctp_assoc_id_t assoc_id,
 	er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
 	if(er.encoded < 0)
 	{
-		printf("encode failued\n");
+		//printf("encode failued\n");
 		return -1;
 	}
 			  
 	bstring b = blk2bstr(buffer, er.encoded);
 					
-	printf("ngap_setup_failure assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, er.encoded); 
+	//printf("ngap_setup_failure assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, er.encoded); 
 	rc =  ngap_amf_itti_send_sctp_request (&b, assoc_id, stream, 0);
 			
 	if(rc != RETURNok)
 	{
-		printf("ngap_setup_failure send sctp client failed\n"); 
+		//printf("ngap_setup_failure send sctp client failed\n"); 
 	}
 	else
 	{
-		printf("ngap_setup_failure send sctp client size:%d, succ \n", length);
+		//printf("ngap_setup_failure send sctp client size:%d, succ \n", length);
 	}
     
     return  0;
@@ -364,7 +363,7 @@ int ng_setup_request_to_send_failure(const sctp_assoc_id_t assoc_id,
 int ng_setup_request_to_send_downlink_nas_transport(const sctp_assoc_id_t assoc_id,
 		const sctp_stream_id_t stream, Ngap_NGAP_PDU_t *downlink_nas_transport_pdu)
 {
-	printf("NGAP_send_downlink_nas_transport-------------encode\n");
+	//printf("NGAP_send_downlink_nas_transport-------------encode\n");
 
 	int assoc[1];
 	sctp_data_t * sctp_data_p = NULL;
@@ -390,7 +389,7 @@ int ng_setup_request_to_send_downlink_nas_transport(const sctp_assoc_id_t assoc_
 	er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
 	if(er.encoded < 0)
 	{
-		printf("encode failued\n");
+		//printf("encode failued\n");
 		return -1;
 	}
 					  
@@ -401,11 +400,11 @@ int ng_setup_request_to_send_downlink_nas_transport(const sctp_assoc_id_t assoc_
 					
 	if(rc != RETURNok)
 	{
-		printf("ng_setup_request_to_send_downlink_nas_transport send sctp client failed\n"); 
+		//printf("ng_setup_request_to_send_downlink_nas_transport send sctp client failed\n"); 
 	}
 	else
 	{
-		printf("ng_setup_request_to_send_downlink_nas_transport send sctp client size:%d, succ \n", length);
+		//printf("ng_setup_request_to_send_downlink_nas_transport send sctp client size:%d, succ \n", length);
 	}	  
 
 	return 0;
@@ -419,7 +418,7 @@ ngap_amf_handle_ng_setup_request(
     const sctp_stream_id_t stream,
 	Ngap_NGAP_PDU_t *pdu){
 
-    //OAILOG_FUNC_IN (LOG_NGAP);
+    OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
     Ngap_NGSetupRequestIEs_t * ngSetupRequest_p = NULL;
 	Ngap_NGSetupRequestIEs_t * ngSetupRequestIEs_p = NULL;
@@ -434,7 +433,7 @@ ngap_amf_handle_ng_setup_request(
     Ngap_NGSetupRequestIEs_t               *ie = NULL;
     Ngap_NGSetupRequestIEs_t               *ie_gnb_name = NULL;
 
-    printf("ngap_amf_handle_ng_setup_request\n");
+    //printf("ngap_amf_handle_ng_setup_request\n");
     DevAssert (pdu != NULL);
 	
     container = &pdu->choice.initiatingMessage->value.choice.NGSetupRequest;
@@ -457,12 +456,12 @@ ngap_amf_handle_ng_setup_request(
 				{
 				    case Ngap_GlobalRANNodeID_PR_NOTHING:
 					{
-						 printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID nothing------------\n");
+						 //printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID nothing------------\n");
 				    }
 					break;
 				    case Ngap_GlobalRANNodeID_PR_globalGNB_ID:
 					{
-						 printf("Ngap_GlobalRANNodeID_PR_globalGNB_ID----------\n");
+						 //printf("Ngap_GlobalRANNodeID_PR_globalGNB_ID----------\n");
 
 						 #if 0
                          if(ng_setup_request_find_GlobalRANNodeID(ngap_GlobalRANNodeID)  == -1)
@@ -481,7 +480,7 @@ ngap_amf_handle_ng_setup_request(
 	                            unsigned long  size = ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.size;
 						        uint8_t gNB_ID[size];
 								memcpy(gNB_ID, ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.buf, size);
-								printf("gNB_ID: 0x%x,0x%x,0x%x,0x%x\n",gNB_ID[0],gNB_ID[1],gNB_ID[2],gNB_ID[3]);
+								//printf("gNB_ID: 0x%x,0x%x,0x%x,0x%x\n",gNB_ID[0],gNB_ID[1],gNB_ID[2],gNB_ID[3]);
 	                        }
 							break;
 							
@@ -502,7 +501,7 @@ ngap_amf_handle_ng_setup_request(
 					break;
 					default:
 					{
-						printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID,unknown protocol IE id(%d)\n",ngap_GlobalRANNodeID->present);
+						//printf("Ngap_ProtocolIE_ID_id_GlobalRANNodeID,unknown protocol IE id(%d)\n",ngap_GlobalRANNodeID->present);
 					}		
                     break;
 				}
@@ -510,7 +509,7 @@ ngap_amf_handle_ng_setup_request(
 			break;
             case Ngap_ProtocolIE_ID_id_RANNodeName:
 			{
-				printf("len:%d,RANNodeName:%s\n",setupRequestIes_p->value.choice.RANNodeName.size, setupRequestIes_p->value.choice.RANNodeName.buf);
+				//printf("len:%d,RANNodeName:%s\n",setupRequestIes_p->value.choice.RANNodeName.size, setupRequestIes_p->value.choice.RANNodeName.buf);
             }		
             break;
             case Ngap_ProtocolIE_ID_id_SupportedTAList:
@@ -523,7 +522,7 @@ ngap_amf_handle_ng_setup_request(
 					if(!supportTA)
 						continue;
 					
-				    printf("TAC",supportTA->tAC.buf);
+				    //printf("TAC",supportTA->tAC.buf);
 
 					int j = 0;
 					for(; j< supportTA->broadcastPLMNList.list.count; j++)
@@ -531,8 +530,8 @@ ngap_amf_handle_ng_setup_request(
                          Ngap_BroadcastPLMNItem_t *plmnItem = supportTA->broadcastPLMNList.list.array[j];
                          if(!plmnItem)
 							 continue;
-						 printf("pLMNIdentity:0x%x,0x%x,0x%x\n", 
-						 plmnItem->pLMNIdentity.buf[0], plmnItem->pLMNIdentity.buf[1],plmnItem->pLMNIdentity.buf[2]);
+						 //printf("pLMNIdentity:0x%x,0x%x,0x%x\n", 
+						 //plmnItem->pLMNIdentity.buf[0], plmnItem->pLMNIdentity.buf[1],plmnItem->pLMNIdentity.buf[2]);
 
 						 int k = 0;
 						 for(; k < plmnItem->tAISliceSupportList.list.count; k++)
@@ -541,16 +540,16 @@ ngap_amf_handle_ng_setup_request(
                              if(!slisupportItem)
 							 	continue;
 							 	
-							 printf("ssT:0x%x,0x%x,0x%x\n",
-							 slisupportItem->s_NSSAI.sST.buf[0],slisupportItem->s_NSSAI.sST.buf[1],slisupportItem->s_NSSAI.sST.buf[2]);
+							 //printf("ssT:0x%x,0x%x,0x%x\n",
+							 //slisupportItem->s_NSSAI.sST.buf[0],slisupportItem->s_NSSAI.sST.buf[1],slisupportItem->s_NSSAI.sST.buf[2]);
 							 
                              if(!slisupportItem->s_NSSAI.sD)
                                 continue;
                              
-							 printf("sd:0x%x,0x%x,0x%x\n",
-							 	slisupportItem->s_NSSAI.sD->buf[0],
-							 	slisupportItem->s_NSSAI.sD->buf[1],
-							 	slisupportItem->s_NSSAI.sD->buf[2]); 
+							 //printf("sd:0x%x,0x%x,0x%x\n",
+							 //	slisupportItem->s_NSSAI.sD->buf[0],
+							 //	slisupportItem->s_NSSAI.sD->buf[1],
+							 //	slisupportItem->s_NSSAI.sD->buf[2]); 
 						 }
 					}
 					
@@ -560,12 +559,12 @@ ngap_amf_handle_ng_setup_request(
 			break;
             case Ngap_ProtocolIE_ID_id_DefaultPagingDRX:
 			{
-		        printf("PagingDRX:%ld\n",setupRequestIes_p->value.choice.PagingDRX);
+		        //printf("PagingDRX:%ld\n",setupRequestIes_p->value.choice.PagingDRX);
             }
 			break;
             default:
 			{
-		   	    printf("Unknown protocol IE id (%d) for message ngsetup_request_ies\n", (int)setupRequestIes_p->id);
+		   	    //printf("Unknown protocol IE id (%d) for message ngsetup_request_ies\n", (int)setupRequestIes_p->id);
             }
 		    break;
 		}
@@ -830,7 +829,7 @@ ngap_amf_handle_ng_setup_failure(
     Ngap_NGSetupFailureIEs_t               *ie = NULL;
     Ngap_NGSetupFailureIEs_t               *ie_gnb_name = NULL;
 
-    printf("ngap_amf_handle_ng_setup_Failure\n");
+    //printf("ngap_amf_handle_ng_setup_Failure\n");
     DevAssert (pdu != NULL);
 	
     container = &pdu->choice.initiatingMessage->value.choice.NGSetupFailure;
@@ -859,7 +858,7 @@ ngap_amf_handle_ng_setup_failure(
             break;
             default:
 			{
-		   	    printf("Unknown protocol IE id (%d) for message ngsetup_failure_ies\n", (int)setupFailureIes_p->id);
+		   	    //printf("Unknown protocol IE id (%d) for message ngsetup_failure_ies\n", (int)setupFailureIes_p->id);
             }
 		    break;
 		}
@@ -882,7 +881,7 @@ ngap_amf_handle_ng_initial_ue_message(
 	Ngap_NGAP_PDU_t *pdu)
 {
 
-    printf("ngap_amf_handle_ng_initial_ue_message --------start\n");
+    //printf("ngap_amf_handle_ng_initial_ue_message --------start\n");
 
     OAILOG_FUNC_IN (LOG_NGAP);
 
@@ -907,7 +906,7 @@ ngap_amf_handle_ng_initial_ue_message(
     int				      gnb_name_size = 0;
     ue_description_t     *ue_ref = NULL;
 
-    printf("ngap_amf_handle_ng_initial_ue_msg\n");
+    //printf("ngap_amf_handle_ng_initial_ue_msg\n");
     DevAssert (pdu != NULL);
 	
     container = &pdu->choice.initiatingMessage->value.choice.InitialUEMessage;
@@ -934,50 +933,50 @@ ngap_amf_handle_ng_initial_ue_message(
 	        case Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
 			{
                           ran_ue_ngap_id = initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID;
-			  printf("RAN_UE_NGAP_ID:0x%x\n",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
+			  //printf("RAN_UE_NGAP_ID:0x%x\n",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
 			}
 			break;
 			
             case Ngap_ProtocolIE_ID_id_NAS_PDU:
 			{
-                          nas_msg =  blk2bstr(initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size);
-			  printf("Ngap_ProtocolIE_ID_id_NAS_PDU----------------------\n");
+               nas_msg =  blk2bstr(initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size);
+			  //printf("Ngap_ProtocolIE_ID_id_NAS_PDU----------------------\n");
                           //test_ngap_amf_itti_nas_uplink_data_ind(&nas_msg);                
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_UserLocationInformation:
 			{
-				printf("Ngap_ProtocolIE_ID_id_UserLocationInformation\n");
+				//printf("Ngap_ProtocolIE_ID_id_UserLocationInformation\n");
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_RRCEstablishmentCause:
 			{
-				printf("Ngap_ProtocolIE_ID_id_RRCEstablishmentCause\n");
+				//printf("Ngap_ProtocolIE_ID_id_RRCEstablishmentCause\n");
 			}
 			break;
 			case Ngap_ProtocolIE_ID_id_FiveG_S_TMSI:
 			{
-				printf("Ngap_ProtocolIE_ID_id_FiveG_S_TMSI\n");
+				//printf("Ngap_ProtocolIE_ID_id_FiveG_S_TMSI\n");
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_AMFSetID:
 			{
-				printf("Ngap_ProtocolIE_ID_id_AMFSetID\n");
+				//printf("Ngap_ProtocolIE_ID_id_AMFSetID\n");
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_UEContextRequest:
 			{
-				printf("Ngap_ProtocolIE_ID_id_UEContextRequest\n");
+				//printf("Ngap_ProtocolIE_ID_id_UEContextRequest\n");
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_AllowedNSSAI:
 			{
-				printf("Ngap_ProtocolIE_ID_id_AllowedNSSAI\n");
+				//printf("Ngap_ProtocolIE_ID_id_AllowedNSSAI\n");
 			}
 			break;
             default:
 			{
-		   	    printf("Unknown protocol IE id (%d) for message ngsetup_failure_ies\n", (int)initialUeMsgIEs_p->id);
+		   	    //printf("Unknown protocol IE id (%d) for message ngsetup_failure_ies\n", (int)initialUeMsgIEs_p->id);
             }
 		    break;
 		}
@@ -1023,7 +1022,7 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
     const sctp_stream_id_t stream,
 	Ngap_NGAP_PDU_t *pdu)
 {
-    printf("ngap_amf_handle_ng_uplink_nas_transport-----\n");
+    //printf("ngap_amf_handle_ng_uplink_nas_transport-----\n");
     OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
     
@@ -1045,24 +1044,24 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 	    {
 	     case  Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID:
 		 {
-		 	printf("Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID---------\n");
+		 	//printf("Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID---------\n");
 		 }
 		 break;
          case  Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
 		 {
-		 	printf("Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID---------\n");
+		 	//printf("Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID---------\n");
 		 }
 		 break;
          case Ngap_ProtocolIE_ID_id_NAS_PDU:
 		 {
-		 	printf("Ngap_ProtocolIE_ID_id_NAS_PDU---------\n");
+		 	//printf("Ngap_ProtocolIE_ID_id_NAS_PDU---------\n");
 			nas_msg =  blk2bstr(uplinkNasTransportIes_p->value.choice.NAS_PDU.buf,uplinkNasTransportIes_p->value.choice.NAS_PDU.size);
 			test_ngap_amf_itti_nas_uplink_data_ind(&nas_msg);
 		 }
 		 break;
          case  Ngap_ProtocolIE_ID_id_UserLocationInformation:
 		 {
-		 	printf("Ngap_ProtocolIE_ID_id_UserLocationInformation---------\n");
+		 	//printf("Ngap_ProtocolIE_ID_id_UserLocationInformation---------\n");
 		 }
 		 break;
 		}

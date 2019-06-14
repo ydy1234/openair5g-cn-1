@@ -78,17 +78,15 @@ void downlink_nas_transport_with_authentication_request(uint8_t *data)
 	  
 	bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 	
+
+
 	#if 0
-		printf("1 start nas_message_encode \n");
-		printf("security %p\n",security);
-		printf("info %p\n",info);
-	#endif
-	
 	printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
 	nas_msg.header.extended_protocol_discriminator,
 	nas_msg.header.security_header_type,
 	nas_msg.header.sequence_number,
 	nas_msg.header.message_authentication_code);
+
 	
 	printf("message type:0x%x\n",mm_msg->header.message_type);
 	printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
@@ -97,7 +95,7 @@ void downlink_nas_transport_with_authentication_request(uint8_t *data)
 	printf("rand buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
 	printf("autn buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
 	printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.eapmessage)->data));
-	
+	#endif
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, BUFFER_LEN/*don't know the size*/, security);
 
@@ -108,7 +106,7 @@ void downlink_nas_transport_with_authentication_request(uint8_t *data)
 
 int amf_handle_mm_msg_registration_request(registration_request_msg * registration_request)
 {
-    printf("amf_handle_mm_msg_registration_request---------- start\n");
+    //printf("amf_handle_mm_msg_registration_request---------- start\n");
 
     
     uint8_t  *data = calloc(BUFFER_LEN, sizeof(uint8_t));
@@ -125,7 +123,7 @@ int amf_handle_mm_msg_registration_request(registration_request_msg * registrati
 
 int downlink_nas_transport_with_authentication_result(uint8_t *data)
 {
-     printf("AUTHENTICATION_RESULT------------ start\n");
+     //printf("AUTHENTICATION_RESULT------------ start\n");
      int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	 int bytes = 0;
    
@@ -192,12 +190,8 @@ int downlink_nas_transport_with_authentication_result(uint8_t *data)
    
 	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 
-	 #if 0
-	 printf("1 start nas_message_encode \n");
-	 printf("security %p\n",security);
-	 printf("info %p\n",info);
-	 #endif
 
+     #if 0
      printf("encode-----------------\n");
 	 printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
 	 nas_msg.header.extended_protocol_discriminator,
@@ -211,7 +205,7 @@ int downlink_nas_transport_with_authentication_result(uint8_t *data)
 	 printf("abba buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_result.abba)->data));
 	 printf("presence:0x%x\n", mm_msg->specific_msg.authentication_result.presence);
 	 printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_result.eapmessage)->data));
-     
+     #endif
 
 	 //bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	 bytes = nas_message_encode (data, &nas_msg, BUFFER_LEN/*don't know the size*/, security);
@@ -220,7 +214,7 @@ int downlink_nas_transport_with_authentication_result(uint8_t *data)
 
 int downlink_nas_transport_with_security_mode_command(uint8_t *data)
 {
-     printf("SECURITY_MODE_COMMAND------------ start\n");
+     //printf("SECURITY_MODE_COMMAND------------ start\n");
      int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	 int bytes = 0;
    
@@ -298,12 +292,8 @@ int downlink_nas_transport_with_security_mode_command(uint8_t *data)
 	 //unsigned char data[BUFFER_LEN] = {'\0'};
    
 	 bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
-
+	 
 	 #if 0
-	 printf("1 start nas_message_encode \n");
-	 printf("security %p\n",security);
-	 printf("info %p\n",info);
-	 #endif
      printf("encode-------------------------\n");
 	 printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
 	 nas_msg.header.extended_protocol_discriminator,
@@ -336,7 +326,7 @@ int downlink_nas_transport_with_security_mode_command(uint8_t *data)
 
      printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.security_mode_command.eapmessage)->data));
 	 printf("abba buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.security_mode_command.abba)->data));
-
+     #endif
 	 //bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	 bytes = nas_message_encode (data, &nas_msg, BUFFER_LEN/*don't know the size*/, security);
 
@@ -346,7 +336,7 @@ int downlink_nas_transport_with_security_mode_command(uint8_t *data)
 
 int amf_handle_mm_msg_authentication_response(authentication_response_msg * authentication_response)
 {
-    printf(" amf_handle_mm_msg_authentication_response-------------start\n");
+    //printf(" amf_handle_mm_msg_authentication_response-------------start\n");
     
     //authentication result
     uint8_t  *data = calloc(BUFFER_LEN, sizeof(uint8_t));
@@ -374,13 +364,13 @@ int amf_handle_mm_msg_authentication_response(authentication_response_msg * auth
 
 int amf_handle_mm_msg_security_mode_complete(security_mode_complete_msg *security_mode_complete)
 {
-    printf("amf_handle_mm_msg_security_mode_complete---------- start\n");
+    //printf("amf_handle_mm_msg_security_mode_complete---------- start\n");
     
     return 0;
 }
 int amf_handle_mm_msg_security_mode_reject(security_mode_reject_msg *security_mode_reject)
 {
-    printf("amf_handle_mm_msg_security_mode_reject---------- start\n");
+    //printf("amf_handle_mm_msg_security_mode_reject---------- start\n");
     
     return 0;
 }
@@ -411,7 +401,7 @@ int amf_handle_nas_mm_message(nas_message_t * nas_msg, tai_t tai, cgi_t cgi, nas
 	}
 	break;
 	default:
-		printf("mm unknown msg type:%d\n", mmMsg->header.message_type);
+		//printf("mm unknown msg type:%d\n", mmMsg->header.message_type);
 	break;
   }
 }

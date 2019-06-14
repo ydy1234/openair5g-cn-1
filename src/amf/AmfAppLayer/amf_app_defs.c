@@ -15,14 +15,20 @@ void amf_app_handle_initial_ue_message       (itti_amf_app_initial_ue_message_t 
 
   int i = 0;
   bstring nas_msg = conn_est_ind_pP->nas;
+
+  #if 0
   printf("gnb id(%d)\n",conn_est_ind_pP->gnb_id);
   printf("assoc id(%d)\n",conn_est_ind_pP->sctp_assoc_id);
   printf("nas test in amf_app_handle_initial_ue_message\n");
   printf("nas len(%d)\n",blength(nas_msg));
+  #endif
   uint8_t * buffer = (uint8_t *)(bdata(nas_msg));
+
+  #if 0
   for(;i<blength(nas_msg);i++)
     printf("0x%x ",buffer[i]);
   printf("\n");
+  #endif
 
 #if 1
   MessageDef                             *message_p = NULL;
