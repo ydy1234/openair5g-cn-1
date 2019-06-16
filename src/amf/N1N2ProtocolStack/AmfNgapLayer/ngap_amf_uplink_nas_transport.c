@@ -144,6 +144,7 @@ void uplink_nas_transport_with_auth_response(uint8_t *data)
 
 void uplink_nas_transport_with_security_mode_complete(uint8_t *data)
 {
+    OAILOG_DEBUG(LOG_NAS,"encode security mode complete dump-------");
 	
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
@@ -205,26 +206,23 @@ void uplink_nas_transport_with_security_mode_complete(uint8_t *data)
 		printf("security %p\n",security);
 		printf("info %p\n",info);
 	#endif
-	printf("encode-------------------------\n");
-	printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
+	
+	OAILOG_DEBUG(LOG_NAS,"nas header encode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	nas_msg.header.extended_protocol_discriminator,
 	nas_msg.header.security_header_type,
 	nas_msg.header.sequence_number,
 	nas_msg.header.message_authentication_code);
 	
-	printf("message type:0x%x\n",mm_msg->header.message_type);
-	printf("presence:0x%x\n",mm_msg->specific_msg.security_mode_complete.presence);
-	printf("nasmessagecontainer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.security_mode_complete.nasmessagecontainer)->data));
+	OAILOG_DEBUG(LOG_NAS,"message type:0x%x",mm_msg->header.message_type);
+	OAILOG_DEBUG(LOG_NAS,"presence:0x%x",mm_msg->specific_msg.security_mode_complete.presence);
+	OAILOG_DEBUG(LOG_NAS,"nasmessagecontainer:0x%x",*(unsigned char *)((mm_msg->specific_msg.security_mode_complete.nasmessagecontainer)->data));
 	
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, UPLINK_BUFF_LEN /*don't know the size*/, security);
-
-	printf("SECURITY_MODE_COMPLETE encode finished!!!------------------\n");
-
 }
 void uplink_nas_transport_with_security_mode_reject(uint8_t *data)
 {
-	printf("SECURITY_MODE_REJECT------------ start\n");
+	OAILOG_DEBUG(LOG_NGAP,"SECURITY_MODE_REJECT");
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
 	   
@@ -303,6 +301,13 @@ Ngap_UplinkNASTransport_IEs_t * make_AMF_UE_NGAP_ID(unsigned long AMF_UE_NGAP_ID
 	ie->value.present = Ngap_UplinkNASTransport_IEs__value_PR_AMF_UE_NGAP_ID;
 	
 	asn_ulong2INTEGER(&ie->value.choice.AMF_UE_NGAP_ID, AMF_UE_NGAP_ID);
+
+    OAILOG_DEBUG(LOG_NGAP,"AMF_UE_NGAP_ID");
+	size_t i  = 0;
+	for(i ; i<ie->value.choice.AMF_UE_NGAP_ID.size;i++)
+	{
+	    OAILOG_DEBUG(LOG_NGAP,"0x%x",ie->value.choice.AMF_UE_NGAP_ID.buf[i]);
+	}
 	
 	return ie;	
 }
@@ -319,6 +324,7 @@ Ngap_UplinkNASTransport_IEs_t * make_RAN_UE_NGAP_ID(unsigned long rAN_UE_NGAP_ID
 	ie->value.present = Ngap_UplinkNASTransport_IEs__value_PR_RAN_UE_NGAP_ID;
 	ie->value.choice.RAN_UE_NGAP_ID = rAN_UE_NGAP_ID;
 
+	OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:%lu",ie->value.choice.RAN_UE_NGAP_ID);
 	return ie;
 }
 
@@ -333,7 +339,7 @@ void uplink_fill_eUTRA_with_CGI_with_pLMNIdentity(Ngap_PLMNIdentity_t *pLMNIdent
     uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
 	OCTET_STRING_fromBuf(pLMNIdentity, (const char*)plmn, 3);
 
-	printf("pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
+	OAILOG_DEBUG(LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
 }
 void uplink_fill_eUTRA_with_CGI_with_eUTRACellIdentity(Ngap_EUTRACellIdentity_t	 *eUTRACellIdentity, int index)
 {
@@ -343,7 +349,7 @@ void uplink_fill_eUTRA_with_CGI_with_eUTRACellIdentity(Ngap_EUTRACellIdentity_t	
 	memcpy(eUTRACellIdentity->buf, &ei, 4);
 	eUTRACellIdentity->bits_unused = 0x04;
 
-    printf("eUTRACellIdentity: 0x%x,0x%x,0x%x,0x%x\n",
+    OAILOG_DEBUG(LOG_NGAP,"eUTRACellIdentity: 0x%x,0x%x,0x%x,0x%x\n",
 	eUTRACellIdentity->buf[0],eUTRACellIdentity->buf[1],
 	eUTRACellIdentity->buf[2],eUTRACellIdentity->buf[3]);
 }
@@ -360,14 +366,14 @@ void uplink_fill_tAI_with_pLMNIdentity(Ngap_PLMNIdentity_t *pLMNIdentity)
     uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
 	OCTET_STRING_fromBuf(pLMNIdentity, (const char*)plmn, 3);
 
-	printf("pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
+	OAILOG_DEBUG(LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
 }
 void uplink_fill_tAI_with_tAC(Ngap_TAC_t	 *tAC)
 {
 	uint8_t tac[3] = { 0x01, 0xF8, 0x29 };
 	OCTET_STRING_fromBuf(tAC, (const char*)tac, 3);
 	
-    printf("tAC: 0x%x,0x%x,0x%x\n", tAC->buf[0],tAC->buf[1],tAC->buf[2]);
+    OAILOG_DEBUG(LOG_NGAP,"tAC: 0x%x,0x%x,0x%x\n", tAC->buf[0],tAC->buf[1],tAC->buf[2]);
 }
 void uplink_fill_userLocationInformationEUTRA_eUTRA_with_tAI(Ngap_TAI_t	 *tAI)
 {
@@ -385,7 +391,7 @@ Ngap_TimeStamp_t	* uplink_fill_userLocationInformationEUTRA_eUTRA_with_timeStamp
     uint8_t st[4] = { 0x02, 0xF8, 0x29, 0x06 };
 	OCTET_STRING_fromBuf(timeStamp, (const char*)st, 4);
 
-	printf("timeStamp: 0x%x,0x%x,0x%x,0x%x\n", timeStamp->buf[0],timeStamp->buf[1],timeStamp->buf[2],timeStamp->buf[3]);
+	OAILOG_DEBUG(LOG_NGAP,"timeStamp: 0x%x,0x%x,0x%x,0x%x\n", timeStamp->buf[0],timeStamp->buf[1],timeStamp->buf[2],timeStamp->buf[3]);
 	
 	return timeStamp;
 }
@@ -455,7 +461,7 @@ Ngap_UplinkNASTransport_IEs_t *make_NAS_PDU(UPLINK_NAS_TRANSPORT_WITH_NAS_MSG_TY
 	   }
 	   break;
 	   default:
-	   	  printf("uplink nas transport unknown protocol:%d\n", nasMsgType);
+	   	  OAILOG_DEBUG(LOG_NGAP,"uplink nas transport unknown protocol:%d\n", nasMsgType);
 	   break;
 	}
 	
