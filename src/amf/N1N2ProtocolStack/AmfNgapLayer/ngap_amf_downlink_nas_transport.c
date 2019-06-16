@@ -29,12 +29,14 @@
 #include "mmData.h"
 #include "common_types.h"
 #include "common_defs.h"
+#include "log.h"
 
 
 #define DOWNLINK_BUFF_LEN 256
 void downlink_nas_transport_with_auth_request(uint8_t *data)
 {
-	printf("AUTHENTICATION_REQUEST------------ start\n");
+    OAILOG_FUNC_IN (LOG_NGAP);
+    OAILOG_DEBUG(LOG_NGAP,"encode authentication request dump--------");
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
 	  
@@ -104,19 +106,19 @@ void downlink_nas_transport_with_auth_request(uint8_t *data)
 		printf("info %p\n",info);
 	#endif
 	
-	printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
+	OAILOG_DEBUG(LOG_NGAP,"nas header encode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	nas_msg.header.extended_protocol_discriminator,
 	nas_msg.header.security_header_type,
 	nas_msg.header.sequence_number,
 	nas_msg.header.message_authentication_code);
 	
-	printf("message type:0x%x\n",mm_msg->header.message_type);
-	printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
-	printf("naskey tsc:0x%x\n",mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
-	printf("abba buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.abba)->data));
-	printf("rand buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
-	printf("autn buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
-	printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_request.eapmessage)->data));
+	OAILOG_DEBUG(LOG_NGAP,"message type:0x%x",mm_msg->header.message_type);
+	OAILOG_DEBUG(LOG_NGAP,"naskey tsc:0x%x",mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
+	OAILOG_DEBUG(LOG_NGAP,"naskey tsc:0x%x",mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
+	OAILOG_DEBUG(LOG_NGAP,"abba buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_request.abba)->data));
+	OAILOG_DEBUG(LOG_NGAP,"rand buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
+	OAILOG_DEBUG(LOG_NGAP,"autn buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
+	OAILOG_DEBUG(LOG_NGAP,"eap message buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_request.eapmessage)->data));
 	
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, DOWNLINK_BUFF_LEN/*don't know the size*/, security);
@@ -136,6 +138,12 @@ Ngap_DownlinkNASTransport_IEs_t * downlink_make_AMF_UE_NGAP_ID(unsigned long AMF
 	
 	asn_ulong2INTEGER(&ie->value.choice.AMF_UE_NGAP_ID, AMF_UE_NGAP_ID);
 	
+	OAILOG_DEBUG(LOG_NGAP,"AMF_UE_NGAP_ID:");
+	size_t i  = 0;
+	for(i ; i<ie->value.choice.AMF_UE_NGAP_ID.size;i++)
+	{
+	    OAILOG_DEBUG(LOG_NGAP,"0x%x",ie->value.choice.AMF_UE_NGAP_ID.buf[i]);
+	}
 	return ie;	
 }
 
@@ -150,6 +158,9 @@ Ngap_DownlinkNASTransport_IEs_t * downlink_make_RAN_UE_NGAP_ID(unsigned long rAN
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_RAN_UE_NGAP_ID;
 	ie->value.choice.RAN_UE_NGAP_ID = rAN_UE_NGAP_ID;
+
+	OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:%lu",ie->value.choice.RAN_UE_NGAP_ID);
+	
 
 	return ie;
 }

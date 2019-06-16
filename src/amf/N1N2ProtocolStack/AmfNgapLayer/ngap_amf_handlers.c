@@ -20,6 +20,26 @@
 #include "ngap_amf_setup_response.h"
 #include "ngap_amf_downlink_nas_transport.h"
 
+#include "Ngap_ProtocolIE-Field.h"
+#include "Ngap_InitiatingMessage.h"
+#include "Ngap_BroadcastPLMNItem.h"
+#include "Ngap_GNB-ID.h"
+#include "Ngap_GlobalGNB-ID.h"
+#include "Ngap_PagingDRX.h"
+#include "Ngap_SliceSupportItem.h"
+#include "Ngap_SupportedTAItem.h"
+#include "Ngap_UnsuccessfulOutcome.h"
+#include "Ngap_GlobalRANNodeID.h"
+
+#include  "Ngap_CriticalityDiagnostics-IE-Item.h"
+#include  "Ngap_EUTRACellIdentity.h"
+#include  "Ngap_TimeStamp.h"
+#include  "Ngap_EUTRA-CGI.h"
+#include  "Ngap_UserLocationInformationEUTRA.h"
+#include  "Ngap_AllowedNSSAI-Item.h"
+
+#include  "Ngap_AMFSetID.h"
+
 extern hash_table_ts_t g_ngap_gnb_coll;
 extern uint32_t nb_gnb_associated;
 static const char * const ng_gnb_state_str [] = {"NGAP_INIT", "NGAP_RESETTING", "NGAP_READY", "NGAP_SHUTDOWN"};
@@ -925,10 +945,8 @@ ngap_amf_handle_ng_initial_ue_message(
 	Ngap_NGAP_PDU_t *pdu)
 {
 
-    //printf("ngap_amf_handle_ng_initial_ue_message --------start\n");
-
     OAILOG_FUNC_IN (LOG_NGAP);
-
+    OAILOG_DEBUG(LOG_NGAP,"decode initial ue message dump-------");
     int rc = RETURNok;
 
     Ngap_NGSetupFailureIEs_t * ngInitialUeMsg = NULL;
@@ -950,7 +968,7 @@ ngap_amf_handle_ng_initial_ue_message(
     int				      gnb_name_size = 0;
     ue_description_t     *ue_ref = NULL;
 
-    //printf("ngap_amf_handle_ng_initial_ue_msg\n");
+  
     DevAssert (pdu != NULL);
 	
     container = &pdu->choice.initiatingMessage->value.choice.InitialUEMessage;
@@ -976,46 +994,176 @@ ngap_amf_handle_ng_initial_ue_message(
 	    {
 	        case Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
 			{
-                          ran_ue_ngap_id = initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID;
-			  //printf("RAN_UE_NGAP_ID:0x%x\n",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
+               ran_ue_ngap_id = initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID;
+			   OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:0x%x",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
 			}
 			break;
 			
             case Ngap_ProtocolIE_ID_id_NAS_PDU:
 			{
-               nas_msg =  blk2bstr(initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size);
-			  //printf("Ngap_ProtocolIE_ID_id_NAS_PDU----------------------\n");
-                          //test_ngap_amf_itti_nas_uplink_data_ind(&nas_msg);                
+               nas_msg =  blk2bstr(initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size);              
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_UserLocationInformation:
 			{
-				//printf("Ngap_ProtocolIE_ID_id_UserLocationInformation\n");
+				Ngap_UserLocationInformation_t	 UserLocationInformation =  initialUeMsgIEs_p->value.choice.UserLocationInformation;
+				switch(UserLocationInformation.present)
+				{
+				  case Ngap_UserLocationInformation_PR_userLocationInformationEUTRA:
+				  {
+				  	Ngap_UserLocationInformationEUTRA_t	*userLocationInformationEUTRA = UserLocationInformation.choice.userLocationInformationEUTRA;
+					if(!userLocationInformationEUTRA)
+						break;
+
+				    //CGI
+				    Ngap_EUTRA_CGI_t eUTRA_CGI = userLocationInformationEUTRA->eUTRA_CGI;
+					
+				    //CGI,pLMNIdentity
+				    Ngap_PLMNIdentity_t	 cgi_pLMNIdentity  = eUTRA_CGI.pLMNIdentity;
+	               
+				    OAILOG_DEBUG(LOG_NGAP,"CGI,pLMNIdentity:");
+					size_t i = 0;
+					for(; i<cgi_pLMNIdentity.size;i++)
+					{
+					   OAILOG_DEBUG(LOG_NGAP,"0x%x",cgi_pLMNIdentity.buf[i]); 
+					}
+				    //CGI,eUTRACellIdentity
+				    OAILOG_DEBUG(LOG_NGAP,"CGI,eUTRACellIdentity:");
+				    Ngap_EUTRACellIdentity_t	 eUTRACellIdentity = eUTRA_CGI.eUTRACellIdentity;
+				    i  = 0;
+				    for(; i<eUTRACellIdentity.size;i++)
+					{
+					   OAILOG_DEBUG(LOG_NGAP,"0x%x",eUTRACellIdentity.buf[i]); 
+					}
+
+                    //TAI
+                    OAILOG_DEBUG(LOG_NGAP,"TAI");
+                    Ngap_TAI_t tAI  =  userLocationInformationEUTRA->tAI;
+                    //TAI,pLMNIdentity
+                    OAILOG_DEBUG(LOG_NGAP,"TAI.pLMNIdentity");
+                    Ngap_PLMNIdentity_t	 pLMNIdentity  = tAI.pLMNIdentity;
+					i  = 0;
+					for(; i<pLMNIdentity.size;i++)
+					{
+                        OAILOG_DEBUG(LOG_NGAP,"0x%x",pLMNIdentity.buf[i]);
+					}
+                    
+                    //TAI,tAC
+                    OAILOG_DEBUG(LOG_NGAP,"TAI.tAC");
+	                Ngap_TAC_t	 tAC = tAI.tAC;
+					i  = 0;
+					for(; i<tAC.size;i++)
+					{
+                        OAILOG_DEBUG(LOG_NGAP,"0x%x",tAC.buf[i]);
+					}
+                    
+					//timeStamp
+					OAILOG_DEBUG(LOG_NGAP,"timeStamp");
+					Ngap_TimeStamp_t	*timeStamp = userLocationInformationEUTRA->timeStamp;
+					i  = 0;
+					if(!timeStamp)
+						break;
+					for(; i<timeStamp->size;i++)
+					{
+                        OAILOG_DEBUG(LOG_NGAP,"0x%x",timeStamp->buf[i]);
+					}
+				  }
+				  break;
+				  case Ngap_UserLocationInformation_PR_userLocationInformationNR:
+				  {
+				  }
+				  break;
+	              case Ngap_UserLocationInformation_PR_userLocationInformationN3IWF:
+		          {
+				  }
+				  break;
+		
+				  default:
+				  	break;
+				}
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_RRCEstablishmentCause:
 			{
-				//printf("Ngap_ProtocolIE_ID_id_RRCEstablishmentCause\n");
+				
+				Ngap_RRCEstablishmentCause_t	 RRCEstablishmentCause = initialUeMsgIEs_p->value.choice.RRCEstablishmentCause;
+				OAILOG_DEBUG(LOG_NGAP,"RRCEstablishmentCause:0x%x", RRCEstablishmentCause);
 			}
 			break;
 			case Ngap_ProtocolIE_ID_id_FiveG_S_TMSI:
 			{
-				//printf("Ngap_ProtocolIE_ID_id_FiveG_S_TMSI\n");
+				Ngap_FiveG_S_TMSI_t	 FiveG_S_TMSI = initialUeMsgIEs_p->value.choice.FiveG_S_TMSI;
+
+                OAILOG_DEBUG(LOG_NGAP,"FiveG_S_TMSI.aMFSetID");
+				Ngap_AMFSetID_t	 aMFSetID = FiveG_S_TMSI.aMFSetID;
+				size_t i  = 0;
+				for(i;i<aMFSetID.size;i++)
+				{
+                    OAILOG_DEBUG(LOG_NGAP,"0x%x", aMFSetID.buf[i]);  
+				}
+				
+				OAILOG_DEBUG(LOG_NGAP,"FiveG_S_TMSI.aMFPointer");
+	            Ngap_AMFPointer_t	 aMFPointer = FiveG_S_TMSI.aMFPointer;
+				i  = 0;
+				for(i;i<aMFPointer.size;i++)
+				{
+                   OAILOG_DEBUG(LOG_NGAP,"0x%x", aMFPointer.buf[i]);  
+				}
+				OAILOG_DEBUG(LOG_NGAP,"fiveG_S_TMSI.fiveG_TMSI");
+                Ngap_FiveG_TMSI_t	 fiveG_TMSI = FiveG_S_TMSI.fiveG_TMSI;
+				i  = 0;
+				for(i;i<fiveG_TMSI.size;i++)
+				{
+                   OAILOG_DEBUG(LOG_NGAP,"0x%x", fiveG_TMSI.buf[i]);  
+				}
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_AMFSetID:
 			{
-				//printf("Ngap_ProtocolIE_ID_id_AMFSetID\n");
+				OAILOG_DEBUG(LOG_NGAP,"AMFSetID");
+				Ngap_AMFSetID_t	 aMFSetID = initialUeMsgIEs_p->value.choice.AMFSetID;
+				size_t i  = 0;
+				for(i;i<aMFSetID.size;i++)
+				{
+                    OAILOG_DEBUG(LOG_NGAP,"0x%x", aMFSetID.buf[i]);  
+				}
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_UEContextRequest:
 			{
-				//printf("Ngap_ProtocolIE_ID_id_UEContextRequest\n");
+	            OAILOG_DEBUG(LOG_NGAP,"UEContextRequest:0x%x",initialUeMsgIEs_p->value.choice.UEContextRequest);
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_AllowedNSSAI:
 			{
-				//printf("Ngap_ProtocolIE_ID_id_AllowedNSSAI\n");
+				//Ngap_AllowedNSSAI_t	 AllowedNSSAI = initialUeMsgIEs_p->value.choice.AllowedNSSAI.list; 
+				size_t i  =0;
+				for(; i < initialUeMsgIEs_p->value.choice.AllowedNSSAI.list.count; i++)
+				{
+				   Ngap_AllowedNSSAI_Item_t *item = initialUeMsgIEs_p->value.choice.AllowedNSSAI.list.array[i];
+				  
+
+				   OAILOG_DEBUG (LOG_NGAP,"s_NSSAI:");
+				   Ngap_S_NSSAI_t	 s_NSSAI = item->s_NSSAI;
+                             
+							 
+				   Ngap_SST_t	 sST = s_NSSAI.sST;
+				   OAILOG_DEBUG (LOG_NGAP,"sST:");
+				   size_t i  = 0;
+				   for(; i< sST.size; i++)
+				   {
+                      OAILOG_DEBUG (LOG_NGAP,"0x%x",sST.buf[i]);
+				   }
+				   OAILOG_DEBUG (LOG_NGAP,"sD:");
+	               Ngap_SD_t	*sD = s_NSSAI.sD;
+				   if(!sD)
+				     continue;
+				   i = 0;
+				   for(; i< sD->size; i++)
+				   {
+                      OAILOG_DEBUG (LOG_NGAP,"0x%x",sD->buf[i]);
+				   }
+				}
 			}
 			break;
             default:
@@ -1054,11 +1202,10 @@ ngap_amf_handle_ng_initial_ue_message(
 
 
 /******************************************************************/
-
-
+   
     //ngap_amf_itti_amf_app_initial_ue_message(assoc_id,10,initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID,100,initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size,NULL,NULL,0,NULL,NULL,NULL,NULL);
     ngap_amf_itti_amf_app_initial_ue_message(assoc_id,10,100,100,bdata(nas_msg),blength(nas_msg),NULL,NULL,0,NULL,NULL,NULL,NULL);
-     return 0;
+    return 0;
 }
 
 
@@ -1066,7 +1213,6 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
     const sctp_stream_id_t stream,
 	Ngap_NGAP_PDU_t *pdu)
 {
-    //printf("ngap_amf_handle_ng_uplink_nas_transport-----\n");
     OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
     
@@ -1088,12 +1234,17 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 	    {
 	     case  Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID:
 		 {
-		 	//printf("Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID---------\n");
+		 	OAILOG_DEBUG(LOG_NGAP,"AMF_UE_NGAP_ID");
+	        size_t i  = 0;
+	        for(i ; i<uplinkNasTransportIes_p->value.choice.AMF_UE_NGAP_ID.size;i++)
+	        {
+	            OAILOG_DEBUG(LOG_NGAP,"0x%x",uplinkNasTransportIes_p->value.choice.AMF_UE_NGAP_ID.buf[i]);
+	        }
 		 }
 		 break;
          case  Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
 		 {
-		 	//printf("Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID---------\n");
+		 	 OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:%lu",uplinkNasTransportIes_p->value.choice.RAN_UE_NGAP_ID);
 		 }
 		 break;
          case Ngap_ProtocolIE_ID_id_NAS_PDU:
@@ -1105,10 +1256,84 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 		 break;
          case  Ngap_ProtocolIE_ID_id_UserLocationInformation:
 		 {
-		 	//printf("Ngap_ProtocolIE_ID_id_UserLocationInformation---------\n");
+				Ngap_UserLocationInformation_t	 UserLocationInformation =  uplinkNasTransportIes_p->value.choice.UserLocationInformation;
+				switch(UserLocationInformation.present)
+				{
+				  case Ngap_UserLocationInformation_PR_userLocationInformationEUTRA:
+				  {
+				  	Ngap_UserLocationInformationEUTRA_t	*userLocationInformationEUTRA = UserLocationInformation.choice.userLocationInformationEUTRA;
+					if(!userLocationInformationEUTRA)
+						break;
+
+				    //CGI
+				    Ngap_EUTRA_CGI_t eUTRA_CGI = userLocationInformationEUTRA->eUTRA_CGI;
+					
+				    //CGI,pLMNIdentity
+				    Ngap_PLMNIdentity_t	 cgi_pLMNIdentity  = eUTRA_CGI.pLMNIdentity;
+	               
+				    OAILOG_DEBUG(LOG_NGAP,"CGI,pLMNIdentity:");
+					size_t i = 0;
+					for(; i<cgi_pLMNIdentity.size;i++)
+					{
+					   OAILOG_DEBUG(LOG_NGAP,"0x%x",cgi_pLMNIdentity.buf[i]); 
+					}
+				    //CGI,eUTRACellIdentity
+				    OAILOG_DEBUG(LOG_NGAP,"CGI,eUTRACellIdentity:");
+				    Ngap_EUTRACellIdentity_t	 eUTRACellIdentity = eUTRA_CGI.eUTRACellIdentity;
+				    i  = 0;
+				    for(; i<eUTRACellIdentity.size;i++)
+					{
+					   OAILOG_DEBUG(LOG_NGAP,"0x%x",eUTRACellIdentity.buf[i]); 
+					}
+
+                    //TAI
+                    OAILOG_DEBUG(LOG_NGAP,"TAI");
+                    Ngap_TAI_t tAI  =  userLocationInformationEUTRA->tAI;
+                    //TAI,pLMNIdentity
+                    OAILOG_DEBUG(LOG_NGAP,"TAI.pLMNIdentity");
+                    Ngap_PLMNIdentity_t	 pLMNIdentity  = tAI.pLMNIdentity;
+					i  = 0;
+					for(; i<pLMNIdentity.size;i++)
+					{
+                        OAILOG_DEBUG(LOG_NGAP,"0x%x",pLMNIdentity.buf[i]);
+					}
+                    
+                    //TAI,tAC
+                    OAILOG_DEBUG(LOG_NGAP,"TAI.tAC");
+	                Ngap_TAC_t	 tAC = tAI.tAC;
+					i  = 0;
+					for(; i<tAC.size;i++)
+					{
+                        OAILOG_DEBUG(LOG_NGAP,"0x%x",tAC.buf[i]);
+					}
+                    
+					//timeStamp
+					OAILOG_DEBUG(LOG_NGAP,"timeStamp");
+					Ngap_TimeStamp_t	*timeStamp = userLocationInformationEUTRA->timeStamp;
+					i  = 0;
+					if(!timeStamp)
+						break;
+					for(; i<timeStamp->size;i++)
+					{
+                        OAILOG_DEBUG(LOG_NGAP,"0x%x",timeStamp->buf[i]);
+					}
+				  }
+				  break;
+				  case Ngap_UserLocationInformation_PR_userLocationInformationNR:
+				  {
+				  }
+				  break;
+	              case Ngap_UserLocationInformation_PR_userLocationInformationN3IWF:
+		          {
+				  }
+				  break;
+		
+				  default:
+				  	break;
+				}
 		 }
 		 break;
-		}
+	   }
 	}
 
     return  0;
