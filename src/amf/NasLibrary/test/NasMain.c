@@ -1046,6 +1046,8 @@ int reg_request()
 
 	 printf("nasmessagecontainer:0x%x\n",
 	 *(unsigned char *)((decoded_mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
+
+
 	 printf("REGISTRATION_REQUEST------------ end\n");
     
      return 0;

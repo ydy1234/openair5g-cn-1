@@ -127,11 +127,13 @@ Ngap_SliceSupportItem_t *make_sliceSupportItem(const snssai_t slice) {
     const char sst = slice.sst;
     OCTET_STRING_fromBuf(&item->s_NSSAI.sST, &sst, 1);
 	OAILOG_DEBUG (LOG_NGAP,"s_NSSAI.sST:0x%x",item->s_NSSAI.sST.buf[0]);
-    if (slice.sd >= 0 ) {
+    if (slice.sd >= 0 )
+    {
         uint32_t sd = ntohl(slice.sd);
         const char *sd_ptr = (const char *)&sd + 1;
         Ngap_SD_t *sD = calloc(1, sizeof(Ngap_SD_t));
         item->s_NSSAI.sD = sD;
+		
         OCTET_STRING_fromBuf(sD, sd_ptr, 3);
 		OAILOG_DEBUG (LOG_NGAP,"s_NSSAI.sD:0x%x,0x%x,0x%x",item->s_NSSAI.sD->buf[0],item->s_NSSAI.sD->buf[1],item->s_NSSAI.sD->buf[2]);
     }
@@ -156,18 +158,18 @@ Ngap_BroadcastPLMNItem_t *make_Ngap_BroadcastPLMNItem(const char *mcc, const cha
 
 void fill_broadcastPLMNList_1(Ngap_BroadcastPLMNList_t *list) {
     Ngap_BroadcastPLMNItem_t *item;
-    snssai_t slice_list[1] = { { 1, -1 } };
-    item = make_Ngap_BroadcastPLMNItem("208", "89", slice_list, 1);
+    snssai_t slice_list[1] = { { 1, 100 } };
+    item = make_Ngap_BroadcastPLMNItem("208", "89", slice_list, 100);
     ASN_SEQUENCE_ADD(list, item);
 
-    snssai_t slice_list2[2] = { { 1, -1 }, { 4, 5000} };
+    snssai_t slice_list2[2] = { { 100, 100 }, { 4, 5000} };
     item = make_Ngap_BroadcastPLMNItem("208", "93", slice_list2, 2);
     ASN_SEQUENCE_ADD(list, item);
 }
 
 void fill_broadcastPLMNList_2(Ngap_BroadcastPLMNList_t *list) {
     Ngap_BroadcastPLMNItem_t *item;
-    snssai_t slice_list[3] = { { 1, -1 }, { 2, -1 }, { 3, -1 } };
+    snssai_t slice_list[3] = { { 1, 100 }, { 2, 100 }, { 3, 100 } };
     item = make_Ngap_BroadcastPLMNItem("208", "89", slice_list, 3);
     ASN_SEQUENCE_ADD(list, item);
 }
@@ -272,6 +274,8 @@ void check_NGAP_pdu_constraints(Ngap_NGAP_PDU_t *pdu) {
 
 Ngap_NGAP_PDU_t *make_NGAP_SetupRequest() {
 
+    OAILOG_FUNC_IN (LOG_NGAP);
+	OAILOG_DEBUG(LOG_NGAP,"encode ng setup request dump--------");
     // prepare PDU message with NGSetupRequest content
 
 	Ngap_NGAP_PDU_t *pdu;
@@ -287,9 +291,8 @@ Ngap_NGAP_PDU_t *make_NGAP_SetupRequest() {
 	ngapSetupRequest = &pdu->choice.initiatingMessage->value.choice.NGSetupRequest;
 
     // Make NGSetupRequest IEs and add it to message
-
 	Ngap_NGSetupRequestIEs_t *ie;
-
+   
     ie = make_GlobalRANNodeID_ie();
     add_NGSetupRequest_ie(ngapSetupRequest, ie);
 
@@ -560,8 +563,7 @@ int main( int argc, char * argv[])
 		return -1;
 	//ngap_recv_from_sctp_server(sctp_data_p);
     #endif
-
-    //ngap_create_socket_thread(NULL);
+	
 	OAILOG_DEBUG(LOG_NGAP,"initial socket, wait......");
 	
 	sleep(5);  //init socket;
@@ -619,7 +621,7 @@ int main( int argc, char * argv[])
 	
 	while(1)
 	{
-      sleep(10);
+        sleep(10);
 	}
     
 	#if 0
