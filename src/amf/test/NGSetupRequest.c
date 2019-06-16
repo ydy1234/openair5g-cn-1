@@ -187,7 +187,6 @@ Ngap_NGSetupRequestIEs_t *make_GlobalRANNodeID_ie() {
     fill_GlobalRANNodeID_with_GlobalGNBID(&ie->value.choice.GlobalRANNodeID);
     //asn_fprint(stderr, &asn_DEF_Ngap_NGSetupRequestIEs, ie);
 
-	
     return ie;
 }
 
@@ -361,7 +360,7 @@ sctp_data_t * ngap_connect_sctp_server( )
   	if (sctp_data_p == NULL)  exit(1);
   	if(sd  = sctp_connect_to_remote_host (local_ip_addr, 1, remote_ip_addr, CONNECT_SCTP_SERVER_PORT, SOCK_STREAM, sctp_data_p) < 0)
     {
-        printf("conn sctp server:%s,id:%d, err:%s failed\n",remote_ip_addr,errno, strerror(errno));
+        OAILOG_ERROR(LOG_SCTP,"conn sctp server:%s,id:%d, err:%s failed\n",remote_ip_addr,errno, strerror(errno));
 		free(sctp_data_p);
 		sctp_data_p = NULL;
 		return NULL;
@@ -378,7 +377,7 @@ int ngap_amf_connect_sctp_server()
 	sctp_data_p = ngap_connect_sctp_server();
 	if(!sctp_data_p)
 	{
-	    printf("connect sctp server port %d failed\n", CONNECT_SCTP_SERVER_PORT);
+	    OAILOG_ERROR(LOG_SCTP,"connect sctp server port %d failed\n", CONNECT_SCTP_SERVER_PORT);
 	    return -1;
 	}
 
@@ -435,7 +434,7 @@ void ngap_sctp_read_server_data(int fd)
             }
             default: 
 			{
-               OAILOG_WARNING(LOG_SCTP, "Unhandled notification type %u\n", snp->sn_header.sn_type);
+               //OAILOG_WARNING(LOG_SCTP, "Unhandled notification type %u\n", snp->sn_header.sn_type);
                break;
             }
         }
@@ -591,7 +590,7 @@ int main( int argc, char * argv[])
     asn_enc_rval_t er;
 
     er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
-    OAILOG_ERROR(LOG_NGAP,"sctp client send buffer(%x) length(%d)",buffer,er.encoded);
+    OAILOG_DEBUG(LOG_NGAP,"sctp client send buffer(%x) length(%d)",buffer,er.encoded);
 	
     ngap_sctp_send_msg(g_ngap_sctp_server_fd, 60, 0, buffer,er.encoded);
 
@@ -625,6 +624,7 @@ int main( int argc, char * argv[])
 	}
     
 	#if 0
+	
 	//sctp_send_msg (sctp_data_p, 60, 0, buffer,er.encoded);
     int                                     flags = 0, n = 0;
     #define SCTP_RECV_BUFFER_SIZE  1024
