@@ -433,9 +433,9 @@ ngap_amf_handle_ng_setup_request(
     Ngap_NGSetupRequestIEs_t               *ie = NULL;
     Ngap_NGSetupRequestIEs_t               *ie_gnb_name = NULL;
 
-    //printf("ngap_amf_handle_ng_setup_request\n");
-    DevAssert (pdu != NULL);
+    OAILOG_DEBUG(LOG_NGAP,"decode  ng setup request dump-------");
 	
+    DevAssert (pdu != NULL);
     container = &pdu->choice.initiatingMessage->value.choice.NGSetupRequest;
 	
 	for (i = 0; i < container->protocolIEs.list.count; i++)
@@ -470,17 +470,30 @@ ngap_amf_handle_ng_setup_request(
 						 }
 						 #endif
 
-						 
-						 switch(ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.present)
+						 Ngap_GlobalGNB_ID_t 	*globalGNB_ID = ngap_GlobalRANNodeID->choice.globalGNB_ID;
+
+                         //pLMNIdentity
+						 size_t i  = 0;
+						 OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:");
+						 for(; i< globalGNB_ID->pLMNIdentity.size;i++)
+						 {
+						    OAILOG_DEBUG (LOG_NGAP,"0x%x",globalGNB_ID->pLMNIdentity.buf[i]);
+						 }
+						
+						 //gNB_ID
+						 switch(globalGNB_ID->gNB_ID.present)
 						 {
                             case Ngap_GNB_ID_PR_NOTHING:	/* No components present */
 							break;
 	                        case Ngap_GNB_ID_PR_gNB_ID:
-							{
-	                            unsigned long  size = ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.size;
-						        uint8_t gNB_ID[size];
-								memcpy(gNB_ID, ngap_GlobalRANNodeID->choice.globalGNB_ID->gNB_ID.choice.gNB_ID.buf, size);
-								//printf("gNB_ID: 0x%x,0x%x,0x%x,0x%x\n",gNB_ID[0],gNB_ID[1],gNB_ID[2],gNB_ID[3]);
+							{   
+								OAILOG_DEBUG (LOG_NGAP,"gNB_ID:");
+								BIT_STRING_t	gNB_ID = globalGNB_ID->gNB_ID.choice.gNB_ID;
+								size_t i  = 0;
+								for(; i < gNB_ID.size ; i++)
+								{
+								    OAILOG_DEBUG (LOG_NGAP,"0x%x", gNB_ID.buf[i]);
+								}	
 	                        }
 							break;
 							
@@ -508,8 +521,11 @@ ngap_amf_handle_ng_setup_request(
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_RANNodeName:
-			{
-				//printf("len:%d,RANNodeName:%s\n",setupRequestIes_p->value.choice.RANNodeName.size, setupRequestIes_p->value.choice.RANNodeName.buf);
+			{    
+				 unsigned char RANNodeName[setupRequestIes_p->value.choice.RANNodeName.size + 1];
+				 memset(RANNodeName, 0, setupRequestIes_p->value.choice.RANNodeName.size + 1);
+				 memcpy(RANNodeName,setupRequestIes_p->value.choice.RANNodeName.buf,setupRequestIes_p->value.choice.RANNodeName.size);
+				 OAILOG_DEBUG (LOG_NGAP,"RANNodeName:%s", RANNodeName);
             }		
             break;
             case Ngap_ProtocolIE_ID_id_SupportedTAList:
@@ -524,32 +540,59 @@ ngap_amf_handle_ng_setup_request(
 					
 				    //printf("TAC",supportTA->tAC.buf);
 
+					//Ngap_TAC_t	 tAC;
+                    OAILOG_DEBUG (LOG_NGAP,"tAC:");
+					size_t i = 0;
+					for(; i < supportTA->tAC.size;i++)
+					{
+                       OAILOG_DEBUG (LOG_NGAP,"0x%x",supportTA->tAC.buf[i]);  
+					}
+
+					OAILOG_DEBUG (LOG_NGAP,"broadcastPLMNList:");
+	                //Ngap_BroadcastPLMNList_t	 broadcastPLMNList;
 					int j = 0;
 					for(; j< supportTA->broadcastPLMNList.list.count; j++)
 					{
                          Ngap_BroadcastPLMNItem_t *plmnItem = supportTA->broadcastPLMNList.list.array[j];
                          if(!plmnItem)
 							 continue;
-						 //printf("pLMNIdentity:0x%x,0x%x,0x%x\n", 
-						 //plmnItem->pLMNIdentity.buf[0], plmnItem->pLMNIdentity.buf[1],plmnItem->pLMNIdentity.buf[2]);
-
-						 int k = 0;
-						 for(; k < plmnItem->tAISliceSupportList.list.count; k++)
+						 Ngap_PLMNIdentity_t	 pLMNIdentity  =  plmnItem->pLMNIdentity;
+						 size_t i  = 0;
+						 OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:");
+						 for(; i< plmnItem->pLMNIdentity.size; i++)
 						 {
-                             Ngap_SliceSupportItem_t  *slisupportItem =  plmnItem->tAISliceSupportList.list.array[k];
+                             OAILOG_DEBUG (LOG_NGAP,"0x%x",pLMNIdentity.buf[i]);
+						 }
+						 
+                         Ngap_SliceSupportList_t	 tAISliceSupportList = plmnItem->tAISliceSupportList;
+						 
+						 size_t k = 0;
+						 for(; k < tAISliceSupportList.list.count; k++)
+						 {
+                             Ngap_SliceSupportItem_t  *slisupportItem =  tAISliceSupportList.list.array[k];
                              if(!slisupportItem)
 							 	continue;
-							 	
-							 //printf("ssT:0x%x,0x%x,0x%x\n",
-							 //slisupportItem->s_NSSAI.sST.buf[0],slisupportItem->s_NSSAI.sST.buf[1],slisupportItem->s_NSSAI.sST.buf[2]);
-							 
-                             if(!slisupportItem->s_NSSAI.sD)
-                                continue;
+
+                             OAILOG_DEBUG (LOG_NGAP,"s_NSSAI:");
+							 Ngap_S_NSSAI_t	 s_NSSAI = slisupportItem->s_NSSAI;
                              
-							 //printf("sd:0x%x,0x%x,0x%x\n",
-							 //	slisupportItem->s_NSSAI.sD->buf[0],
-							 //	slisupportItem->s_NSSAI.sD->buf[1],
-							 //	slisupportItem->s_NSSAI.sD->buf[2]); 
+							 
+							 Ngap_SST_t	 sST = s_NSSAI.sST;
+							 OAILOG_DEBUG (LOG_NGAP,"sST:");
+							 size_t i  = 0;
+							 for(; i< sST.size; i++)
+							 {
+                                OAILOG_DEBUG (LOG_NGAP,"0x%x",sST.buf[i]);
+							 }
+							 OAILOG_DEBUG (LOG_NGAP,"sD:");
+	                         Ngap_SD_t	*sD = s_NSSAI.sD;
+							 if(!sD)
+							 	continue;
+							 i = 0;
+							 for(; i< sD->size; i++)
+							 {
+                                OAILOG_DEBUG (LOG_NGAP,"0x%x",sD->buf[i]);
+							 }
 						 }
 					}
 					
@@ -559,6 +602,7 @@ ngap_amf_handle_ng_setup_request(
 			break;
             case Ngap_ProtocolIE_ID_id_DefaultPagingDRX:
 			{
+				 OAILOG_DEBUG (LOG_NGAP,"PagingDRX:0x%x",setupRequestIes_p->value.choice.PagingDRX);
 		        //printf("PagingDRX:%ld\n",setupRequestIes_p->value.choice.PagingDRX);
             }
 			break;
