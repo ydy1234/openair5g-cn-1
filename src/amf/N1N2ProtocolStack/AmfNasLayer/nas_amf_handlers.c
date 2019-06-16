@@ -15,7 +15,7 @@
 void downlink_nas_transport_with_authentication_request(uint8_t *data)
 {
 	
-       OAILOG_DEBUG (LOG_NAS,"AUTHENTICATION_REQUEST encode dump ------------------");
+    OAILOG_DEBUG (LOG_NAS,"AUTHENTICATION_REQUEST encode dump ------------------");
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
 	  
@@ -375,31 +375,97 @@ int amf_handle_mm_msg_security_mode_reject(security_mode_reject_msg *security_mo
 
 int decode_registration_request_dump(nas_message_t decoded_nas_msg)
 {
-
-        OAILOG_DEBUG (LOG_NAS,"decode registration_request dump-----------------");
-	OAILOG_DEBUG (LOG_NAS,"nas header  decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
-			decoded_nas_msg.header.extended_protocol_discriminator,
-			decoded_nas_msg.header.security_header_type,
-			decoded_nas_msg.header.sequence_number,
-			decoded_nas_msg.header.message_authentication_code);
-
+    OAILOG_DEBUG (LOG_NAS,"decode registration_request dump------");
+	
+	OAILOG_DEBUG (LOG_NAS,"nas header	decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
+		decoded_nas_msg.header.extended_protocol_discriminator,
+		decoded_nas_msg.header.security_header_type,
+		decoded_nas_msg.header.sequence_number,
+		decoded_nas_msg.header.message_authentication_code);
+	
 	MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
-	OAILOG_DEBUG (LOG_NAS,"message type:0x%x",decoded_mm_msg->header.message_type);
-	OAILOG_DEBUG (LOG_NAS,"naskey tsc:0x%x",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
-	OAILOG_DEBUG (LOG_NAS,"naskey tsc:0x%x",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
-	OAILOG_DEBUG (LOG_NAS,"abba buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.abba)->data));
-	OAILOG_DEBUG (LOG_NAS,"rand buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
-	OAILOG_DEBUG (LOG_NAS,"autn buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
-	OAILOG_DEBUG (LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.eapmessage)->data));
-
-
+	   
+    OAILOG_DEBUG (LOG_NAS,"message type:0x%x",decoded_mm_msg->header.message_type);
+	OAILOG_DEBUG (LOG_NAS,"_5gsregistrationtype :is_for:0x%x,reg_type:0x%x",
+		decoded_mm_msg->specific_msg.registration_request._5gsregistrationtype.is_for,
+		decoded_mm_msg->specific_msg.registration_request._5gsregistrationtype.registration_type);
+	
+	OAILOG_DEBUG (LOG_NAS,"naskeysetidentifier: tsc:0x%x,naskeysetidentifier:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.naskeysetidentifier.tsc,
+		decoded_mm_msg->specific_msg.registration_request.naskeysetidentifier.naskeysetidentifier);
+	
+		
+	OAILOG_DEBUG (LOG_NAS,"presence:0x%x",decoded_mm_msg->specific_msg.registration_request.presence);
+	OAILOG_DEBUG (LOG_NAS,"non_current_native_nas_key_set_identifier: tsc:0x%x,naskeysetidentifier:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.tsc,
+		decoded_mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.naskeysetidentifier);
+	
+	
+	OAILOG_DEBUG (LOG_NAS,"_5gmmcapability: is_HO_supported:0x%x,is_LPP_supported:0x%x,is_S1_mode_supported:0x%x",
+		decoded_mm_msg->specific_msg.registration_request._5gmmcapability.is_HO_supported,
+		decoded_mm_msg->specific_msg.registration_request._5gmmcapability.is_LPP_supported,
+		decoded_mm_msg->specific_msg.registration_request._5gmmcapability.is_S1_mode_supported);
+	
+	
+	OAILOG_DEBUG (LOG_NAS,"uesecuritycapability nea:0x%x,nia:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.uesecuritycapability.nea,
+		decoded_mm_msg->specific_msg.registration_request.uesecuritycapability.nia);
+		
+		//NSSAI nssai;
+	OAILOG_DEBUG (LOG_NAS,"_5gstrackingareaidentity mcc:0x%x, mnc:0x%x,tac:0x%x",
+		decoded_mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mcc,
+		decoded_mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mnc,
+	
+		//ENCODE_U24->U32
+		decoded_mm_msg->specific_msg.registration_request._5gstrackingareaidentity.tac);  
+	
+	OAILOG_DEBUG (LOG_NAS,"s1uenetworkcapability eea:0x%x, eai:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.s1uenetworkcapability.eea,
+		decoded_mm_msg->specific_msg.registration_request.s1uenetworkcapability.eia);
+	
+	
+	OAILOG_DEBUG (LOG_NAS,"uplinkdatastatus:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.uplinkdatastatus);
+	OAILOG_DEBUG (LOG_NAS,"pdusessionstatus:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.pdusessionstatus);
+		
+	OAILOG_DEBUG (LOG_NAS,"micoindication.raai:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.micoindication.raai);
+		
+	OAILOG_DEBUG (LOG_NAS,"uestatus: n1_mode_reg:0x%x,s1_mode_reg:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.uestatus.n1_mode_reg,
+		decoded_mm_msg->specific_msg.registration_request.uestatus.s1_mode_reg);
+		
+		//_5GSMobileIdentity AdditionalGUTI;
+	OAILOG_DEBUG (LOG_NAS,"allowedpdusessionstatus:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.allowedpdusessionstatus);
+	OAILOG_DEBUG (LOG_NAS,"uesusagesetting:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.uesusagesetting);
+	OAILOG_DEBUG (LOG_NAS,"_5gsdrxparameters:0x%x",
+		decoded_mm_msg->specific_msg.registration_request._5gsdrxparameters);
+	
+	OAILOG_DEBUG (LOG_NAS,"eapmessage:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.registration_request.epsnasmessagecontainer)->data));
+	   //LADNIndication ladnindication;
+	OAILOG_DEBUG (LOG_NAS,"payloadcontainertype:0x%x",decoded_mm_msg->specific_msg.registration_request.payloadcontainertype);
+	OAILOG_DEBUG (LOG_NAS,"payloadcontainer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.registration_request.payloadcontainer)->data));
+	
+	OAILOG_DEBUG (LOG_NAS,"networkslicingindication,dcni:0x%x,nssci:0x%x",
+		decoded_mm_msg->specific_msg.registration_request.networkslicingindication.dcni,
+		decoded_mm_msg->specific_msg.registration_request.networkslicingindication.nssci);
+		
+	OAILOG_DEBUG (LOG_NAS,"_5gsupdatetyp,ng_ran_rcu:0x%x, sms_requested:0x%x",
+		decoded_mm_msg->specific_msg.registration_request._5gsupdatetype.ng_ran_rcu,
+		decoded_mm_msg->specific_msg.registration_request._5gsupdatetype.sms_requested);
+	
+	OAILOG_DEBUG (LOG_NAS,"nasmessagecontainer:0x%x",
+		*(unsigned char *)((decoded_mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
 	return 0;
 }
 int  decode_authentication_response_dump(nas_message_t   decoded_nas_msg)
 {
 
-         OAILOG_DEBUG (LOG_NAS,"decode authentication_response dump-----------------");
-         OAILOG_DEBUG (LOG_NAS,"nas header  decode extended_protocol_discriminator:0x%x,security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
+     OAILOG_DEBUG (LOG_NAS,"decode authentication_response dump------");
+     OAILOG_DEBUG (LOG_NAS,"nas header  decode extended_protocol_discriminator:0x%x,security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	 decoded_nas_msg.header.extended_protocol_discriminator,
 	 decoded_nas_msg.header.security_header_type,
 	 decoded_nas_msg.header.sequence_number,
@@ -412,14 +478,12 @@ int  decode_authentication_response_dump(nas_message_t   decoded_nas_msg)
 	 OAILOG_DEBUG (LOG_NAS,"param:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_response.authenticationresponseparameter)->data));
 	 OAILOG_DEBUG (LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_response.eapmessage)->data));
 
- 
-         return  0;
+     return  0;
 }
-
 
 int  decode_security_mode_complete_dump(nas_message_t  decoded_nas_msg)
 {
-        OAILOG_DEBUG (LOG_NAS,"decode security_mode_complete dump-----------------");
+    OAILOG_DEBUG (LOG_NAS,"decode security_mode_complete dump-------");
 	OAILOG_DEBUG (LOG_NAS,"nas header  decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 			decoded_nas_msg.header.extended_protocol_discriminator,
 			decoded_nas_msg.header.security_header_type,
@@ -428,12 +492,9 @@ int  decode_security_mode_complete_dump(nas_message_t  decoded_nas_msg)
 
 	MM_msg * mm_msg = &decoded_nas_msg.plain.mm;
 	OAILOG_DEBUG (LOG_NAS,"message type:0x%x", mm_msg->header.message_type);
-
-
 	OAILOG_DEBUG (LOG_NAS,"presence:0x%x",mm_msg->specific_msg.security_mode_complete.presence);
 	OAILOG_DEBUG (LOG_NAS,"nasmessagecontainer:0x%x",*(unsigned char *)((mm_msg->specific_msg.security_mode_complete.nasmessagecontainer)->data));
 
-        
 	return  0;
 }
 int amf_handle_nas_mm_message(nas_message_t * nas_msg, tai_t tai, cgi_t cgi, nas_message_decode_status_t * decode_status)
@@ -443,19 +504,19 @@ int amf_handle_nas_mm_message(nas_message_t * nas_msg, tai_t tai, cgi_t cgi, nas
   {
     case REGISTRATION_REQUEST:
 	{
-               //decode_registration_request_dump(*nas_msg);
-               amf_handle_mm_msg_registration_request(&mmMsg->specific_msg.registration_request);
+        decode_registration_request_dump(*nas_msg);
+        amf_handle_mm_msg_registration_request(&mmMsg->specific_msg.registration_request); 
     }
     break; 
 	case AUTHENTICATION_RESPONSE:
 	{
-                //decode_authentication_response_dump(*nas_msg);
+        decode_authentication_response_dump(*nas_msg);
 		amf_handle_mm_msg_authentication_response(&mmMsg->specific_msg.authentication_response);
 	}
 	break;
 	case SECURITY_MODE_COMPLETE:
 	{
-                //decode_security_mode_complete_dump(*nas_msg);
+        decode_security_mode_complete_dump(*nas_msg);
 		amf_handle_mm_msg_security_mode_complete(&mmMsg->specific_msg.security_mode_complete);
 	}
 	break;
