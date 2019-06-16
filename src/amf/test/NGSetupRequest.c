@@ -403,11 +403,15 @@ void ngap_sctp_read_server_data(int fd)
     memset ((void *)&sinfo, 0, sizeof (struct sctp_sndrcvinfo));
     recvSize = sctp_recvmsg (fd, (void *)recvBuffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr *)&addr, &from_len, &sinfo, &flags);
     
-    if (recvSize <= 0)
-    {
-        OAILOG_DEBUG (LOG_SCTP, "An error occured during read\n");
-        OAILOG_ERROR (LOG_SCTP, "sctp_recvmsg: %s:%d\n", strerror (errno), errno);
-        //continue;
+    if (recvSize <= 0)  //<= 
+    {   
+        if(recvSize < 0)
+        {
+            OAILOG_DEBUG (LOG_SCTP, "An error occured during read,recvSize:%d\n",recvSize);
+            OAILOG_ERROR (LOG_SCTP, "sctp_recvmsg: %s:%d\n", strerror (errno), errno);
+        }
+        //continue;  
+        //==0 sctp mechanism ?
         return NULL;
     }
 	OAILOG_DEBUG(LOG_SCTP,"recv size:%d\n", recvSize);

@@ -125,7 +125,7 @@ typedef  enum  NGAP_AMF_MSG_TYPE_STATE_MACHINE
 
 int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
 {
-    //printf("ngap_amf_state_machine  ------------- start\n");
+    OAILOG_FUNC_IN (LOG_NGAP);
     uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
 	//pdu = make_NGAP_SetupRequest();
@@ -133,19 +133,22 @@ int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
     switch(msgType)
     {
       case NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE:
-	  {
+	  {  OAILOG_DEBUG(LOG_NAS,"initial ue msg");
+	     sleep(3);
 	  	 pdu =  make_NGAP_InitialUEMessage();
 	  }
 	  break;
 	  case NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE:
 	  {
 	  	 OAILOG_DEBUG(LOG_NAS,"authentication response");
+		 sleep(3);
 	  	 pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);
 	  }
 	  break;
 	  case NGAP_AMF_MSG_TYPE_SECURITY_MODE_COMPLETE:
 	  {
 	  	 OAILOG_DEBUG(LOG_NAS,"security mode complete");
+		 sleep(3);
 	  	 pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_SECUTIRY_MODE_COMPLETE);
 	  }
 	  break;
@@ -773,6 +776,8 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
     //state machine
     //send to initial ue msg
 
+	printf("initial ue msg\n");
+	sleep(3);
     ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE);
 	
 	//ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, encodePdu);

@@ -549,6 +549,7 @@ void add_NGInitialUeMessage_ie(Ngap_InitialUEMessage_t *ngapInitialUeMsg, Ngap_I
 
 Ngap_NGAP_PDU_t *make_NGAP_InitialUEMessage()
 {
+    OAILOG_FUNC_IN (LOG_NGAP);
 	Ngap_NGAP_PDU_t       *pdu = NULL;
 	sctp_data_t * sctp_data_p = NULL;
 	uint8_t * buffer_p = NULL;
