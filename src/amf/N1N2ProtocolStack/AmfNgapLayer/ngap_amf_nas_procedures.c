@@ -214,8 +214,8 @@ ngap_generate_downlink_nas_transport (
     //OAILOG_NOTICE (LOG_NGAP, "Send NGAP DOWNLINK_NAS_TRANSPORT message ue_id = " AMF_UE_NGAP_ID_FMT " AMF_UE_NGAP_ID = " AMF_UE_NGAP_ID_FMT " gNB_UE_NGAP_ID = " RAN_UE_NGAP_ID_FMT "\n",
     //            ue_id, (amf_ue_ngap_id_t)ue_ref->amf_ue_ngap_id, (ran_ue_ngap_id_t)ue_ref->ran_ue_ngap_id);
     bstring b = blk2bstr(buffer_p,er.encoded);
-    printf("ngap_amf_itti_send_sctp_request\n");
-    printf("assoc_id (%d)\n",ue_ref->gnb->sctp_assoc_id);
+    //printf("ngap_amf_itti_send_sctp_request\n");
+    //printf("assoc_id (%d)\n",ue_ref->gnb->sctp_assoc_id);
     //ngap_amf_itti_send_sctp_request (&b , ran_ue_ngap_id, 1, ran_ue_ngap_id);
     ngap_amf_itti_send_sctp_request (&b , ue_ref->gnb->sctp_assoc_id, ue_ref->sctp_stream_send, ue_ref->amf_ue_ngap_id);
   }

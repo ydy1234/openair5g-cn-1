@@ -142,22 +142,22 @@ static sctp_association_t *sctp_is_assoc_in_list (sctp_assoc_id_t assoc_id)
 {
   sctp_association_t              *assoc_desc = NULL;
 
-  printf("assos_id(%d)\n",assoc_id);
+  //printf("assos_id(%d)\n",assoc_id);
   if (assoc_id < 0) {
-    printf("NULL\n");
+    //printf("NULL\n");
     return NULL;
   }
 
   for (assoc_desc = sctp_desc.available_connections_head; assoc_desc; assoc_desc = assoc_desc->next_assoc) {
-    printf("assos_id(%d) in sctp_desc\n",assoc_desc->assoc_id);
-    printf("assos_desc(%p)\n",assoc_desc);
+    //printf("assos_id(%d) in sctp_desc\n",assoc_desc->assoc_id);
+    //printf("assos_desc(%p)\n",assoc_desc);
     if (assoc_desc->assoc_id == assoc_id) {
-      printf("found\n");
+      //printf("found\n");
       break;
     }
   }
-  printf("in sctp_is_assoc_in_list：sctp_desc.available_connections_head(%p)\n",sctp_desc.available_connections_head);
-  printf("in sctp_is_assoc_in_list：assoc_desc(%p)\n",assoc_desc);
+  //printf("in sctp_is_assoc_in_list：sctp_desc.available_connections_head(%p)\n",sctp_desc.available_connections_head);
+  //printf("in sctp_is_assoc_in_list：assoc_desc(%p)\n",assoc_desc);
   return assoc_desc;
 }
 
@@ -265,15 +265,15 @@ static int sctp_send_msg (
     uint16_t stream,
     STOLEN_REF bstring *payload)
 {
-  printf("in sctp_send_msg\n");
+  //printf("in sctp_send_msg\n");
   sctp_association_t              *assoc_desc = NULL;
 
-  printf("sctp_assoc_id_t:%u\n", sctp_assoc_id);
+  //printf("sctp_assoc_id_t:%u\n", sctp_assoc_id);
   
   DevAssert (*payload);
-  printf("after DevAssert (*payload)\n");
+  //printf("after DevAssert (*payload)\n");
   if ((assoc_desc = sctp_is_assoc_in_list (sctp_assoc_id)) == NULL) {
-    printf("This assoc id has not been fount in list (%d)\n",sctp_assoc_id);
+    //printf("This assoc id has not been fount in list (%d)\n",sctp_assoc_id);
     OAILOG_DEBUG (LOG_SCTP, "This assoc id has not been fount in list (%d)\n", sctp_assoc_id);
     return -1;
   }
@@ -282,11 +282,11 @@ static int sctp_send_msg (
     /*
      * The socket is invalid may be closed.
      */
-    printf("The socket is invalid may be closed (assoc id %d)\n",sctp_assoc_id);
+    //printf("The socket is invalid may be closed (assoc id %d)\n",sctp_assoc_id);
     OAILOG_DEBUG (LOG_SCTP, "The socket is invalid may be closed (assoc id %d)\n", sctp_assoc_id);
     return -1;
   }
-  printf("sctp_sendmsg\n");
+  //printf("sctp_sendmsg\n");
 
   OAILOG_DEBUG (LOG_SCTP, "[%d][%d] Sending buffer %p of %d bytes on stream %d with ppid %d\n",
       assoc_desc->sd, sctp_assoc_id, bdata(*payload), blength(*payload), stream, assoc_desc->ppid);
@@ -493,7 +493,7 @@ static inline int sctp_read_from_socket (int sd, uint32_t ppid)
     /*
      * Data payload received
      */
-    printf("Data payload received\n");
+    //printf("Data payload received\n");
   #if 1
         printf("sctp server recv buffer length(%d)\nbuffer:\t",n);
         int i=0;
@@ -735,13 +735,13 @@ sctp_association_t* add_new_association(int sd, uint32_t ppid, struct sctp_assoc
     OAILOG_ERROR (LOG_SCTP, "Failed to allocate new sctp peer \n");
     return NULL;
   }
-  printf("After sctp_add_new_peer\n");
+  //printf("After sctp_add_new_peer\n");
   new_association->sd = sd;
   new_association->ppid = ppid;
   new_association->instreams = sctp_assoc_changed->sac_inbound_streams;
   new_association->outstreams = sctp_assoc_changed->sac_outbound_streams;
   new_association->assoc_id = (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id;
-  printf("sctp_assoc_changed->sac_assoc_id(%d)\n",sctp_assoc_changed->sac_assoc_id);
+  //printf("sctp_assoc_changed->sac_assoc_id(%d)\n",sctp_assoc_changed->sac_assoc_id);
   sctp_get_localaddresses(sd, NULL, NULL);
   sctp_get_peeraddresses(sd, &new_association->peer_addresses, &new_association->nb_peer_addresses);
 
@@ -761,7 +761,6 @@ sctp_association_t* add_new_association(int sd, uint32_t ppid, struct sctp_assoc
 int handle_assoc_change(int sd, uint32_t ppid, struct sctp_assoc_change  *sctp_assoc_changed) {
   int rc = SCTP_RC_NORMAL_READ;
   switch (sctp_assoc_changed->sac_state) {
-  printf("888888888888888888 sd:%d,ppid:%d,sac_assoc_id:%d\n", sd, ppid, sctp_assoc_changed->sac_assoc_id);
   case SCTP_COMM_UP: {
     if (add_new_association(sd, ppid, sctp_assoc_changed) == NULL) {
       rc = SCTP_RC_ERROR;
