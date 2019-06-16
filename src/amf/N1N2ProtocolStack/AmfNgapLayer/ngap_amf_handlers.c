@@ -125,7 +125,7 @@ typedef  enum  NGAP_AMF_MSG_TYPE_STATE_MACHINE
 
 int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
 {
-    printf("ngap_amf_state_machine  ------------- start\n");
+    //printf("ngap_amf_state_machine  ------------- start\n");
     uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
 	//pdu = make_NGAP_SetupRequest();
@@ -139,29 +139,29 @@ int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
 	  break;
 	  case NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE:
 	  {
-	  	 printf("authentication response\n");
+	  	 OAILOG_DEBUG(LOG_NAS,"authentication response");
 	  	 pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);
 	  }
 	  break;
 	  case NGAP_AMF_MSG_TYPE_SECURITY_MODE_COMPLETE:
 	  {
-	  	 printf("security mode complete\n");
+	  	 OAILOG_DEBUG(LOG_NAS,"security mode complete");
 	  	 pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_SECUTIRY_MODE_COMPLETE);
 	  }
 	  break;
 	  case NGAP_AMF_MSG_TYPE_SECURITY_MODE_REJECT:
 	  {
-	  	 printf("security mode reject\n");
+	  	 OAILOG_DEBUG(LOG_NAS,"security mode reject");
 	  	 pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_SECUTIRY_MODE_REJECT);
 	  }
 	  break;
 	  case NGAP_AMF_MSG_TYPE_AUTHENTICATION_RESULT:
 	  {
-	  	 printf("authentication result \n");
+	  	 OAILOG_DEBUG(LOG_NAS,"authentication result");
 	  }
 	  break;
 	  default:
-	  	 printf("ngap amf state machine unknown msg type:0x%x\n", msgType);
+	  	 OAILOG_DEBUG(LOG_NAS,"ngap amf state machine unknown msg type:0x%x", msgType);
 	  break;
 	}
 
@@ -908,12 +908,89 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
     return  0;
 }
 
+int decode_authentication_request_dump(nas_message_t	decoded_nas_msg)
+{
+    OAILOG_DEBUG(LOG_NAS,"decode authentication request dump------");
+	OAILOG_DEBUG(LOG_NAS,"nas header decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
+	decoded_nas_msg.header.extended_protocol_discriminator,
+	decoded_nas_msg.header.security_header_type,
+	decoded_nas_msg.header.sequence_number,
+	decoded_nas_msg.header.message_authentication_code);
+	
+	MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
+	OAILOG_DEBUG(LOG_NAS,"message type:0x%x",decoded_mm_msg->header.message_type);
+	OAILOG_DEBUG(LOG_NAS,"naskey tsc:0x%x",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.tsc);
+	OAILOG_DEBUG(LOG_NAS,"naskey tsc:0x%x",decoded_mm_msg->specific_msg.authentication_request.naskeysetidentifier.naskeysetidentifier);
+	OAILOG_DEBUG(LOG_NAS,"abba buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.abba)->data));
+	OAILOG_DEBUG(LOG_NAS,"rand buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.authenticationparameterrand)->data));
+	OAILOG_DEBUG(LOG_NAS,"autn buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.authenticationparameterautn)->data));
+	OAILOG_DEBUG(LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_request.eapmessage)->data));
+
+	return 0;
+}
+
+int decode_authentication_result_dump(nas_message_t	decoded_nas_msg)
+{
+    OAILOG_DEBUG(LOG_NAS,"decode authentication result dump------");
+	OAILOG_DEBUG(LOG_NAS,"nas header	decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
+		decoded_nas_msg.header.extended_protocol_discriminator,
+		decoded_nas_msg.header.security_header_type,
+		decoded_nas_msg.header.sequence_number,
+		decoded_nas_msg.header.message_authentication_code);
+	
+	MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
+	OAILOG_DEBUG(LOG_NAS,"message type:0x%x",decoded_mm_msg->header.message_type);
+	OAILOG_DEBUG(LOG_NAS,"naskey tsc:0x%x",decoded_mm_msg->specific_msg.authentication_result.naskeysetidentifier.tsc);
+	OAILOG_DEBUG(LOG_NAS,"naskey tsc:0x%x",decoded_mm_msg->specific_msg.authentication_result.naskeysetidentifier.naskeysetidentifier);
+	OAILOG_DEBUG(LOG_NAS,"abba buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_result.abba)->data));
+	OAILOG_DEBUG(LOG_NAS,"presence:0x%x", decoded_mm_msg->specific_msg.authentication_result.presence);
+	OAILOG_DEBUG(LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_result.eapmessage)->data));
+
+    return 0;
+}
+int decode_security_mode_command_dump(nas_message_t	decoded_nas_msg)
+{
+    OAILOG_DEBUG(LOG_NAS,"decode security mode command dump------");
+	OAILOG_DEBUG(LOG_NAS,"nas header	decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
+		decoded_nas_msg.header.extended_protocol_discriminator,
+		decoded_nas_msg.header.security_header_type,
+		decoded_nas_msg.header.sequence_number,
+		decoded_nas_msg.header.message_authentication_code);
+	
+    MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
+	OAILOG_DEBUG(LOG_NAS,"message type:0x%x", decoded_mm_msg->header.message_type);
+		
+	OAILOG_DEBUG(LOG_NAS,"nassecurityalgorithms,typeOfCipheringAlgorithm:0x%x,typeOfIntegrityProtectionAlgorithm:0x%x",
+				decoded_mm_msg->specific_msg.security_mode_command.nassecurityalgorithms.typeOfCipheringAlgorithm,
+				decoded_mm_msg->specific_msg.security_mode_command.nassecurityalgorithms.typeOfIntegrityProtectionAlgorithm );
+	OAILOG_DEBUG(LOG_NAS,"naskeysetidentifier,tsc:0x%x,naskeysetidentifier:0x%x",
+				decoded_mm_msg->specific_msg.security_mode_command.naskeysetidentifier.tsc,
+				decoded_mm_msg->specific_msg.security_mode_command.naskeysetidentifier.naskeysetidentifier);
+	OAILOG_DEBUG(LOG_NAS,"uesecuritycapability.nea:0x%x,nia:0x%x",	
+				decoded_mm_msg->specific_msg.security_mode_command.uesecuritycapability.nea,
+				decoded_mm_msg->specific_msg.security_mode_command.uesecuritycapability.nia);
+		
+	OAILOG_DEBUG(LOG_NAS,"presence:0x%x",decoded_mm_msg->specific_msg.security_mode_command.presence);
+			 
+	OAILOG_DEBUG(LOG_NAS,"imeisvrequest:0x%x",decoded_mm_msg->specific_msg.security_mode_command.imeisvrequest);
+		
+	OAILOG_DEBUG(LOG_NAS,"epsnassecurityalgorithms, typeOfCipheringAlgoithm:0x%x,typeOfIntegrityProtectionAlgoithm:0x%x",
+				decoded_mm_msg->specific_msg.security_mode_command.epsnassecurityalgorithms.typeOfCipheringAlgoithm,
+				decoded_mm_msg->specific_msg.security_mode_command.epsnassecurityalgorithms.typeOfIntegrityProtectionAlgoithm); 
+		
+	OAILOG_DEBUG(LOG_NAS,"additional5gsecurityinformation,hdp:0x%x,rinmr:0x%x",
+				decoded_mm_msg->specific_msg.security_mode_command.additional5gsecurityinformation.hdp,
+				decoded_mm_msg->specific_msg.security_mode_command.additional5gsecurityinformation.rinmr);
+		
+	OAILOG_DEBUG(LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.security_mode_command.eapmessage)->data));
+	OAILOG_DEBUG(LOG_NAS,"abba buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.security_mode_command.abba)->data));
+	return 0;
+}
+
 int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
 								Ngap_NGAP_PDU_t *pdu)
 {
-    printf("ngap_amf_handle_ng_downlink_nas_transport-----\n");
-
-	 //OAILOG_FUNC_IN (LOG_NGAP);
+	OAILOG_FUNC_IN (LOG_NGAP);
     int rc = RETURNok;
     
     int i = 0;
@@ -980,16 +1057,19 @@ int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, co
 	        {
 			    case AUTHENTICATION_REQUEST:
 				{
+					decode_authentication_request_dump(decoded_nas_msg);
 				    ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);	
 				}
 				break;
 				case AUTHENTICATION_RESULT:
 				{
+					decode_authentication_result_dump(decoded_nas_msg);
                     ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_AUTHENTICATION_RESULT);
 				}
 				break;
 				case SECURITY_MODE_COMMAND:
 				{
+					decode_security_mode_command_dump(decoded_nas_msg);
 					ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_SECURITY_MODE_COMPLETE);
 					//sleep(3);
 					//ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_SECURITY_MODE_REJECT);	

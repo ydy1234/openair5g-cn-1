@@ -31,6 +31,7 @@
 #include  "nas_message.h"
 #include  "mmData.h"
 #include  "common_defs.h"
+#include  "log.h"
 
 
 #define BUFF_LEN  256
@@ -39,8 +40,6 @@
 
 void reg_request(uint8_t *data, uint32_t  bufLen)
 {
-    
-	printf("REGISTRATION_REQUEST------------ start\n");
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
 	  
@@ -162,95 +161,86 @@ void reg_request(uint8_t *data, uint32_t  bufLen)
 	  
 	//bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 	
-	#if 0
-		printf("1 start nas_message_encode \n");
-		printf("security %p\n",security);
-		printf("info %p\n",info);
-	#endif
 	
-	printf("encode-------------------------\n");
-	printf("nas header encode extended_protocol_discriminator:0x%x\n, security_header_type:0x%x\n,sequence_number:0x%x\n,message_authentication_code:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"encode regisration request  dump ------");
+	OAILOG_DEBUG(LOG_NAS,"nas header encode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	nas_msg.header.extended_protocol_discriminator,
 	nas_msg.header.security_header_type,
 	nas_msg.header.sequence_number,
 	nas_msg.header.message_authentication_code);
 	
-	printf("message type:0x%x\n",mm_msg->header.message_type);
-	printf("_5gsregistrationtype :is_for:0x%x,reg_type:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"message type:0x%x",mm_msg->header.message_type);
+	OAILOG_DEBUG(LOG_NAS,"_5gsregistrationtype :is_for:0x%x,reg_type:0x%x",
 	mm_msg->specific_msg.registration_request._5gsregistrationtype.is_for,
 	mm_msg->specific_msg.registration_request._5gsregistrationtype.registration_type);
 		
-	printf("naskeysetidentifier: tsc:0x%x,naskeysetidentifier:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"naskeysetidentifier: tsc:0x%x,naskeysetidentifier:0x%x",
 	mm_msg->specific_msg.registration_request.naskeysetidentifier.tsc,
 	mm_msg->specific_msg.registration_request.naskeysetidentifier.naskeysetidentifier);
 	
-	printf("presence:0x%x\n",mm_msg->specific_msg.registration_request.presence);
-	printf("non_current_native_nas_key_set_identifier: tsc:0x%x,naskeysetidentifier:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"presence:0x%x",mm_msg->specific_msg.registration_request.presence);
+	OAILOG_DEBUG(LOG_NAS,"non_current_native_nas_key_set_identifier: tsc:0x%x,naskeysetidentifier:0x%x",
 	mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.tsc,
 	mm_msg->specific_msg.registration_request.non_current_native_nas_key_set_identifier.naskeysetidentifier);
 	
-	printf("_5gmmcapability: is_HO_supported:0x%x,is_LPP_supported:0x%x,is_S1_mode_supported:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"_5gmmcapability: is_HO_supported:0x%x,is_LPP_supported:0x%x,is_S1_mode_supported:0x%x",
 	mm_msg->specific_msg.registration_request._5gmmcapability.is_HO_supported,
 	mm_msg->specific_msg.registration_request._5gmmcapability.is_LPP_supported,
 	mm_msg->specific_msg.registration_request._5gmmcapability.is_S1_mode_supported);
 	
-	printf("uesecuritycapability nea:0x%x,nia:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"uesecuritycapability nea:0x%x,nia:0x%x",
 	mm_msg->specific_msg.registration_request.uesecuritycapability.nea,
 	mm_msg->specific_msg.registration_request.uesecuritycapability.nia);
 		
 	//NSSAI nssai;
-	printf("_5gstrackingareaidentity mcc:0x%x, mnc:0x%x,tac:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"_5gstrackingareaidentity mcc:0x%x, mnc:0x%x,tac:0x%x",
 	mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mcc,
 	mm_msg->specific_msg.registration_request._5gstrackingareaidentity.mnc,
 	mm_msg->specific_msg.registration_request._5gstrackingareaidentity.tac);
 	
-	printf("s1uenetworkcapability eea:0x%x, eai:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"s1uenetworkcapability eea:0x%x, eai:0x%x",
 	mm_msg->specific_msg.registration_request.s1uenetworkcapability.eea,
 	mm_msg->specific_msg.registration_request.s1uenetworkcapability.eia);
 	
-	printf("uplinkdatastatus:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"uplinkdatastatus:0x%x",
 	mm_msg->specific_msg.registration_request.uplinkdatastatus);
-	printf("pdusessionstatus:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"pdusessionstatus:0x%x",
 	mm_msg->specific_msg.registration_request.pdusessionstatus);
 		
-	printf("micoindication.raai:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"micoindication.raai:0x%x",
 	mm_msg->specific_msg.registration_request.micoindication.raai);
 		
-	printf("uestatus: n1_mode_reg:0x%x,s1_mode_reg:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"uestatus: n1_mode_reg:0x%x,s1_mode_reg:0x%x",
 	mm_msg->specific_msg.registration_request.uestatus.n1_mode_reg,
 	mm_msg->specific_msg.registration_request.uestatus.s1_mode_reg);
 		
 	//_5GSMobileIdentity AdditionalGUTI;
 	
-	printf("allowedpdusessionstatus:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"allowedpdusessionstatus:0x%x",
 	mm_msg->specific_msg.registration_request.allowedpdusessionstatus);
-	printf("uesusagesetting:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"uesusagesetting:0x%x",
 	mm_msg->specific_msg.registration_request.uesusagesetting);
-	printf("_5gsdrxparameters:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"_5gsdrxparameters:0x%x",
 	mm_msg->specific_msg.registration_request._5gsdrxparameters);
 	
-	printf("eapmessage:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_request.epsnasmessagecontainer)->data));
+	OAILOG_DEBUG(LOG_NAS,"eapmessage:0x%x",*(unsigned char *)((mm_msg->specific_msg.registration_request.epsnasmessagecontainer)->data));
 	//LADNIndication ladnindication;
-	printf("payloadcontainertype:0x%x\n",mm_msg->specific_msg.registration_request.payloadcontainertype);
-	printf("payloadcontainer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_request.payloadcontainer)->data));
+	OAILOG_DEBUG(LOG_NAS,"payloadcontainertype:0x%x",mm_msg->specific_msg.registration_request.payloadcontainertype);
+	OAILOG_DEBUG(LOG_NAS,"payloadcontainer:0x%x",*(unsigned char *)((mm_msg->specific_msg.registration_request.payloadcontainer)->data));
 	   
-	printf("networkslicingindication,dcni:0x%x,nssci:0x%x\n",
+	OAILOG_DEBUG(LOG_NAS,"networkslicingindication,dcni:0x%x,nssci:0x%x",
 	mm_msg->specific_msg.registration_request.networkslicingindication.dcni,
 	mm_msg->specific_msg.registration_request.networkslicingindication.nssci);
 		
-	printf("_5gsupdatetype ng_ran_rcu:0x%x, sms_requested:0x%x\n",
-	
+	OAILOG_DEBUG(LOG_NAS,"_5gsupdatetype ng_ran_rcu:0x%x, sms_requested:0x%x",
 	mm_msg->specific_msg.registration_request._5gsupdatetype.ng_ran_rcu,
 	mm_msg->specific_msg.registration_request._5gsupdatetype.sms_requested);
 	
 	 
-	printf("nasmessagecontainer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
+	OAILOG_DEBUG(LOG_NAS,"nasmessagecontainer:0x%x",*(unsigned char *)((mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, bufLen/*don't know the size*/, security);
-    
-	//info->data = data;
-	//memcpy(info->data, data, BUFF_LEN * sizeof(unsigned char ) -1);
-	//info->slen = BUFF_LEN * sizeof(unsigned char )  -1 ;
+   
 }
 
 //RAN_UE_NGAP_ID

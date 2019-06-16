@@ -715,7 +715,7 @@ int auth_result()
 	 printf("presence:0x%x\n", decoded_mm_msg->specific_msg.authentication_result.presence);
 	 printf("eap message buffer:0x%x\n",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_result.eapmessage)->data));
      
-     printf("AUTHENTICATION_REQUEST------------ end\n");
+     printf("AUTHENTICATION_RESULT------------ end\n");
      return  0;
 }
 

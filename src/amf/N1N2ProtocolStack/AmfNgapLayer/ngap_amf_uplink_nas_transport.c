@@ -50,12 +50,12 @@
 #include "mmData.h"
 #include "common_types.h"
 #include "common_defs.h"
+#include "log.h"
 
 
 #define UPLINK_BUFF_LEN 256
 void uplink_nas_transport_with_auth_response(uint8_t *data)
 {
-    printf("AUTHENTICATION_RESPONSE------------ start\n");
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
   
@@ -126,21 +126,20 @@ void uplink_nas_transport_with_auth_response(uint8_t *data)
 	printf("info %p\n",info);
 	#endif
 
-	printf("encode-----------------\n");
-	printf("nas header encode extended_protocol_discriminator:0x%x,\nsecurity_header_type:0x%x,\nsequence_number:0x%x,\nmessage_authentication_code:0x%x,\n",
+	OAILOG_DEBUG(LOG_NAS,"encode  autentication response dump-------");
+	OAILOG_DEBUG(LOG_NAS,"nas header encode extended_protocol_discriminator:0x%x,security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	nas_msg.header.extended_protocol_discriminator,
 	nas_msg.header.security_header_type,
 	nas_msg.header.sequence_number,
 	nas_msg.header.message_authentication_code);
 
-	printf("message type:0x%x\n",mm_msg->header.message_type);
-	printf("presence:0x%x\n",mm_msg->specific_msg.authentication_response.presence);
-	printf("param:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_response.authenticationresponseparameter)->data));
-	printf("eap message buffer:0x%x\n",*(unsigned char *)((mm_msg->specific_msg.authentication_response.eapmessage)->data));
+	OAILOG_DEBUG(LOG_NAS,"message type:0x%x",mm_msg->header.message_type);
+	OAILOG_DEBUG(LOG_NAS,"presence:0x%x",mm_msg->specific_msg.authentication_response.presence);
+	OAILOG_DEBUG(LOG_NAS,"param:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_response.authenticationresponseparameter)->data));
+	OAILOG_DEBUG(LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_response.eapmessage)->data));
 
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, UPLINK_BUFF_LEN/*don't know the size*/, security);
-    
 }
 
 void uplink_nas_transport_with_security_mode_complete(uint8_t *data)
