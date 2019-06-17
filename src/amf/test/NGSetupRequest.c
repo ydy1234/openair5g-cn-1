@@ -543,9 +543,57 @@ sctp_data_t * ngap_connect_sctp_server( )
 	return sctp_data_p;
 }
 #endif
+static  handler(int signo)
+{
+    uint8_t sig = 0 ;
+    switch(signo) {
+    case SIGUSR1:  //处理信号 SIGUSR1 
+		sig =  1;
+        break;
+    case SIGUSR2: //处理信号 SIGUSR2
+        sig =  2;
+        break;
+    default:      //本例不支持
+        break;
+    }
+
+    if(sig)
+    {
+	    uint32_t ppid =  60;
+	    Ngap_NGAP_PDU_t *pdu = NULL;
+	    if(sig == 1)
+	       pdu = make_NGAP_SetupRequest();
+	    else if(sig == 2)
+	       pdu = make_NGAP_InitialUEMessage();
+	       //pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);
+
+       // debug
+       asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
+
+       check_NGAP_pdu_constraints(pdu);
+       //encode_pdu_to_aper_and_write_to_stdout(pdu);
+
+	   //encode
+       size_t buffer_size = 1000;
+       void *buffer = calloc(1,buffer_size);
+       asn_enc_rval_t er;
+
+       er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, pdu, buffer, buffer_size);
+       OAILOG_DEBUG(LOG_NGAP,"sctp client send buffer(%x) length(%d)",buffer,er.encoded);
+	
+       ngap_sctp_send_msg(g_ngap_sctp_server_fd, 60, 0, buffer,er.encoded);
+
+       ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
+    }
+}
 
 int main( int argc, char * argv[])
 {
+	//为两个信号设置信号处理函数
+    signal(SIGUSR1, handler);
+    signal(SIGUSR2, handler);
+
+    
     CHECK_INIT_RETURN (OAILOG_INIT (LOG_SPGW_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
 	OAILOG_DEBUG(LOG_NGAP, "initial fake gnb......");
     nas_message_t  nas_msg;
@@ -571,7 +619,7 @@ int main( int argc, char * argv[])
 	   OAILOG_ERROR(LOG_NGAP,"init sctp server port %d failed, exit", CONNECT_SCTP_SERVER_PORT);
        exit(0);
 	}
-	
+	#if 0
 	uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;
 	pdu = make_NGAP_SetupRequest();
@@ -595,6 +643,7 @@ int main( int argc, char * argv[])
     ngap_sctp_send_msg(g_ngap_sctp_server_fd, 60, 0, buffer,er.encoded);
 
     ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, pdu);
+	#endif
     #if 0   
     pdu = make_NGAP_InitialUEMessage();
 

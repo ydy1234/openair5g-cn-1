@@ -135,7 +135,7 @@ int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
       case NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE:
 	  {  
 	  	 OAILOG_DEBUG(LOG_NAS,"initial ue msg");
-	  	 pdu =  make_NGAP_InitialUEMessage();
+	  	 //pdu =  make_NGAP_InitialUEMessage();
 	  }
 	  break;
 	  case NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE:
