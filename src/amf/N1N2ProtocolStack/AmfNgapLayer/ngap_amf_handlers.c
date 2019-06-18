@@ -171,7 +171,7 @@ int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
 
     // debug print
     asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
-
+    
     //check valid
     check_NGAP_pdu_constraints(pdu);
    
@@ -1008,6 +1008,8 @@ int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, co
     bstring nas_msg;
     DevAssert (pdu != NULL);
 	
+	asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);//asn_printf
+	
     container = &pdu->choice.initiatingMessage->value.choice.DownlinkNASTransport;
 	
 	for (i = 0; i < container->protocolIEs.list.count; i++)
@@ -1020,22 +1022,22 @@ int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, co
 	    {
 	     case Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID:
 		 {
-		 	OAILOG_DEBUG(LOG_NGAP,"AMF_UE_NGAP_ID:");
+		 	//OAILOG_DEBUG(LOG_NGAP,"AMF_UE_NGAP_ID:");
 	        size_t i  = 0;
 	        for(i ; i<downlinkNasTransportIes_p->value.choice.AMF_UE_NGAP_ID.size;i++)
 	        {
-	           OAILOG_DEBUG(LOG_NGAP,"0x%x",downlinkNasTransportIes_p->value.choice.AMF_UE_NGAP_ID.buf[i]);
+	           //OAILOG_DEBUG(LOG_NGAP,"0x%x",downlinkNasTransportIes_p->value.choice.AMF_UE_NGAP_ID.buf[i]);
 	        }
 		 }
 		 break;
          case Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
 		 {
-		 	OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:%lu",downlinkNasTransportIes_p->value.choice.RAN_UE_NGAP_ID);
+		 	//OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:%lu",downlinkNasTransportIes_p->value.choice.RAN_UE_NGAP_ID);
 		 }
 		 break;
          case Ngap_ProtocolIE_ID_id_NAS_PDU:
 		 {
-		 	OAILOG_DEBUG(LOG_NGAP,"Ngap_ProtocolIE_ID_id_NAS_PDU");
+		 	//OAILOG_DEBUG(LOG_NGAP,"Ngap_ProtocolIE_ID_id_NAS_PDU");
 			nas_msg =  blk2bstr(downlinkNasTransportIes_p->value.choice.NAS_PDU.buf,downlinkNasTransportIes_p->value.choice.NAS_PDU.size);
 			
           
@@ -1043,10 +1045,10 @@ int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, co
 
             if(!nas_msg || !nas_msg->data)
             {
-               OAILOG_DEBUG(LOG_NGAP,"nsg data is NULL");
+               //OAILOG_DEBUG(LOG_NGAP,"nsg data is NULL");
 			   continue;
 			}
-			OAILOG_DEBUG(LOG_NGAP,"nas_msg size:%d", nas_msg->slen);
+			//OAILOG_DEBUG(LOG_NGAP,"nas_msg size:%d", nas_msg->slen);
 			
 			nas_message_t	decoded_nas_msg; 
 	        memset (&decoded_nas_msg,		 0, sizeof (nas_message_t));
@@ -1090,7 +1092,7 @@ int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, co
 				}
 				break;
 				default:
-				    OAILOG_DEBUG(LOG_NGAP,"downlink nas transport unknown msg type:0x%x\n", decoded_mm_msg->header.message_type);
+				    //OAILOG_DEBUG(LOG_NGAP,"downlink nas transport unknown msg type:0x%x\n", decoded_mm_msg->header.message_type);
 				break;	
 	        }
 			#if 0
@@ -1104,6 +1106,7 @@ int ngap_amf_handle_ng_downlink_nas_transport(const sctp_assoc_id_t assoc_id, co
 		 break;
 		 default:
 		 	OAILOG_DEBUG(LOG_NGAP,"unknown protocol:%d\n", downlinkNasTransportIes_p->id);
+		 //break;
 		}
 	}
     return 0;
