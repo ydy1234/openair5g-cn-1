@@ -948,7 +948,7 @@ ngap_amf_handle_ng_initial_ue_message(
 {
 
     OAILOG_FUNC_IN (LOG_NGAP);
-    OAILOG_DEBUG(LOG_NGAP,"decode initial ue message dump-------");
+    //OAILOG_DEBUG(LOG_NGAP,"decode initial ue message dump-------");
     int rc = RETURNok;
 
     Ngap_NGSetupFailureIEs_t * ngInitialUeMsg = NULL;
@@ -972,7 +972,7 @@ ngap_amf_handle_ng_initial_ue_message(
 
   
     DevAssert (pdu != NULL);
-	
+	asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
     container = &pdu->choice.initiatingMessage->value.choice.InitialUEMessage;
 
 /********************** is gnb in list ************************************************/
@@ -1224,6 +1224,9 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
     bstring nas_msg;
     DevAssert (pdu != NULL);
 	
+	//debug print
+	asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
+	
     container = &pdu->choice.initiatingMessage->value.choice.UplinkNASTransport;
 	
 	for (i = 0; i < container->protocolIEs.list.count; i++)
@@ -1236,17 +1239,17 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 	    {
 	     case  Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID:
 		 {
-		 	OAILOG_DEBUG(LOG_NGAP,"AMF_UE_NGAP_ID");
+		 	//OAILOG_DEBUG(LOG_NGAP,"AMF_UE_NGAP_ID");
 	        size_t i  = 0;
 	        for(i ; i<uplinkNasTransportIes_p->value.choice.AMF_UE_NGAP_ID.size;i++)
 	        {
-	            OAILOG_DEBUG(LOG_NGAP,"0x%x",uplinkNasTransportIes_p->value.choice.AMF_UE_NGAP_ID.buf[i]);
+	            //OAILOG_DEBUG(LOG_NGAP,"0x%x",uplinkNasTransportIes_p->value.choice.AMF_UE_NGAP_ID.buf[i]);
 	        }
 		 }
 		 break;
          case  Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
 		 {
-		 	 OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:%lu",uplinkNasTransportIes_p->value.choice.RAN_UE_NGAP_ID);
+		 	 //OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:%lu",uplinkNasTransportIes_p->value.choice.RAN_UE_NGAP_ID);
 		 }
 		 break;
          case Ngap_ProtocolIE_ID_id_NAS_PDU:
@@ -1273,51 +1276,51 @@ int ngap_amf_handle_ng_uplink_nas_transport(const sctp_assoc_id_t assoc_id,
 				    //CGI,pLMNIdentity
 				    Ngap_PLMNIdentity_t	 cgi_pLMNIdentity  = eUTRA_CGI.pLMNIdentity;
 	               
-				    OAILOG_DEBUG(LOG_NGAP,"CGI,pLMNIdentity:");
+				    //OAILOG_DEBUG(LOG_NGAP,"CGI,pLMNIdentity:");
 					size_t i = 0;
 					for(; i<cgi_pLMNIdentity.size;i++)
 					{
-					   OAILOG_DEBUG(LOG_NGAP,"0x%x",cgi_pLMNIdentity.buf[i]); 
+					   //OAILOG_DEBUG(LOG_NGAP,"0x%x",cgi_pLMNIdentity.buf[i]); 
 					}
 				    //CGI,eUTRACellIdentity
-				    OAILOG_DEBUG(LOG_NGAP,"CGI,eUTRACellIdentity:");
+				    //OAILOG_DEBUG(LOG_NGAP,"CGI,eUTRACellIdentity:");
 				    Ngap_EUTRACellIdentity_t	 eUTRACellIdentity = eUTRA_CGI.eUTRACellIdentity;
 				    i  = 0;
 				    for(; i<eUTRACellIdentity.size;i++)
 					{
-					   OAILOG_DEBUG(LOG_NGAP,"0x%x",eUTRACellIdentity.buf[i]); 
+					   //OAILOG_DEBUG(LOG_NGAP,"0x%x",eUTRACellIdentity.buf[i]); 
 					}
 
                     //TAI
-                    OAILOG_DEBUG(LOG_NGAP,"TAI");
+                    //OAILOG_DEBUG(LOG_NGAP,"TAI");
                     Ngap_TAI_t tAI  =  userLocationInformationEUTRA->tAI;
                     //TAI,pLMNIdentity
-                    OAILOG_DEBUG(LOG_NGAP,"TAI.pLMNIdentity");
+                    //OAILOG_DEBUG(LOG_NGAP,"TAI.pLMNIdentity");
                     Ngap_PLMNIdentity_t	 pLMNIdentity  = tAI.pLMNIdentity;
 					i  = 0;
 					for(; i<pLMNIdentity.size;i++)
 					{
-                        OAILOG_DEBUG(LOG_NGAP,"0x%x",pLMNIdentity.buf[i]);
+                        //OAILOG_DEBUG(LOG_NGAP,"0x%x",pLMNIdentity.buf[i]);
 					}
                     
                     //TAI,tAC
-                    OAILOG_DEBUG(LOG_NGAP,"TAI.tAC");
+                    //OAILOG_DEBUG(LOG_NGAP,"TAI.tAC");
 	                Ngap_TAC_t	 tAC = tAI.tAC;
 					i  = 0;
 					for(; i<tAC.size;i++)
 					{
-                        OAILOG_DEBUG(LOG_NGAP,"0x%x",tAC.buf[i]);
+                        //OAILOG_DEBUG(LOG_NGAP,"0x%x",tAC.buf[i]);
 					}
                     
 					//timeStamp
-					OAILOG_DEBUG(LOG_NGAP,"timeStamp");
+					//OAILOG_DEBUG(LOG_NGAP,"timeStamp");
 					Ngap_TimeStamp_t	*timeStamp = userLocationInformationEUTRA->timeStamp;
 					i  = 0;
 					if(!timeStamp)
 						break;
 					for(; i<timeStamp->size;i++)
 					{
-                        OAILOG_DEBUG(LOG_NGAP,"0x%x",timeStamp->buf[i]);
+                        //OAILOG_DEBUG(LOG_NGAP,"0x%x",timeStamp->buf[i]);
 					}
 				  }
 				  break;

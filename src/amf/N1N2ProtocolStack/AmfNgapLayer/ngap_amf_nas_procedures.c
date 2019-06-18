@@ -183,6 +183,9 @@ ngap_generate_downlink_nas_transport (
     *payload = NULL;
 
     asn_enc_rval_t er;
+	
+	asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, &pdu);  //asn_printf
+	
     er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, &pdu, buffer_p, length);
 #if 1
         printf("sctp server send buffer length(%d)\nbuffer:\t",er.encoded);
