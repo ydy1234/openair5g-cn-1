@@ -99,7 +99,7 @@ void fill_tAC(Ngap_TAC_t *item, unsigned int tac) {
     uint32_t tAC = htonl(tac);
     const char *ptr = (void *)&tAC;
     OCTET_STRING_fromBuf(item, ptr + 1, 3);
-	OAILOG_DEBUG (LOG_NGAP,"tAC:0x%x,0x%x,0x%x",item->buf[0],item->buf[1],item->buf[2]);
+	//OAILOG_DEBUG (LOG_NGAP,"tAC:0x%x,0x%x,0x%x",item->buf[0],item->buf[1],item->buf[2]);
 }
 
 void fill_GlobalRANNodeID_with_GlobalGNBID(Ngap_GlobalRANNodeID_t *ngap_GlobalRANNodeID) {
@@ -111,10 +111,10 @@ void fill_GlobalRANNodeID_with_GlobalGNBID(Ngap_GlobalRANNodeID_t *ngap_GlobalRA
     fill_gNB_ID(&globalGNB_ID->gNB_ID, 513);
     //asn_fprint(stderr, &asn_DEF_Ngap_GlobalRANNodeID, ngap_GlobalRANNodeID);
 
-	OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:0x%x,0x%x,0x%x",globalGNB_ID->pLMNIdentity.buf[0],globalGNB_ID->pLMNIdentity.buf[1],globalGNB_ID->pLMNIdentity.buf[2]);
-	OAILOG_DEBUG (LOG_NGAP,"gNB_ID:0x%x,0x%x,0x%x,0x%x",
-	globalGNB_ID->gNB_ID.choice.gNB_ID.buf[0],globalGNB_ID->gNB_ID.choice.gNB_ID.buf[1],
-	globalGNB_ID->gNB_ID.choice.gNB_ID.buf[2],globalGNB_ID->gNB_ID.choice.gNB_ID.buf[3]);
+	//OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:0x%x,0x%x,0x%x",globalGNB_ID->pLMNIdentity.buf[0],globalGNB_ID->pLMNIdentity.buf[1],globalGNB_ID->pLMNIdentity.buf[2]);
+	//OAILOG_DEBUG (LOG_NGAP,"gNB_ID:0x%x,0x%x,0x%x,0x%x",
+	//globalGNB_ID->gNB_ID.choice.gNB_ID.buf[0],globalGNB_ID->gNB_ID.choice.gNB_ID.buf[1],
+	//globalGNB_ID->gNB_ID.choice.gNB_ID.buf[2],globalGNB_ID->gNB_ID.choice.gNB_ID.buf[3]);
 }
 typedef struct {
     int sst;
@@ -126,7 +126,7 @@ Ngap_SliceSupportItem_t *make_sliceSupportItem(const snssai_t slice) {
     item = calloc (1, sizeof(Ngap_SliceSupportItem_t));
     const char sst = slice.sst;
     OCTET_STRING_fromBuf(&item->s_NSSAI.sST, &sst, 1);
-	OAILOG_DEBUG (LOG_NGAP,"s_NSSAI.sST:0x%x",item->s_NSSAI.sST.buf[0]);
+	//OAILOG_DEBUG (LOG_NGAP,"s_NSSAI.sST:0x%x",item->s_NSSAI.sST.buf[0]);
     if (slice.sd >= 0 )
     {
         uint32_t sd = ntohl(slice.sd);
@@ -135,18 +135,16 @@ Ngap_SliceSupportItem_t *make_sliceSupportItem(const snssai_t slice) {
         item->s_NSSAI.sD = sD;
 		
         OCTET_STRING_fromBuf(sD, sd_ptr, 3);
-		OAILOG_DEBUG (LOG_NGAP,"s_NSSAI.sD:0x%x,0x%x,0x%x",item->s_NSSAI.sD->buf[0],item->s_NSSAI.sD->buf[1],item->s_NSSAI.sD->buf[2]);
+		//OAILOG_DEBUG (LOG_NGAP,"s_NSSAI.sD:0x%x,0x%x,0x%x",item->s_NSSAI.sD->buf[0],item->s_NSSAI.sD->buf[1],item->s_NSSAI.sD->buf[2]);
     }
     return item;
 }
-
-
 Ngap_BroadcastPLMNItem_t *make_Ngap_BroadcastPLMNItem(const char *mcc, const char *mnc,
                                                       const snssai_t slice_list[], const int slice_list_len) {
     Ngap_BroadcastPLMNItem_t *item;
     item = calloc (1, sizeof(Ngap_BroadcastPLMNItem_t));
 	fill_pLMNIdentity(&item->pLMNIdentity, mcc, mnc);
-	OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:0x%x,0x%x,0x%x",item->pLMNIdentity.buf[0],item->pLMNIdentity.buf[1],item->pLMNIdentity.buf[2]);
+	//OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:0x%x,0x%x,0x%x",item->pLMNIdentity.buf[0],item->pLMNIdentity.buf[1],item->pLMNIdentity.buf[2]);
     Ngap_SliceSupportItem_t *sliceSupportItem;
     int i;
     for (i=0; i<slice_list_len; i++) {
@@ -162,7 +160,7 @@ void fill_broadcastPLMNList_1(Ngap_BroadcastPLMNList_t *list) {
     item = make_Ngap_BroadcastPLMNItem("208", "89", slice_list, 100);
     ASN_SEQUENCE_ADD(list, item);
 
-    snssai_t slice_list2[2] = { { 100, 100 }, { 4, 5000} };
+    snssai_t slice_list2[2] = { { 1, 100 }, { 1, 100} };
     item = make_Ngap_BroadcastPLMNItem("208", "93", slice_list2, 2);
     ASN_SEQUENCE_ADD(list, item);
 }
@@ -198,7 +196,7 @@ Ngap_NGSetupRequestIEs_t *make_RANNodeName_ie(const char *name) {
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_NGSetupRequestIEs__value_PR_RANNodeName;
 	OCTET_STRING_fromBuf (&ie->value.choice.RANNodeName, name, strlen (name));
-	OAILOG_DEBUG (LOG_NGAP,"RANNodeName:%s", name);
+	//OAILOG_DEBUG (LOG_NGAP,"RANNodeName:%s", name);
     return ie;
 }
 
@@ -211,7 +209,7 @@ Ngap_NGSetupRequestIEs_t *make_DefaultPagingDRX_ie(e_Ngap_PagingDRX drx ) {
 	ie->value.present = Ngap_NGSetupRequestIEs__value_PR_PagingDRX;
 	ie->value.choice.PagingDRX = drx;
 	
-	OAILOG_DEBUG (LOG_NGAP,"PagingDRX:0x%x",ie->value.choice.PagingDRX);
+	//OAILOG_DEBUG (LOG_NGAP,"PagingDRX:0x%x",ie->value.choice.PagingDRX);
     return ie;
 }
 
@@ -240,8 +238,8 @@ Ngap_NGSetupRequestIEs_t *make_supportedTAList(void) {
 
     Ngap_SupportedTAItem_t *ta;
 
-    ta = make_SupportedTaItem_1();
-    ASN_SEQUENCE_ADD(&ie->value.choice.SupportedTAList.list, ta);
+    //ta = make_SupportedTaItem_1();
+    //ASN_SEQUENCE_ADD(&ie->value.choice.SupportedTAList.list, ta);
 
     ta = make_SupportedTaItem_2();
     ASN_SEQUENCE_ADD(&ie->value.choice.SupportedTAList.list, ta);
@@ -274,9 +272,8 @@ void check_NGAP_pdu_constraints(Ngap_NGAP_PDU_t *pdu) {
 Ngap_NGAP_PDU_t *make_NGAP_SetupRequest() {
 
     OAILOG_FUNC_IN (LOG_NGAP);
-	OAILOG_DEBUG(LOG_NGAP,"encode ng setup request dump--------");
-    // prepare PDU message with NGSetupRequest content
-
+	//OAILOG_DEBUG(LOG_NGAP,"encode ng setup request dump--------");
+   
 	Ngap_NGAP_PDU_t *pdu;
 	pdu = calloc(1, sizeof(Ngap_NGAP_PDU_t));
 
@@ -567,12 +564,12 @@ static  handler(int signo)
 	       pdu = make_NGAP_InitialUEMessage();
 	       //pdu = make_NGAP_UplinkNasTransport(UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE);
 
+     
        // debug
-       asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, pdu);
-
+       asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
+	   
        check_NGAP_pdu_constraints(pdu);
-       //encode_pdu_to_aper_and_write_to_stdout(pdu);
-
+       
 	   //encode
        size_t buffer_size = 1000;
        void *buffer = calloc(1,buffer_size);
@@ -602,23 +599,17 @@ int main( int argc, char * argv[])
     //fprintf(stderr, "  terminal 1: $ socat SCTP-LISTEN:38412,reuseaddr,fork STDOUT\n");
     //fprintf(stderr, "  terminal 2: $ ./NGSetupRequest | socat STDIN SCTP-CONNECT:127.0.0.1:38412,end-close\n\n");
 
+	
     ngap_create_socket_thread(NULL);
-    #if 0
-    sctp_data_t * sctp_data_p = NULL;
-	sctp_data_p = ngap_connect_sctp_server();
-	if(!sctp_data_p)
-		return -1;
-	//ngap_recv_from_sctp_server(sctp_data_p);
-    #endif
-	
+   
 	OAILOG_DEBUG(LOG_NGAP,"initial socket, wait......");
-	
 	sleep(5);  //init socket;
 	if(g_ngap_sctp_server_fd < 0)
 	{
 	   OAILOG_ERROR(LOG_NGAP,"init sctp server port %d failed, exit", CONNECT_SCTP_SERVER_PORT);
        exit(0);
 	}
+  
 	#if 0
 	uint32_t ppid =  60;
 	Ngap_NGAP_PDU_t *pdu = NULL;

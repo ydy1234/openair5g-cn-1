@@ -254,7 +254,7 @@ Ngap_InitialUEMessage_IEs_t  *make_RAN_UE_NGAP_ID_ie(Ngap_RAN_UE_NGAP_ID_t  RAN_
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_RAN_UE_NGAP_ID;
 	ie->value.choice.RAN_UE_NGAP_ID = 0x80;
-	OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:0x%x\n", ie->value.choice.RAN_UE_NGAP_ID);
+	//OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:0x%x\n", ie->value.choice.RAN_UE_NGAP_ID);
 
 	return ie;
 }
@@ -269,7 +269,7 @@ void fill_eUTRA_with_CGI_with_pLMNIdentity(Ngap_PLMNIdentity_t *pLMNIdentity)
     uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
 	OCTET_STRING_fromBuf(pLMNIdentity, (const char*)plmn, 3);
 
-	OAILOG_DEBUG(LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
+	//OAILOG_DEBUG(LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
 }
 void fill_eUTRA_with_CGI_with_eUTRACellIdentity(Ngap_EUTRACellIdentity_t	 *eUTRACellIdentity, int index)
 {
@@ -279,9 +279,9 @@ void fill_eUTRA_with_CGI_with_eUTRACellIdentity(Ngap_EUTRACellIdentity_t	 *eUTRA
 	memcpy(eUTRACellIdentity->buf, &ei, 4);
 	eUTRACellIdentity->bits_unused = 0x04;
 
-    OAILOG_DEBUG(LOG_NGAP,"eUTRACellIdentity: 0x%x,0x%x,0x%x,0x%x\n",
-	eUTRACellIdentity->buf[0],eUTRACellIdentity->buf[1],
-	eUTRACellIdentity->buf[2],eUTRACellIdentity->buf[3]);
+    //OAILOG_DEBUG(LOG_NGAP,"eUTRACellIdentity: 0x%x,0x%x,0x%x,0x%x\n",
+	//eUTRACellIdentity->buf[0],eUTRACellIdentity->buf[1],
+	//eUTRACellIdentity->buf[2],eUTRACellIdentity->buf[3]);
 }
 
 void fill_userLocationInformationEUTRA_eUTRA_with_CGI(Ngap_EUTRA_CGI_t	 *eUTRA_CGI)
@@ -296,14 +296,14 @@ void fill_tAI_with_pLMNIdentity(Ngap_PLMNIdentity_t *pLMNIdentity)
     uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
 	OCTET_STRING_fromBuf(pLMNIdentity, (const char*)plmn, 3);
 
-	OAILOG_DEBUG(LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
+	//OAILOG_DEBUG(LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
 }
 void fill_tAI_with_tAC(Ngap_TAC_t	 *tAC)
 {
 	uint8_t tac[3] = { 0x01, 0xF8, 0x29 };
 	OCTET_STRING_fromBuf(tAC, (const char*)tac, 3);
 	
-    OAILOG_DEBUG(LOG_NGAP,"tAC: 0x%x,0x%x,0x%x\n", tAC->buf[0],tAC->buf[1],tAC->buf[2]);
+    //OAILOG_DEBUG(LOG_NGAP,"tAC: 0x%x,0x%x,0x%x\n", tAC->buf[0],tAC->buf[1],tAC->buf[2]);
 }
 void fill_userLocationInformationEUTRA_eUTRA_with_tAI(Ngap_TAI_t	 *tAI)
 {
@@ -332,7 +332,7 @@ Ngap_TimeStamp_t	* fill_userLocationInformationEUTRA_eUTRA_with_timeStamp()
     uint8_t st[4] = { 0x02, 0xF8, 0x29, 0x06 };
 	OCTET_STRING_fromBuf(timeStamp, (const char*)st, 4);
 
-	OAILOG_DEBUG(LOG_NGAP,"timeStamp: 0x%x,0x%x,0x%x,0x%x\n", timeStamp->buf[0],timeStamp->buf[1],timeStamp->buf[2],timeStamp->buf[3]);
+	//OAILOG_DEBUG(LOG_NGAP,"timeStamp: 0x%x,0x%x,0x%x,0x%x\n", timeStamp->buf[0],timeStamp->buf[1],timeStamp->buf[2],timeStamp->buf[3]);
 	
 	return timeStamp;
 }
@@ -391,7 +391,7 @@ Ngap_InitialUEMessage_IEs_t *make_RRCEstablishmentCause_ie(e_Ngap_RRCEstablishme
 	ie->criticality = Ngap_Criticality_reject;
 	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_RRCEstablishmentCause;
 	ie->value.choice.RRCEstablishmentCause = cause;
-	OAILOG_DEBUG(LOG_NGAP,"RRCEstablishmentCause:0x%x\n", ie->value.choice.RRCEstablishmentCause);
+	//OAILOG_DEBUG(LOG_NGAP,"RRCEstablishmentCause:0x%x\n", ie->value.choice.RRCEstablishmentCause);
 	
 	return ie;
 	
@@ -406,7 +406,7 @@ void fill_aMFSetID(Ngap_AMFSetID_t *aMFSetID, uint8_t setid, uint32_t len)
 	aMFSetID->size =  len;
 	aMFSetID->bits_unused = 0x0E;
 
-	OAILOG_DEBUG(LOG_NGAP,"aMFSetID:aMFSetID->size:%d,0x%x,0x%x\n", aMFSetID->size, aMFSetID->buf[0],aMFSetID->buf[1]);
+	//OAILOG_DEBUG(LOG_NGAP,"aMFSetID:aMFSetID->size:%d,0x%x,0x%x\n", aMFSetID->size, aMFSetID->buf[0],aMFSetID->buf[1]);
 }
 //aMFPointer
 void fill_aMFPointer(Ngap_AMFPointer_t *aMFPointer, uint8_t ap, uint32_t len)
@@ -422,7 +422,7 @@ void fill_aMFPointer(Ngap_AMFPointer_t *aMFPointer, uint8_t ap, uint32_t len)
 void fill_fiveG_TMSI(Ngap_FiveG_TMSI_t *fiveG_TMSI,const char *tmsi)
 {
     OCTET_STRING_fromBuf (fiveG_TMSI, tmsi, strlen (tmsi)); 
-	OAILOG_DEBUG(LOG_NGAP,"fiveG_TMSI:%s",fiveG_TMSI->buf);
+	//OAILOG_DEBUG(LOG_NGAP,"fiveG_TMSI:%s",fiveG_TMSI->buf);
 }
 Ngap_InitialUEMessage_IEs_t *make_FiveG_S_TMSI_ie()
 {
@@ -452,7 +452,7 @@ void fill_AMFSetID(Ngap_AMFSetID_t *aMFSetID, uint8_t setid, uint32_t len)
 	aMFSetID->size =  len;
 	aMFSetID->bits_unused = 0x0E;
 
-	OAILOG_DEBUG(LOG_NGAP,"aMFSetID:aMFSetID->size:%d,0x%x,0x%x\n", aMFSetID->size, aMFSetID->buf[0],aMFSetID->buf[1]);
+	//OAILOG_DEBUG(LOG_NGAP,"aMFSetID:aMFSetID->size:%d,0x%x,0x%x\n", aMFSetID->size, aMFSetID->buf[0],aMFSetID->buf[1]);
 }
 Ngap_InitialUEMessage_IEs_t * make_AMFSetID_ie(uint8_t setid, uint32_t len)
 {
@@ -479,7 +479,7 @@ Ngap_InitialUEMessage_IEs_t * make_UEContextRequest_ie(e_Ngap_UEContextRequest	 
 	ie->value.present = Ngap_InitialUEMessage_IEs__value_PR_UEContextRequest;
 
 	ie->value.choice.UEContextRequest = UEContextRequest;
-	OAILOG_DEBUG(LOG_NGAP,"UEContextRequest:0x%x",UEContextRequest);
+	//OAILOG_DEBUG(LOG_NGAP,"UEContextRequest:0x%x",UEContextRequest);
 	return ie;
 }
 
@@ -492,12 +492,12 @@ Ngap_InitialUEMessage_IEs_t * make_UEContextRequest_ie(e_Ngap_UEContextRequest	 
 	 item = calloc(1, sizeof(Ngap_AllowedNSSAI_Item_t));
 
      OCTET_STRING_fromBuf(&item->s_NSSAI.sST, &sst, 1);
-	 OAILOG_DEBUG(LOG_NGAP,"NSSAI.sST:0x%x",item->s_NSSAI.sST.buf[0]);
+	 //OAILOG_DEBUG(LOG_NGAP,"NSSAI.sST:0x%x",item->s_NSSAI.sST.buf[0]);
 
 	 Ngap_SD_t *sD = calloc(1, sizeof(Ngap_SD_t));
      item->s_NSSAI.sD = sD;
      OCTET_STRING_fromBuf(sD, sd, 3);
-	 OAILOG_DEBUG(LOG_NGAP,"NSSAI.sd:0x%x,0x%x,0x%x",item->s_NSSAI.sD->buf[0],item->s_NSSAI.sD->buf[1],item->s_NSSAI.sD->buf[2]);
+	 //OAILOG_DEBUG(LOG_NGAP,"NSSAI.sd:0x%x,0x%x,0x%x",item->s_NSSAI.sD->buf[0],item->s_NSSAI.sD->buf[1],item->s_NSSAI.sD->buf[2]);
    
      return item;   
  }

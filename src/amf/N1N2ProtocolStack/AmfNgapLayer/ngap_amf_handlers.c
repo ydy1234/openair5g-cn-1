@@ -135,7 +135,7 @@ int ngap_amf_state_machine(e_NGAP_AMF_MSG_TYPE_STATE_MACHINE_t msgType)
       case NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE:
 	  {  
 	  	 OAILOG_DEBUG(LOG_NAS,"initial ue msg");
-	  	 //pdu =  make_NGAP_InitialUEMessage();
+	  	 pdu =  make_NGAP_InitialUEMessage();
 	  }
 	  break;
 	  case NGAP_AMF_MSG_TYPE_UPLINK_NAS_TRANSPORT_WITH_AUTHENTICATION_RESPONSE:
@@ -211,7 +211,7 @@ ngap_amf_handle_message(
 	  return -1;
   }
 
-  OAILOG_DEBUG (LOG_SCTP,"ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);
+  //OAILOG_DEBUG (LOG_SCTP,"ngap_amf_handle_message procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);
   if ((procedureCode > (sizeof (messages_callback) / (3 * sizeof (ngap_message_decoded_callback)))) || (present > Ngap_NGAP_PDU_PR_unsuccessfulOutcome)) {
     //OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] Either procedureCode %d or direction %d exceed expected\n", assoc_id, (int)pdu->choice.initiatingMessage->procedureCode, (int)pdu->present);
     return -1;  
@@ -221,7 +221,7 @@ ngap_amf_handle_message(
     //OAILOG_DEBUG (LOG_NGAP, "[SCTP %d] No handler for procedureCode %d in %s\n", assoc_id, (int)pdu->choice.initiatingMessage->procedureCode, ngap_direction2String[(int)pdu->present]);
     return -2;
   }     
-  OAILOG_DEBUG (LOG_SCTP,"procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);    
+  //OAILOG_DEBUG (LOG_SCTP,"procedureCode:%d;present:%d\n",pdu->choice.initiatingMessage->procedureCode,pdu->present);    
   return (*messages_callback[procedureCode][present - 1]) (assoc_id, stream, pdu);
  
 }
@@ -714,7 +714,7 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
 		Ngap_NGAP_PDU_t *pdu)
 {
     OAILOG_FUNC_IN (LOG_NGAP);
-    OAILOG_DEBUG (LOG_NGAP,"decode ng setup response dump--------");
+    //OAILOG_DEBUG (LOG_NGAP,"decode ng setup response dump--------");
 	
     int rc = RETURNok;
     int i = 0;
@@ -723,6 +723,7 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
     Ngap_NGSetupResponseIEs_t               *ie_gnb_name = NULL;
 
     DevAssert (pdu != NULL);
+	asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
 	
     container = &pdu->choice.successfulOutcome->value.choice.NGSetupResponse;
 
@@ -736,12 +737,12 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
 	    {
             case Ngap_ProtocolIE_ID_id_AMFName:
 			{
-			    OAILOG_DEBUG (LOG_NGAP,"AMFName:%s\n", (char *)(setupResponseIes_p->value.choice.AMFName.buf));
+			    //OAILOG_DEBUG (LOG_NGAP,"AMFName:%s\n", (char *)(setupResponseIes_p->value.choice.AMFName.buf));
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_RelativeAMFCapacity:
 			{
-	            OAILOG_DEBUG (LOG_NGAP,"RelativeAMFCapacity:%d\n", setupResponseIes_p->value.choice.RelativeAMFCapacity);
+	            //OAILOG_DEBUG (LOG_NGAP,"RelativeAMFCapacity:%d\n", setupResponseIes_p->value.choice.RelativeAMFCapacity);
 			}
 			break;	
             case Ngap_ProtocolIE_ID_id_PLMNSupportList:
@@ -756,10 +757,10 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
 
 					Ngap_PLMNIdentity_t	 pLMNIdentity  = pPlmn->pLMNIdentity;
 					size_t i  = 0;
-					OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity");
+					//OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity");
 					for(; i <pLMNIdentity.size; i++)
 					{
-					   OAILOG_DEBUG (LOG_NGAP,"0x%x", pLMNIdentity.buf[i]);
+					   //OAILOG_DEBUG (LOG_NGAP,"0x%x", pLMNIdentity.buf[i]);
 					}
 					
 
@@ -770,7 +771,7 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
                         Ngap_SliceSupportItem_t *pSS  = sliceSupportList.list.array[k];
 						if(!pSS)
 							continue;
-						OAILOG_DEBUG (LOG_NGAP,"NSSAI_sST:0x%x\n",pSS->s_NSSAI.sST.buf[0]);
+						//OAILOG_DEBUG (LOG_NGAP,"NSSAI_sST:0x%x\n",pSS->s_NSSAI.sST.buf[0]);
 					}
 				}
 			}
@@ -781,7 +782,7 @@ int ngap_amf_handle_ng_setup_response(const sctp_assoc_id_t assoc_id, const sctp
     //state machine
     //send to initial ue msg
 
-    ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE);
+    //ngap_amf_state_machine(NGAP_AMF_MSG_TYPE_INITIAL_UE_MESSAGE);
 	
 	//ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, encodePdu);
 	 
