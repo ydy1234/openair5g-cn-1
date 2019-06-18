@@ -37,7 +37,7 @@ Ngap_NGSetupResponseIEs_t *make_AMFName_ie(const char *name)
 	ie->value.present = Ngap_NGSetupResponseIEs__value_PR_AMFName;
 	OCTET_STRING_fromBuf (&ie->value.choice.AMFName, name, strlen (name));
 	
-	OAILOG_DEBUG(LOG_NGAP,"AMFName:%s\n", ie->value.choice.AMFName.buf);
+	//OAILOG_DEBUG(LOG_NGAP,"AMFName:%s\n", ie->value.choice.AMFName.buf);
 	
     return ie;
 }
@@ -55,7 +55,7 @@ Ngap_NGSetupResponseIEs_t * make_RelativeAMFCapacity_ie(Ngap_RelativeAMFCapacity
 	ie->value.present = Ngap_NGSetupResponseIEs__value_PR_RelativeAMFCapacity;
     ie->value.choice.RelativeAMFCapacity  =   RelativeAMFCapacity;
 	
-	OAILOG_DEBUG(LOG_NGAP,"RelativeAMFCapacity:%d\n", ie->value.choice.RelativeAMFCapacity);
+	//OAILOG_DEBUG(LOG_NGAP,"RelativeAMFCapacity:%d\n", ie->value.choice.RelativeAMFCapacity);
 	
 	return ie;
 }
@@ -69,14 +69,14 @@ void fill_PLMNSupportItem_with_pLMNIdentity(Ngap_PLMNIdentity_t	 *pLMNIdentity)
     uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
 	OCTET_STRING_fromBuf(pLMNIdentity, (const char*)plmn, 3);
 
-	OAILOG_DEBUG(LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
+	//OAILOG_DEBUG(LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
 }
 
 void fill_s_NSSAI_sST(Ngap_SST_t *sST)
 {
     uint8_t plmn[3] = { 0x02};
 	OCTET_STRING_fromBuf(sST, (const char*)plmn, 1);
-	OAILOG_DEBUG(LOG_NGAP,"NSSAI_sST:0x%x\n",sST->buf[0]);
+	//OAILOG_DEBUG(LOG_NGAP,"NSSAI_sST:0x%x\n",sST->buf[0]);
 }
 #if 0
 void fill_s_NSSAI_sD(Ngap_SD_t	*sD)
@@ -132,7 +132,7 @@ void add_NGSetupResponse_ie(Ngap_NGSetupResponse_t *ngapSetupResponse, Ngap_NGSe
 
 Ngap_NGAP_PDU_t *make_NGAP_SetupResponse()
 {
-    OAILOG_DEBUG(LOG_NGAP,"encode ng setup response dump-----");
+    //OAILOG_DEBUG(LOG_NGAP,"encode ng setup response dump-----");
 	
 	Ngap_NGAP_PDU_t *pdu;
 	pdu = calloc(1, sizeof(Ngap_NGAP_PDU_t));

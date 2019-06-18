@@ -294,7 +294,8 @@ int ng_setup_request_to_send_response(const sctp_assoc_id_t assoc_id,
 	char errbuf[512] = {0};
 	pdu = make_NGAP_SetupResponse();
 	
-		
+    asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
+	
 	size_t errlen = sizeof(errbuf);
 	ret = asn_check_constraints(&asn_DEF_Ngap_NGAP_PDU, pdu, errbuf, &errlen);
 	if(ret != 0) {
@@ -314,7 +315,7 @@ int ng_setup_request_to_send_response(const sctp_assoc_id_t assoc_id,
 				  
 	bstring b = blk2bstr(buffer, er.encoded);
 						
-	printf("ngap_setup_response assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, er.encoded); 
+	//OAILOG_DEBUG(LOG_NGAP,"ngap_setup_response assoc_id:%u, stream:%u,len:%d\n",assoc_id, stream, er.encoded); 
 	rc =  ngap_amf_itti_send_sctp_request (&b, assoc_id, stream, 0);
 				
 	if(rc != RETURNok)
@@ -453,9 +454,10 @@ ngap_amf_handle_ng_setup_request(
     Ngap_NGSetupRequestIEs_t               *ie = NULL;
     Ngap_NGSetupRequestIEs_t               *ie_gnb_name = NULL;
 
-    OAILOG_DEBUG(LOG_NGAP,"decode  ng setup request dump-------");
+    //OAILOG_DEBUG(LOG_NGAP,"decode ng setup request dump-------");
 	
     DevAssert (pdu != NULL);
+	asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
     container = &pdu->choice.initiatingMessage->value.choice.NGSetupRequest;
 	
 	for (i = 0; i < container->protocolIEs.list.count; i++)
@@ -494,10 +496,10 @@ ngap_amf_handle_ng_setup_request(
 
                          //pLMNIdentity
 						 size_t i  = 0;
-						 OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:");
+						 //OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:");
 						 for(; i< globalGNB_ID->pLMNIdentity.size;i++)
 						 {
-						    OAILOG_DEBUG (LOG_NGAP,"0x%x",globalGNB_ID->pLMNIdentity.buf[i]);
+						    //OAILOG_DEBUG (LOG_NGAP,"0x%x",globalGNB_ID->pLMNIdentity.buf[i]);
 						 }
 						
 						 //gNB_ID
@@ -507,12 +509,12 @@ ngap_amf_handle_ng_setup_request(
 							break;
 	                        case Ngap_GNB_ID_PR_gNB_ID:
 							{   
-								OAILOG_DEBUG (LOG_NGAP,"gNB_ID:");
+								//OAILOG_DEBUG (LOG_NGAP,"gNB_ID:");
 								BIT_STRING_t	gNB_ID = globalGNB_ID->gNB_ID.choice.gNB_ID;
 								size_t i  = 0;
 								for(; i < gNB_ID.size ; i++)
 								{
-								    OAILOG_DEBUG (LOG_NGAP,"0x%x", gNB_ID.buf[i]);
+								    //OAILOG_DEBUG (LOG_NGAP,"0x%x", gNB_ID.buf[i]);
 								}	
 	                        }
 							break;
@@ -545,7 +547,7 @@ ngap_amf_handle_ng_setup_request(
 				 unsigned char RANNodeName[setupRequestIes_p->value.choice.RANNodeName.size + 1];
 				 memset(RANNodeName, 0, setupRequestIes_p->value.choice.RANNodeName.size + 1);
 				 memcpy(RANNodeName,setupRequestIes_p->value.choice.RANNodeName.buf,setupRequestIes_p->value.choice.RANNodeName.size);
-				 OAILOG_DEBUG (LOG_NGAP,"RANNodeName:%s", RANNodeName);
+				 //OAILOG_DEBUG (LOG_NGAP,"RANNodeName:%s", RANNodeName);
             }		
             break;
             case Ngap_ProtocolIE_ID_id_SupportedTAList:
@@ -561,14 +563,14 @@ ngap_amf_handle_ng_setup_request(
 				    //printf("TAC",supportTA->tAC.buf);
 
 					//Ngap_TAC_t	 tAC;
-                    OAILOG_DEBUG (LOG_NGAP,"tAC:");
+                    //OAILOG_DEBUG (LOG_NGAP,"tAC:");
 					size_t i = 0;
 					for(; i < supportTA->tAC.size;i++)
 					{
-                       OAILOG_DEBUG (LOG_NGAP,"0x%x",supportTA->tAC.buf[i]);  
+                       //OAILOG_DEBUG (LOG_NGAP,"0x%x",supportTA->tAC.buf[i]);  
 					}
 
-					OAILOG_DEBUG (LOG_NGAP,"broadcastPLMNList:");
+					//OAILOG_DEBUG (LOG_NGAP,"broadcastPLMNList:");
 	                //Ngap_BroadcastPLMNList_t	 broadcastPLMNList;
 					int j = 0;
 					for(; j< supportTA->broadcastPLMNList.list.count; j++)
@@ -578,10 +580,10 @@ ngap_amf_handle_ng_setup_request(
 							 continue;
 						 Ngap_PLMNIdentity_t	 pLMNIdentity  =  plmnItem->pLMNIdentity;
 						 size_t i  = 0;
-						 OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:");
+						 //OAILOG_DEBUG (LOG_NGAP,"pLMNIdentity:");
 						 for(; i< plmnItem->pLMNIdentity.size; i++)
 						 {
-                             OAILOG_DEBUG (LOG_NGAP,"0x%x",pLMNIdentity.buf[i]);
+                             //OAILOG_DEBUG (LOG_NGAP,"0x%x",pLMNIdentity.buf[i]);
 						 }
 						 
                          Ngap_SliceSupportList_t	 tAISliceSupportList = plmnItem->tAISliceSupportList;
@@ -593,25 +595,25 @@ ngap_amf_handle_ng_setup_request(
                              if(!slisupportItem)
 							 	continue;
 
-                             OAILOG_DEBUG (LOG_NGAP,"s_NSSAI:");
+                             //OAILOG_DEBUG (LOG_NGAP,"s_NSSAI:");
 							 Ngap_S_NSSAI_t	 s_NSSAI = slisupportItem->s_NSSAI;
                              
 							 
 							 Ngap_SST_t	 sST = s_NSSAI.sST;
-							 OAILOG_DEBUG (LOG_NGAP,"sST:");
+							 //OAILOG_DEBUG (LOG_NGAP,"sST:");
 							 size_t i  = 0;
 							 for(; i< sST.size; i++)
 							 {
-                                OAILOG_DEBUG (LOG_NGAP,"0x%x",sST.buf[i]);
+                                //OAILOG_DEBUG (LOG_NGAP,"0x%x",sST.buf[i]);
 							 }
-							 OAILOG_DEBUG (LOG_NGAP,"sD:");
+							 //OAILOG_DEBUG (LOG_NGAP,"sD:");
 	                         Ngap_SD_t	*sD = s_NSSAI.sD;
 							 if(!sD)
 							 	continue;
 							 i = 0;
 							 for(; i< sD->size; i++)
 							 {
-                                OAILOG_DEBUG (LOG_NGAP,"0x%x",sD->buf[i]);
+                                //OAILOG_DEBUG (LOG_NGAP,"0x%x",sD->buf[i]);
 							 }
 						 }
 					}
@@ -622,7 +624,7 @@ ngap_amf_handle_ng_setup_request(
 			break;
             case Ngap_ProtocolIE_ID_id_DefaultPagingDRX:
 			{
-				 OAILOG_DEBUG (LOG_NGAP,"PagingDRX:0x%x",setupRequestIes_p->value.choice.PagingDRX);
+				 //OAILOG_DEBUG (LOG_NGAP,"PagingDRX:0x%x",setupRequestIes_p->value.choice.PagingDRX);
 		        //printf("PagingDRX:%ld\n",setupRequestIes_p->value.choice.PagingDRX);
             }
 			break;
@@ -995,7 +997,7 @@ ngap_amf_handle_ng_initial_ue_message(
 	        case Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
 			{
                ran_ue_ngap_id = initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID;
-			   OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:0x%x",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
+			   //OAILOG_DEBUG(LOG_NGAP,"RAN_UE_NGAP_ID:0x%x",initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID); 
 			}
 			break;
 			
@@ -1021,51 +1023,51 @@ ngap_amf_handle_ng_initial_ue_message(
 				    //CGI,pLMNIdentity
 				    Ngap_PLMNIdentity_t	 cgi_pLMNIdentity  = eUTRA_CGI.pLMNIdentity;
 	               
-				    OAILOG_DEBUG(LOG_NGAP,"CGI,pLMNIdentity:");
+				    //OAILOG_DEBUG(LOG_NGAP,"CGI,pLMNIdentity:");
 					size_t i = 0;
 					for(; i<cgi_pLMNIdentity.size;i++)
 					{
-					   OAILOG_DEBUG(LOG_NGAP,"0x%x",cgi_pLMNIdentity.buf[i]); 
+					   //OAILOG_DEBUG(LOG_NGAP,"0x%x",cgi_pLMNIdentity.buf[i]); 
 					}
 				    //CGI,eUTRACellIdentity
-				    OAILOG_DEBUG(LOG_NGAP,"CGI,eUTRACellIdentity:");
+				    //OAILOG_DEBUG(LOG_NGAP,"CGI,eUTRACellIdentity:");
 				    Ngap_EUTRACellIdentity_t	 eUTRACellIdentity = eUTRA_CGI.eUTRACellIdentity;
 				    i  = 0;
 				    for(; i<eUTRACellIdentity.size;i++)
 					{
-					   OAILOG_DEBUG(LOG_NGAP,"0x%x",eUTRACellIdentity.buf[i]); 
+					   //OAILOG_DEBUG(LOG_NGAP,"0x%x",eUTRACellIdentity.buf[i]); 
 					}
 
                     //TAI
-                    OAILOG_DEBUG(LOG_NGAP,"TAI");
+                    //OAILOG_DEBUG(LOG_NGAP,"TAI");
                     Ngap_TAI_t tAI  =  userLocationInformationEUTRA->tAI;
                     //TAI,pLMNIdentity
-                    OAILOG_DEBUG(LOG_NGAP,"TAI.pLMNIdentity");
+                    //OAILOG_DEBUG(LOG_NGAP,"TAI.pLMNIdentity");
                     Ngap_PLMNIdentity_t	 pLMNIdentity  = tAI.pLMNIdentity;
 					i  = 0;
 					for(; i<pLMNIdentity.size;i++)
 					{
-                        OAILOG_DEBUG(LOG_NGAP,"0x%x",pLMNIdentity.buf[i]);
+                        //OAILOG_DEBUG(LOG_NGAP,"0x%x",pLMNIdentity.buf[i]);
 					}
                     
                     //TAI,tAC
-                    OAILOG_DEBUG(LOG_NGAP,"TAI.tAC");
+                    //OAILOG_DEBUG(LOG_NGAP,"TAI.tAC");
 	                Ngap_TAC_t	 tAC = tAI.tAC;
 					i  = 0;
 					for(; i<tAC.size;i++)
 					{
-                        OAILOG_DEBUG(LOG_NGAP,"0x%x",tAC.buf[i]);
+                        //OAILOG_DEBUG(LOG_NGAP,"0x%x",tAC.buf[i]);
 					}
                     
 					//timeStamp
-					OAILOG_DEBUG(LOG_NGAP,"timeStamp");
+					//OAILOG_DEBUG(LOG_NGAP,"timeStamp");
 					Ngap_TimeStamp_t	*timeStamp = userLocationInformationEUTRA->timeStamp;
 					i  = 0;
 					if(!timeStamp)
 						break;
 					for(; i<timeStamp->size;i++)
 					{
-                        OAILOG_DEBUG(LOG_NGAP,"0x%x",timeStamp->buf[i]);
+                        //OAILOG_DEBUG(LOG_NGAP,"0x%x",timeStamp->buf[i]);
 					}
 				  }
 				  break;
@@ -1087,51 +1089,51 @@ ngap_amf_handle_ng_initial_ue_message(
 			{
 				
 				Ngap_RRCEstablishmentCause_t	 RRCEstablishmentCause = initialUeMsgIEs_p->value.choice.RRCEstablishmentCause;
-				OAILOG_DEBUG(LOG_NGAP,"RRCEstablishmentCause:0x%x", RRCEstablishmentCause);
+				//OAILOG_DEBUG(LOG_NGAP,"RRCEstablishmentCause:0x%x", RRCEstablishmentCause);
 			}
 			break;
 			case Ngap_ProtocolIE_ID_id_FiveG_S_TMSI:
 			{
 				Ngap_FiveG_S_TMSI_t	 FiveG_S_TMSI = initialUeMsgIEs_p->value.choice.FiveG_S_TMSI;
 
-                OAILOG_DEBUG(LOG_NGAP,"FiveG_S_TMSI.aMFSetID");
+                //OAILOG_DEBUG(LOG_NGAP,"FiveG_S_TMSI.aMFSetID");
 				Ngap_AMFSetID_t	 aMFSetID = FiveG_S_TMSI.aMFSetID;
 				size_t i  = 0;
 				for(i;i<aMFSetID.size;i++)
 				{
-                    OAILOG_DEBUG(LOG_NGAP,"0x%x", aMFSetID.buf[i]);  
+                    //OAILOG_DEBUG(LOG_NGAP,"0x%x", aMFSetID.buf[i]);  
 				}
 				
-				OAILOG_DEBUG(LOG_NGAP,"FiveG_S_TMSI.aMFPointer");
+				//OAILOG_DEBUG(LOG_NGAP,"FiveG_S_TMSI.aMFPointer");
 	            Ngap_AMFPointer_t	 aMFPointer = FiveG_S_TMSI.aMFPointer;
 				i  = 0;
 				for(i;i<aMFPointer.size;i++)
 				{
-                   OAILOG_DEBUG(LOG_NGAP,"0x%x", aMFPointer.buf[i]);  
+                   //OAILOG_DEBUG(LOG_NGAP,"0x%x", aMFPointer.buf[i]);  
 				}
-				OAILOG_DEBUG(LOG_NGAP,"fiveG_S_TMSI.fiveG_TMSI");
+				//OAILOG_DEBUG(LOG_NGAP,"fiveG_S_TMSI.fiveG_TMSI");
                 Ngap_FiveG_TMSI_t	 fiveG_TMSI = FiveG_S_TMSI.fiveG_TMSI;
 				i  = 0;
 				for(i;i<fiveG_TMSI.size;i++)
 				{
-                   OAILOG_DEBUG(LOG_NGAP,"0x%x", fiveG_TMSI.buf[i]);  
+                   //OAILOG_DEBUG(LOG_NGAP,"0x%x", fiveG_TMSI.buf[i]);  
 				}
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_AMFSetID:
 			{
-				OAILOG_DEBUG(LOG_NGAP,"AMFSetID");
+				//OAILOG_DEBUG(LOG_NGAP,"AMFSetID");
 				Ngap_AMFSetID_t	 aMFSetID = initialUeMsgIEs_p->value.choice.AMFSetID;
 				size_t i  = 0;
 				for(i;i<aMFSetID.size;i++)
 				{
-                    OAILOG_DEBUG(LOG_NGAP,"0x%x", aMFSetID.buf[i]);  
+                    //OAILOG_DEBUG(LOG_NGAP,"0x%x", aMFSetID.buf[i]);  
 				}
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_UEContextRequest:
 			{
-	            OAILOG_DEBUG(LOG_NGAP,"UEContextRequest:0x%x",initialUeMsgIEs_p->value.choice.UEContextRequest);
+	            //OAILOG_DEBUG(LOG_NGAP,"UEContextRequest:0x%x",initialUeMsgIEs_p->value.choice.UEContextRequest);
 			}
 			break;
             case Ngap_ProtocolIE_ID_id_AllowedNSSAI:
@@ -1143,25 +1145,25 @@ ngap_amf_handle_ng_initial_ue_message(
 				   Ngap_AllowedNSSAI_Item_t *item = initialUeMsgIEs_p->value.choice.AllowedNSSAI.list.array[i];
 				  
 
-				   OAILOG_DEBUG (LOG_NGAP,"s_NSSAI:");
+				   //OAILOG_DEBUG (LOG_NGAP,"s_NSSAI:");
 				   Ngap_S_NSSAI_t	 s_NSSAI = item->s_NSSAI;
                              
 							 
 				   Ngap_SST_t	 sST = s_NSSAI.sST;
-				   OAILOG_DEBUG (LOG_NGAP,"sST:");
+				   //OAILOG_DEBUG (LOG_NGAP,"sST:");
 				   size_t i  = 0;
 				   for(; i< sST.size; i++)
 				   {
-                      OAILOG_DEBUG (LOG_NGAP,"0x%x",sST.buf[i]);
+                      //OAILOG_DEBUG (LOG_NGAP,"0x%x",sST.buf[i]);
 				   }
-				   OAILOG_DEBUG (LOG_NGAP,"sD:");
+				   //OAILOG_DEBUG (LOG_NGAP,"sD:");
 	               Ngap_SD_t	*sD = s_NSSAI.sD;
 				   if(!sD)
 				     continue;
 				   i = 0;
 				   for(; i< sD->size; i++)
 				   {
-                      OAILOG_DEBUG (LOG_NGAP,"0x%x",sD->buf[i]);
+                      //OAILOG_DEBUG (LOG_NGAP,"0x%x",sD->buf[i]);
 				   }
 				}
 			}
