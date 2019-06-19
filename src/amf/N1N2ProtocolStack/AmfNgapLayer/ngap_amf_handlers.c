@@ -295,9 +295,9 @@ int ng_setup_request_to_send_response(const sctp_assoc_id_t assoc_id,
 	int ret;
 	char errbuf[512] = {0};
 	pdu = make_NGAP_SetupResponse();
-    printf("----------------------- ENCODED NG SETUP RESPONSE NGAP MSG --------------------------\n");	
-    asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
-    printf("----------------------- ENCODED NG SETUP RESPONSE NGAP MSG --------------------------\n");	
+    //printf("----------------------- ENCODED NG SETUP RESPONSE NGAP MSG --------------------------\n");	
+    //asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
+    //printf("----------------------- ENCODED NG SETUP RESPONSE NGAP MSG --------------------------\n");	
 	size_t errlen = sizeof(errbuf);
 	ret = asn_check_constraints(&asn_DEF_Ngap_NGAP_PDU, pdu, errbuf, &errlen);
 	if(ret != 0) {
