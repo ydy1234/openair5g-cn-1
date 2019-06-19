@@ -22,7 +22,7 @@
 static void *nas_intertask_interface (void *args_p)
 {
   itti_mark_task_ready (TASK_NAS_AMF);
-
+  OAILOG_START_USE ();
   while (1) {
     MessageDef                             *received_message_p = NULL;
 

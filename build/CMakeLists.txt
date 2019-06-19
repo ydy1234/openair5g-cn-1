@@ -105,7 +105,7 @@ endif()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_boolean_option(LOG_OAI True "Thread safe logging API")
   add_boolean_option(DEBUG_IS_ON True "Thread safe logging API")
-  add_boolean_option(TRACE_IS_ON True "Thread safe logging API")
+  add_boolean_option(TRACE_IS_ON True "Thread safe tracing API")
 endif()
 
 ###############################################################################
@@ -340,6 +340,7 @@ file(GLOB SRCS
     ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_config.c
     ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_app_defs.c
     ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_app_itti_messaging.c
+    ${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_app_statistics.c
     #${OPENAIR5GCN_DIR}/src/amf/AmfAppLayer/amf_app_bearer.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_decoder.c
     #${CMAKE_CURRENT_SOURCE_DIR}/../../build/amf/build/r15.2/ngap_encoder.c

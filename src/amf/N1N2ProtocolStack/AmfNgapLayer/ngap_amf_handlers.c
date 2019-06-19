@@ -637,8 +637,11 @@ ngap_amf_handle_ng_setup_request(
 	 }
 
 	 //ng_setup_request_to_send_failure(assoc_id, stream, pdu);
-	 ng_setup_request_to_send_response(assoc_id, stream, pdu);
+	 rc = ng_setup_request_to_send_response(assoc_id, stream, pdu);
 	 //ng_setup_request_to_send_downlink_nas_transport(assoc_id, stream, pdu);
+         if (rc == RETURNok) {
+           update_amf_app_stats_connected_gnb_add();
+         }
 	 return 0;
 
 

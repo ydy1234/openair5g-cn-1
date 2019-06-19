@@ -377,6 +377,8 @@ static int amf_config_parse_file (amf_config_t * config_pP)
     }
   }
 
+  OAILOG_SET_CONFIG(&config_pP->log_config);
+  config_destroy (&cfg);
 
   return 0;
 }

@@ -222,7 +222,7 @@ int ngap_amf_decode_pdu(
 		Ngap_NGAP_PDU_t *pdu,
   const_bstring const raw,
   MessagesIds *message_id) {
-    
+  OAILOG_FUNC_IN (LOG_NGAP);  
 	Ngap_NGAP_PDU_t                     *decoded_pdu = pdu;
     asn_dec_rval_t                       dec_ret = {(RC_OK)};
     printf("ngap_amf_decode_pdu\n"); 

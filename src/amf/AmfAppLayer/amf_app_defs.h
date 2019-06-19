@@ -4,7 +4,7 @@
 
 typedef struct {
   /* UE contexts + some statistics variables */
-  //mme_ue_context_t mme_ue_contexts;
+  //amf_ue_context_t amf_ue_contexts;
 
   long statistic_timer_id;
   uint32_t statistic_timer_period;
@@ -18,11 +18,11 @@ typedef struct {
    * number of S1_U bearers,number of PDN sessions
    */
 
-  uint32_t               nb_enb_connected;
+  uint32_t               nb_gnb_connected;
   uint32_t               nb_ue_attached;
   uint32_t               nb_ue_connected;
-  //uint32_t               nb_default_eps_bearers;
-  //uint32_t               nb_s1u_bearers;
+  uint32_t               nb_default_eps_bearers;
+  uint32_t               nb_s1u_bearers;
 
   /* ***************Changes in Statistics**************/
 
@@ -32,12 +32,18 @@ typedef struct {
   uint32_t               nb_ue_disconnected_since_last_stat;
   uint32_t               nb_eps_bearers_established_since_last_stat;
   uint32_t               nb_eps_bearers_released_since_last_stat;
-  uint32_t               nb_enb_connected_since_last_stat;
-  uint32_t               nb_enb_released_since_last_stat;
+  uint32_t               nb_gnb_connected_since_last_stat;
+  uint32_t               nb_gnb_released_since_last_stat;
   uint32_t               nb_s1u_bearers_released_since_last_stat;
   uint32_t               nb_s1u_bearers_established_since_last_stat;
 } amf_app_desc_t;
 
 void amf_app_handle_initial_ue_message       (itti_amf_app_initial_ue_message_t * const conn_est_ind_pP);
+
+extern amf_app_desc_t amf_app_desc;
+
+#define amf_stats_read_lock(mMEsTATS)  pthread_rwlock_rdlock(&(mMEsTATS)->rw_lock)
+#define amf_stats_write_lock(mMEsTATS) pthread_rwlock_wrlock(&(mMEsTATS)->rw_lock)
+#define amf_stats_unlock(mMEsTATS)     pthread_rwlock_unlock(&(mMEsTATS)->rw_lock)
 
 #endif

@@ -130,7 +130,7 @@ int main(
     pid_file_name = get_exe_absolute_path("/var/run");
 
     CHECK_INIT_RETURN (OAILOG_INIT (MAX_LOG_ENV, OAILOG_LEVEL_DEBUG, MAX_LOG_PROTOS));
-    OAILOG_START_USE ();
+    //OAILOG_START_USE ();
     CHECK_INIT_RETURN (amf_config_parse_opt_line (argc,argv,&amf_config));
 
   pid_dir = bstr2cstr(amf_config.pid_dir, 1);
@@ -193,7 +193,7 @@ int main(
     CHECK_INIT_RETURN (sctp_init(&amf_config));
     CHECK_INIT_RETURN (ngap_amf_init());
     CHECK_INIT_RETURN (nas_amf_init(&amf_config));
-    CHECK_INIT_RETURN (amf_app_init());
+    CHECK_INIT_RETURN (amf_app_init(&amf_config));
     OAILOG_DEBUG(LOG_NGAP,"NGAP\n");
     //OAILOG_INFO(LOG_AMF_APP,"AMF-APP\n");
 

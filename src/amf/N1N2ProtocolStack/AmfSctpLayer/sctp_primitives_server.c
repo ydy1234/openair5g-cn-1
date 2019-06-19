@@ -667,7 +667,7 @@ static void * sctp_intertask_interface (
 {
   int sctp_sd = -1;
   itti_mark_task_ready (TASK_SCTP);
-
+  OAILOG_START_USE ();
   while (1) {
     MessageDef                             *received_message_p = NULL;
 
@@ -676,7 +676,7 @@ static void * sctp_intertask_interface (
     switch (ITTI_MSG_ID (received_message_p)) {
     case SCTP_INIT_MSG:{
         OAILOG_DEBUG (LOG_SCTP, "Received SCTP_INIT_MSG\n");
-        printf("Received SCTP_INIT_MSG\n");
+        //printf("Received SCTP_INIT_MSG\n");
         if ((sctp_sd = sctp_create_new_listener (&received_message_p->ittiMsg.sctpInit)) < 0) {
           AssertFatal(false, "Failed to create new SCTP listener\n");
         }
@@ -688,7 +688,7 @@ static void * sctp_intertask_interface (
       break;
 
     case SCTP_DATA_REQ:{
-        printf("SCTP_DATA_REQ\n");
+        //printf("SCTP_DATA_REQ\n");
         if (sctp_send_msg (SCTP_DATA_REQ (received_message_p).assoc_id,
             SCTP_DATA_REQ (received_message_p).stream,
             &SCTP_DATA_REQ (received_message_p).payload) < 0) {
