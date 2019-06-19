@@ -194,8 +194,6 @@ int main(
     CHECK_INIT_RETURN (ngap_amf_init());
     CHECK_INIT_RETURN (nas_amf_init(&amf_config));
     CHECK_INIT_RETURN (amf_app_init(&amf_config));
-    OAILOG_DEBUG(LOG_NGAP,"NGAP\n");
-    //OAILOG_INFO(LOG_AMF_APP,"AMF-APP\n");
 
     OAILOG_DEBUG(LOG_AMF_APP, "AMF app initialization complete\n");
     /*

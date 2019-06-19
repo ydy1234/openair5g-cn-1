@@ -105,6 +105,7 @@ void downlink_nas_transport_with_authentication_request(uint8_t *data)
 
 int amf_handle_mm_msg_registration_request(registration_request_msg * registration_request)
 {
+    OAILOG_FUNC_IN(LOG_NAS);
     //printf("amf_handle_mm_msg_registration_request---------- start\n");
 
     
@@ -116,8 +117,8 @@ int amf_handle_mm_msg_registration_request(registration_request_msg * registrati
 	nas_msg =  blk2bstr(data, BUFFER_LEN);
 
 	amf_app_itti_send_ngap_dl_nas_transport_request(0x80, 0x90, nas_msg);
-	
-    return  0;
+    OAILOG_FUNC_RETURN(LOG_NAS,0);	
+    //return  0;
 }
 
 int downlink_nas_transport_with_authentication_result(uint8_t *data)
@@ -375,8 +376,10 @@ int amf_handle_mm_msg_security_mode_reject(security_mode_reject_msg *security_mo
 
 int decode_registration_request_dump(nas_message_t decoded_nas_msg)
 {
+    OAILOG_FUNC_IN(LOG_NAS);
+    #if 0
     OAILOG_DEBUG (LOG_NAS,"decode registration_request dump------");
-	
+    	
 	OAILOG_DEBUG (LOG_NAS,"nas header	decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 		decoded_nas_msg.header.extended_protocol_discriminator,
 		decoded_nas_msg.header.security_header_type,
@@ -460,10 +463,27 @@ int decode_registration_request_dump(nas_message_t decoded_nas_msg)
 	OAILOG_DEBUG (LOG_NAS,"nasmessagecontainer:0x%x",
 		*(unsigned char *)((decoded_mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
 	return 0;
+    #endif
+    #if 1
+      MM_msg * decoded_mm_msg = &decoded_nas_msg.plain.mm;
+      printf("-------------------------------- REGISTRATION REQUEST NAS MSG BUFFER --------------------------------------\n\n");
+      printf("(octet1)[Extended protocol discriminator] [0x%x]\n",decoded_mm_msg->header.extended_protocol_discriminator);
+      printf("(octet2)[Security header type           ] [0x%x]\n",decoded_mm_msg->header.security_header_type);
+      printf("(octet3)[Message type                   ] [0x%x]\n",decoded_mm_msg->header.message_type);
+      printf("(octet4)[Registration type              ] [0x%x]\n",decoded_mm_msg->specific_msg.registration_request._5gsregistrationtype.registration_type);
+      printf("(octet5)[NAS Key set identifier         ] [0x%x]\n",decoded_mm_msg->specific_msg.registration_request.naskeysetidentifier);
+      //printf("(octet4)[Registration type              ] [0x%x]\n",decoded_mm_msg->header.specific_msg.registration_request._5gsregistrationtype);
+      //printf("(octet4)[Registration type              ] [0x%x]\n",decoded_mm_msg->header.specific_msg.registration_request._5gsregistrationtype);
+      //printf("(octet4)[Registration type              ] [0x%x]\n",decoded_mm_msg->header.specific_msg.registration_request._5gsregistrationtype);
+      //printf("(octet4)[Registration type              ] [0x%x]\n",decoded_mm_msg->header.specific_msg.registration_request._5gsregistrationtype);
+      printf("\n-------------------------------- REGISTRATION REQUEST NAS MSG BUFFER --------------------------------------\n\n");
+    #endif
+    OAILOG_FUNC_RETURN(LOG_NAS,0);
 }
 int  decode_authentication_response_dump(nas_message_t   decoded_nas_msg)
 {
-
+     OAILOG_FUNC_IN(LOG_NAS);
+     #if 0
      OAILOG_DEBUG (LOG_NAS,"decode authentication_response dump------");
      OAILOG_DEBUG (LOG_NAS,"nas header  decode extended_protocol_discriminator:0x%x,security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	 decoded_nas_msg.header.extended_protocol_discriminator,
@@ -479,10 +499,14 @@ int  decode_authentication_response_dump(nas_message_t   decoded_nas_msg)
 	 OAILOG_DEBUG (LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((decoded_mm_msg->specific_msg.authentication_response.eapmessage)->data));
 
      return  0;
+    #endif
+    OAILOG_FUNC_RETURN(LOG_NAS,0);
 }
 
 int  decode_security_mode_complete_dump(nas_message_t  decoded_nas_msg)
 {
+    OAILOG_FUNC_IN(LOG_NAS);
+    #if 0
     OAILOG_DEBUG (LOG_NAS,"decode security_mode_complete dump-------");
 	OAILOG_DEBUG (LOG_NAS,"nas header  decode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 			decoded_nas_msg.header.extended_protocol_discriminator,
@@ -496,32 +520,39 @@ int  decode_security_mode_complete_dump(nas_message_t  decoded_nas_msg)
 	OAILOG_DEBUG (LOG_NAS,"nasmessagecontainer:0x%x",*(unsigned char *)((mm_msg->specific_msg.security_mode_complete.nasmessagecontainer)->data));
 
 	return  0;
+    #endif
+    OAILOG_FUNC_RETURN(LOG_NAS,0);
 }
 int amf_handle_nas_mm_message(nas_message_t * nas_msg, tai_t tai, cgi_t cgi, nas_message_decode_status_t * decode_status)
 {
+  OAILOG_FUNC_IN(LOG_NAS);
   MM_msg *mmMsg = &(nas_msg->plain.mm);
   switch(mmMsg->header.message_type)
   {
     case REGISTRATION_REQUEST:
 	{
+        OAILOG_DEBUG(LOG_NAS,"message type(%d):REGISTRATION_REQUEST\n",mmMsg->header.message_type);
         decode_registration_request_dump(*nas_msg);
         amf_handle_mm_msg_registration_request(&mmMsg->specific_msg.registration_request); 
     }
     break; 
 	case AUTHENTICATION_RESPONSE:
 	{
+        OAILOG_DEBUG(LOG_NAS,"message type(%d):AUTHENTICATION_RESPONSE\n",mmMsg->header.message_type);
         decode_authentication_response_dump(*nas_msg);
 		amf_handle_mm_msg_authentication_response(&mmMsg->specific_msg.authentication_response);
 	}
 	break;
 	case SECURITY_MODE_COMPLETE:
 	{
+        OAILOG_DEBUG(LOG_NAS,"message type(%d):SECURITY_MODE_COMPLETE\n",mmMsg->header.message_type);
         decode_security_mode_complete_dump(*nas_msg);
 		amf_handle_mm_msg_security_mode_complete(&mmMsg->specific_msg.security_mode_complete);
 	}
 	break;
 	case SECURITY_MODE_REJECT:
 	{
+          OAILOG_DEBUG(LOG_NAS,"message type(%d):SECURITY_MODE_REJECT\n",mmMsg->header.message_type);
 		amf_handle_mm_msg_security_mode_reject(&mmMsg->specific_msg.security_mode_reject);
 	}
 	break;
@@ -529,4 +560,5 @@ int amf_handle_nas_mm_message(nas_message_t * nas_msg, tai_t tai, cgi_t cgi, nas
 		//printf("mm unknown msg type:%d\n", mmMsg->header.message_type);
 	break;
   }
+  OAILOG_FUNC_RETURN(LOG_NAS,0);
 }

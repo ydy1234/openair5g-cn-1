@@ -31,7 +31,7 @@ static void *nas_intertask_interface (void *args_p)
     switch (ITTI_MSG_ID (received_message_p)) {
       case NAS_INITIAL_UE_MESSAGE:
       case NGAP_DATA_IND:
-        printf("NGAP_DATA_IND\n");
+        OAILOG_DEBUG(LOG_NAS,"NGAP_DATA_IND\n");
         if(blength(NGAP_UL_DATA_IND(received_message_p).nas_msg) > 0){
           //struct mm_data_context_s              *mm_ctx = NULL;
           //fivegmm_security_context_t             *security_context = NULL;
@@ -64,11 +64,9 @@ static void *nas_intertask_interface (void *args_p)
             OAILOG_FUNC_RETURN (LOG_NAS, decoder_rc);
           } else if (decoder_rc == TLV_UNEXPECTED_IEI) {
             //*emm_cause = EMM_CAUSE_IE_NOT_IMPLEMENTED;
-            printf("\nSource COde Modified\n");
           } else if (decoder_rc < 0) {
               //*emm_cause = EMM_CAUSE_PROTOCOL_ERROR;
           }
-          printf("decoded nas msg type(%x)\n",decoded_nas_msg.plain.mm.header.message_type); 
           amf_handle_nas_mm_message(&decoded_nas_msg, NGAP_UL_DATA_IND(received_message_p).tai, NGAP_UL_DATA_IND(received_message_p).cgi, &decode_status);
  
         }
@@ -85,7 +83,8 @@ static void *nas_intertask_interface (void *args_p)
 
 
 int nas_amf_init (amf_config_t * amf_config_p)
-{ 
+{
+  OAILOG_FUNC_IN(LOG_NAS); 
   OAILOG_DEBUG (LOG_NAS, "Initializing NAS task interface\n");
   //nas_network_initialize (mme_config_p);
   
@@ -96,5 +95,6 @@ int nas_amf_init (amf_config_t * amf_config_p)
   }
   
   OAILOG_DEBUG (LOG_NAS, "Initializing NAS task interface: DONE\n");
-  return 0;
+  OAILOG_FUNC_RETURN(LOG_NAS,0);
+  //return 0;
 }

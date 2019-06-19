@@ -17,7 +17,6 @@ int encode_nas_message_container ( NASMessageContainer nasmessagecontainer, uint
       *buffer=iei;
       encoded++;
     }
-	printf("encode_nas_message_container: buffer:0x%x\n",*buffer);
 
     lenPtr = (buffer + encoded);
     encoded++;
@@ -28,7 +27,6 @@ int encode_nas_message_container ( NASMessageContainer nasmessagecontainer, uint
         return encode_result;
     else
         encoded += encode_result;
-	printf("encode_nas_message_container: buffer:0x%x, encode_result:0x%x\n",*buffer, encode_result);
 
     uint32_t res = encoded - 2 - ((iei > 0) ? 1 : 0);
     *lenPtr =res/(1<<8);
@@ -45,13 +43,11 @@ int decode_nas_message_container ( NASMessageContainer * nasmessagecontainer, ui
     uint8_t ielen=0;
     int decode_result;
 
-    printf("decode_nas_message_container: buffer:0x%x\n",*buffer);
     if (iei > 0)
     {
         CHECK_IEI_DECODER (iei, *buffer);
         decoded++;
     }
-    printf("decode_nas_message_container: buffer:0x%x\n",*buffer);
     ielen = *(buffer + decoded);
     decoded++;
     ielen = ( ielen << 8)+*(buffer + decoded);
@@ -62,7 +58,6 @@ int decode_nas_message_container ( NASMessageContainer * nasmessagecontainer, ui
         return decode_result;
     else
         decoded += decode_result;
-	printf("decode_nas_message_container: buffer:0x%x,decode_result:0x%x\n",*buffer, decode_result);
     return decoded;
 }
 

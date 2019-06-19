@@ -10,7 +10,7 @@
 static void notify_ngap_new_ue_amf_ngap_id_association (amf_ue_ngap_id_t amf_ue_ngap_id,ran_ue_ngap_id_t ran_ue_ngap_id, sctp_assoc_id_t sctp_assoc_id);
 
 void amf_app_handle_initial_ue_message       (itti_amf_app_initial_ue_message_t * const conn_est_ind_pP){
-
+  OAILOG_FUNC_IN(LOG_AMF_APP);
   notify_ngap_new_ue_amf_ngap_id_association(0x80,0x90,conn_est_ind_pP->sctp_assoc_id);
 
   int i = 0;
@@ -37,7 +37,7 @@ void amf_app_handle_initial_ue_message       (itti_amf_app_initial_ue_message_t 
   NGAP_UL_DATA_IND(message_p).nas_msg = nas_msg;
   itti_send_msg_to_task (TASK_NAS_AMF, INSTANCE_DEFAULT, message_p);
 #endif
-
+ OAILOG_FUNC_RETURN(LOG_AMF_APP,0);
 }
 
 
@@ -56,5 +56,5 @@ static void notify_ngap_new_ue_amf_ngap_id_association (amf_ue_ngap_id_t amf_ue_
 
   itti_send_msg_to_task (TASK_NGAP, INSTANCE_DEFAULT, message_p);
   OAILOG_DEBUG (LOG_AMF_APP, " Sent AMF_APP_NGAP_AMF_UE_ID_NOTIFICATION to NGAP for UE Id %u\n", notification_p->amf_ue_ngap_id);
-  OAILOG_FUNC_OUT (LOG_AMF_APP);
+  OAILOG_FUNC_RETURN (LOG_AMF_APP,0);
 }

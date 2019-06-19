@@ -154,6 +154,7 @@ bool ngap_gnb_find_ue_by_amf_ue_id_cb (__attribute__((unused))const hash_key_t k
 int 
 ngap_amf_init(void)
 { 
+    OAILOG_FUNC_IN(LOG_NGAP);
     OAILOG_DEBUG (LOG_NGAP, "Initializing NGAP interface\n");
     //if (get_asn1c_environment_version () < ASN1_MINIMUM_VERSION) {
       //OAILOG_ERROR (LOG_NGAP, "ASN1C version %d fount, expecting at least %d\n", get_asn1c_environment_version (), ASN1_MINIMUM_VERSION);
@@ -185,7 +186,8 @@ ngap_amf_init(void)
     }
 
     OAILOG_DEBUG (LOG_NGAP, "Initializing NGAP interface: DONE\n");
-    return RETURNok;
+    OAILOG_FUNC_RETURN(LOG_NGAP,RETURNok);
+    //return RETURNok;
 }
 
 

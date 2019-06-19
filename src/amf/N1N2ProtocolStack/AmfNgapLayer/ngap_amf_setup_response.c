@@ -38,8 +38,8 @@ Ngap_NGSetupResponseIEs_t *make_AMFName_ie(const char *name)
 	OCTET_STRING_fromBuf (&ie->value.choice.AMFName, name, strlen (name));
 	
 	//OAILOG_DEBUG(LOG_NGAP,"AMFName:%s\n", ie->value.choice.AMFName.buf);
-	
-    return ie;
+    OAILOG_FUNC_RETURN (LOG_NGAP,ie);
+    //return ie;
 }
 
 
@@ -56,8 +56,8 @@ Ngap_NGSetupResponseIEs_t * make_RelativeAMFCapacity_ie(Ngap_RelativeAMFCapacity
     ie->value.choice.RelativeAMFCapacity  =   RelativeAMFCapacity;
 	
 	//OAILOG_DEBUG(LOG_NGAP,"RelativeAMFCapacity:%d\n", ie->value.choice.RelativeAMFCapacity);
-	
-	return ie;
+ OAILOG_FUNC_RETURN (LOG_NGAP,ie);	
+	//return ie;
 }
 
 //PLMNSupportList
@@ -66,16 +66,19 @@ Ngap_NGSetupResponseIEs_t * make_RelativeAMFCapacity_ie(Ngap_RelativeAMFCapacity
 //pLMNIdentity
 void fill_PLMNSupportItem_with_pLMNIdentity(Ngap_PLMNIdentity_t	 *pLMNIdentity)
 {
+    OAILOG_FUNC_IN (LOG_NGAP);
     uint8_t plmn[3] = { 0x02, 0xF8, 0x29 };
 	OCTET_STRING_fromBuf(pLMNIdentity, (const char*)plmn, 3);
-
+    OAILOG_FUNC_RETURN (LOG_NGAP,0);
 	//OAILOG_DEBUG(LOG_NGAP,"pLMNIdentity: 0x%x,0x%x,0x%x\n", pLMNIdentity->buf[0],pLMNIdentity->buf[1],pLMNIdentity->buf[2]);
 }
 
 void fill_s_NSSAI_sST(Ngap_SST_t *sST)
-{
+{ 
+   OAILOG_FUNC_IN (LOG_NGAP);
     uint8_t plmn[3] = { 0x02};
 	OCTET_STRING_fromBuf(sST, (const char*)plmn, 1);
+   OAILOG_FUNC_RETURN (LOG_NGAP,0);
 	//OAILOG_DEBUG(LOG_NGAP,"NSSAI_sST:0x%x\n",sST->buf[0]);
 }
 #if 0
@@ -86,28 +89,35 @@ void fill_s_NSSAI_sD(Ngap_SD_t	*sD)
 #endif
 void fill_sliceSupportItem_with_s_NSSAI(Ngap_S_NSSAI_t	 *s_NSSAI)
 {
+    OAILOG_FUNC_IN (LOG_NGAP);
     fill_s_NSSAI_sST(&s_NSSAI->sST);
+    OAILOG_FUNC_RETURN (LOG_NGAP,0);
 }
 void fill_PLMNSupportItem_with_sliceSupportList(Ngap_SliceSupportList_t	 *sliceSupportList)
-{
+{   
+    OAILOG_FUNC_IN (LOG_NGAP);
     Ngap_SliceSupportItem_t *ss = NULL;
 	ss = calloc(1, sizeof(Ngap_SliceSupportItem_t));
     fill_sliceSupportItem_with_s_NSSAI(&ss->s_NSSAI);
 	ASN_SEQUENCE_ADD(&sliceSupportList->list, ss);
+    OAILOG_FUNC_RETURN (LOG_NGAP,0);
 }
 
 Ngap_PLMNSupportItem_t  *make_PLMNSupportItem()
 {
+    OAILOG_FUNC_IN (LOG_NGAP);
     Ngap_PLMNSupportItem_t  *plmn = NULL;
     plmn = calloc(1, sizeof(Ngap_PLMNSupportItem_t));
 
 	fill_PLMNSupportItem_with_pLMNIdentity(&plmn->pLMNIdentity);
 	fill_PLMNSupportItem_with_sliceSupportList(&plmn->sliceSupportList);
-	return plmn;
+    OAILOG_FUNC_RETURN (LOG_NGAP,plmn);
+	//return plmn;
 }
 
 Ngap_NGSetupResponseIEs_t * make_PLMNSupportList()
 {
+    OAILOG_FUNC_IN (LOG_NGAP);
     Ngap_NGSetupResponseIEs_t *ie = NULL;
 	ie = calloc(1, sizeof(Ngap_NGSetupResponseIEs_t));
 	
@@ -119,21 +129,24 @@ Ngap_NGSetupResponseIEs_t * make_PLMNSupportList()
     plmn= make_PLMNSupportItem();
 
 	ASN_SEQUENCE_ADD(&ie->value.choice.PLMNSupportList.list, plmn);
-    return ie;
+    OAILOG_FUNC_RETURN (LOG_NGAP,ie);
+    //return ie;
 }
 void add_NGSetupResponse_ie(Ngap_NGSetupResponse_t *ngapSetupResponse, Ngap_NGSetupResponseIEs_t *ie)
-	{
+{
+    OAILOG_FUNC_IN (LOG_NGAP);
     int ret;
 	ret = ASN_SEQUENCE_ADD(&ngapSetupResponse->protocolIEs.list, ie);
     if ( ret != 0 ) {
         fprintf(stderr, "Failed to add ie\n");
     }
+    OAILOG_FUNC_RETURN (LOG_NGAP,0);
 }
 
 Ngap_NGAP_PDU_t *make_NGAP_SetupResponse()
 {
     //OAILOG_DEBUG(LOG_NGAP,"encode ng setup response dump-----");
-	
+    OAILOG_FUNC_IN (LOG_NGAP);	
 	Ngap_NGAP_PDU_t *pdu;
 	pdu = calloc(1, sizeof(Ngap_NGAP_PDU_t));
 	
@@ -184,7 +197,7 @@ Ngap_NGAP_PDU_t *make_NGAP_SetupResponse()
 	ie = make_supportedTAList();
 	add_NGSetupRequest_ie(ngapSetupRequest, ie);
 	#endif
-
-	return pdu;
+        OAILOG_FUNC_RETURN (LOG_NGAP,pdu);
+	//return pdu;
 }
 

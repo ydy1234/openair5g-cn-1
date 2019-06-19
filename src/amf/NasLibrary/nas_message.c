@@ -220,7 +220,7 @@ int nas_message_decode (
     void *security,
     nas_message_decode_status_t * status)
 {
-  //OAILOG_FUNC_IN (LOG_NAS);
+  OAILOG_FUNC_IN (LOG_NAS);
   fivegmm_security_context_t                 *fivegmm_security_context = (fivegmm_security_context_t *) security;
   int                                     bytes = 0;
   uint32_t                                mac   = 0;
@@ -269,8 +269,6 @@ int nas_message_decode (
           length - offset,
           SECU_DIRECTION_UPLINK,
           fivegmm_security_context);
-      printf("decoded mac(%x)\n",mac);
-      printf("mac in buffer(%x)\n",msg->header.message_authentication_code);
       /*
        * Check NAS message integrity
        */
@@ -278,7 +276,7 @@ int nas_message_decode (
         printf("mac_matched!!!!!!!!!!!!!!!!!!!\n");
         status->mac_matched = 1;
       } else {
-        //OAILOG_DEBUG (LOG_NAS, "msg->header.message_authentication_code = %04X != computed = %04X\n", msg->header.message_authentication_code, mac);
+        OAILOG_DEBUG (LOG_NAS, "msg->header.message_authentication_code = %04X != computed = %04X\n", msg->header.message_authentication_code, mac);
       }
     }
 
@@ -296,15 +294,15 @@ int nas_message_decode (
 
   if (bytes < 0)  {
     return bytes;
-    //OAILOG_FUNC_RETURN (LOG_NAS, bytes);
+    OAILOG_FUNC_RETURN (LOG_NAS, bytes);
   }
 
   if (size > 1) {
     return size+bytes;
-    //OAILOG_FUNC_RETURN (LOG_NAS, size + bytes);
+    OAILOG_FUNC_RETURN (LOG_NAS, size + bytes);
   }
   return bytes;
-  //OAILOG_FUNC_RETURN (LOG_NAS, bytes);
+  OAILOG_FUNC_RETURN (LOG_NAS, bytes);
 }
 
 

@@ -188,12 +188,11 @@ ngap_generate_downlink_nas_transport (
 	
     er = aper_encode_to_buffer(&asn_DEF_Ngap_NGAP_PDU, NULL, &pdu, buffer_p, length);
 #if 1
-        printf("sctp server send buffer length(%d)\nbuffer:\t",er.encoded);
         int i=0;
         uint8_t * buffer = (uint8_t*)buffer_p;
-        for(;i<er.encoded;buffer+=sizeof(uint8_t),i++)
-          printf("%x",*((uint8_t*)buffer));
-        printf("\n");
+        //for(;i<er.encoded;buffer+=sizeof(uint8_t),i++)
+        //  printf("%x",*((uint8_t*)buffer));
+        //printf("\n");
 #if 0
              {
                MessagesIds message_id = MESSAGES_ID_MAX;

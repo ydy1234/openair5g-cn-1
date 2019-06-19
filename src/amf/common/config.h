@@ -105,6 +105,7 @@
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "itti_analyzer"
+#define PACKAGE_NAME_BUPT_TEST "BUPT TEST CONFIGURATION"
 
 /* Define to the full name and version of this package. */
 #define PACKAGE_STRING "itti_analyzer 0.2.7427"
@@ -117,6 +118,7 @@
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "0.2.7427"
+#define PACKAGE_VERSION_BUPT_TEST "1.0"
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be

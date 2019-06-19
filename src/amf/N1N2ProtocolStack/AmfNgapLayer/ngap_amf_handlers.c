@@ -283,7 +283,9 @@ ngap_amf_generate_ng_setup_failure (
 	
 int ng_setup_request_to_send_response(const sctp_assoc_id_t assoc_id,
 			const sctp_stream_id_t stream, Ngap_NGAP_PDU_t *setup_req_pdu)
-{	
+{
+    OAILOG_FUNC_IN (LOG_NGAP);
+    OAILOG_DEBUG(LOG_NGAP,"encode ng setup response msg and send it to gNB\n");	
     int assoc[1];
     sctp_data_t * sctp_data_p = NULL;
     Ngap_NGAP_PDU_t 		*pdu = NULL; 
@@ -293,9 +295,9 @@ int ng_setup_request_to_send_response(const sctp_assoc_id_t assoc_id,
 	int ret;
 	char errbuf[512] = {0};
 	pdu = make_NGAP_SetupResponse();
-	
+    printf("----------------------- ENCODED NG SETUP RESPONSE NGAP MSG --------------------------\n");	
     asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
-	
+    printf("----------------------- ENCODED NG SETUP RESPONSE NGAP MSG --------------------------\n");	
 	size_t errlen = sizeof(errbuf);
 	ret = asn_check_constraints(&asn_DEF_Ngap_NGAP_PDU, pdu, errbuf, &errlen);
 	if(ret != 0) {
@@ -325,8 +327,9 @@ int ng_setup_request_to_send_response(const sctp_assoc_id_t assoc_id,
 	else
 	{
 		//printf("ng_setup_request_to_send_response send sctp client size:%d, succ \n", length);
-	}	 
-	return 0;
+	}	
+        OAILOG_FUNC_RETURN (LOG_NGAP, rc); 
+	//return 0;
 }
 	
 
@@ -457,7 +460,9 @@ ngap_amf_handle_ng_setup_request(
     //OAILOG_DEBUG(LOG_NGAP,"decode ng setup request dump-------");
 	
     DevAssert (pdu != NULL);
-	asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
+    printf("----------------------- DECODED NG SETUP REQUEST NGAP MSG --------------------------\n");
+    asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
+    printf("----------------------- DECODED NG SETUP REQUEST NGAP MSG --------------------------\n");
     container = &pdu->choice.initiatingMessage->value.choice.NGSetupRequest;
 	
 	for (i = 0; i < container->protocolIEs.list.count; i++)
@@ -642,7 +647,8 @@ ngap_amf_handle_ng_setup_request(
          if (rc == RETURNok) {
            update_amf_app_stats_connected_gnb_add();
          }
-	 return 0;
+    OAILOG_FUNC_RETURN (LOG_NGAP, rc);
+	 //return 0;
 
 
 
@@ -974,8 +980,10 @@ ngap_amf_handle_ng_initial_ue_message(
     ue_description_t     *ue_ref = NULL;
 
   
-    DevAssert (pdu != NULL);
-	asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
+    DevAssert (pdu != NULL); 
+    printf("-------------------------------- DECODED INITIAL UE MESSAGE NGAP MSG ------------------------------\n");
+    asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
+    printf("-------------------------------- DECODED INITIAL UE MESSAGE NGAP MSG ------------------------------\n");
     container = &pdu->choice.initiatingMessage->value.choice.InitialUEMessage;
 
 /********************** is gnb in list ************************************************/
@@ -1210,7 +1218,8 @@ ngap_amf_handle_ng_initial_ue_message(
    
     //ngap_amf_itti_amf_app_initial_ue_message(assoc_id,10,initialUeMsgIEs_p->value.choice.RAN_UE_NGAP_ID,100,initialUeMsgIEs_p->value.choice.NAS_PDU.buf,initialUeMsgIEs_p->value.choice.NAS_PDU.size,NULL,NULL,0,NULL,NULL,NULL,NULL);
     ngap_amf_itti_amf_app_initial_ue_message(assoc_id,10,100,100,bdata(nas_msg),blength(nas_msg),NULL,NULL,0,NULL,NULL,NULL,NULL);
-    return 0;
+    OAILOG_FUNC_RETURN (LOG_NGAP,0);
+    //return 0;
 }
 
 

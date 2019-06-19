@@ -109,7 +109,7 @@ static void sctp_exit (void);
 //------------------------------------------------------------------------------
 static sctp_association_t *sctp_add_new_peer (void)
 {
-  printf("sctp_add_new_peer\n");
+  OAILOG_DEBUG(LOG_SCTP,"sctp_add_new_peer\n");
   sctp_association_t              *new_sctp_descriptor = calloc (1, sizeof (sctp_association_t));
 
   if (new_sctp_descriptor == NULL) {
@@ -130,9 +130,6 @@ static sctp_association_t *sctp_add_new_peer (void)
   }
 
   sctp_desc.number_of_connections++;
-  printf("sctp_desc.number_of_connections(%d)\n",sctp_desc.number_of_connections);
-  printf("sctp_desc.available_connections_head(%p)\n",sctp_desc.available_connections_head);
-  printf("%p\n",new_sctp_descriptor);
   sctp_dump_list ();
   return new_sctp_descriptor;
 }
@@ -495,12 +492,13 @@ static inline int sctp_read_from_socket (int sd, uint32_t ppid)
      */
     //printf("Data payload received\n");
   #if 1
-        printf("sctp server recv buffer length(%d)\nbuffer:\t",n);
-        int i=0;
-        uint8_t * buffer_p = (uint8_t*)buffer;
-        for(;i<n;buffer_p+=sizeof(uint8_t),i++)
-          printf("%x",*((uint8_t*)buffer_p));
-        printf("\n");
+        //printf("sctp server recv buffer length(%d)\nbuffer:\t",n);
+        OAILOG_DEBUG(LOG_SCTP,"sctp server recv buffer length(%d)\n",n);
+        //int i=0;
+        //uint8_t * buffer_p = (uint8_t*)buffer;
+        //for(;i<n;buffer_p+=sizeof(uint8_t),i++)
+        //  printf("%x",*((uint8_t*)buffer_p));
+        //printf("\n");
 #endif
     sctp_association_t              *association;
 
@@ -791,6 +789,7 @@ int handle_assoc_change(int sd, uint32_t ppid, struct sctp_assoc_change  *sctp_a
 int sctp_init (const amf_config_t * amf_config_p)
 //int sctp_init ()
 {
+  OAILOG_FUNC_IN(LOG_SCTP);
   OAILOG_DEBUG (LOG_SCTP, "Initializing SCTP task interface\n");
   memset (&sctp_desc, 0, sizeof (sctp_descriptor_t));
   /*
@@ -808,7 +807,8 @@ int sctp_init (const amf_config_t * amf_config_p)
   }
 
   OAILOG_DEBUG (LOG_SCTP, "Initializing SCTP task interface: DONE\n");
-  return 0;
+  //return 0;
+  OAILOG_FUNC_RETURN(LOG_SCTP,0);
 }
 
 //------------------------------------------------------------------------------

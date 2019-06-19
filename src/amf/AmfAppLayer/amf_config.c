@@ -385,16 +385,16 @@ static int amf_config_parse_file (amf_config_t * config_pP)
 
 static void amf_config_display (amf_config_t * config_pP)
 {
-  OAILOG_INFO (LOG_CONFIG, "==== BUPT %s v%s ====\n", PACKAGE_NAME, PACKAGE_VERSION);
+  OAILOG_INFO (LOG_CONFIG, "==== BUPT %s v%s ====\n", PACKAGE_NAME_BUPT_TEST, PACKAGE_VERSION_BUPT_TEST);
   OAILOG_INFO (LOG_CONFIG, "Configuration:\n");
   OAILOG_INFO (LOG_CONFIG, "- File .................................: %s\n", bdata(config_pP->config_file));
   OAILOG_INFO (LOG_CONFIG, "- Realm ................................: %s\n", bdata(config_pP->realm));
   OAILOG_INFO (LOG_CONFIG, "- Run mode .............................: %s\n", (RUN_MODE_TEST == config_pP->run_mode) ? "TEST":"NORMAL");
-  OAILOG_INFO (LOG_CONFIG, "- Max eNBs .............................: %u\n", config_pP->max_enbs);
+  OAILOG_INFO (LOG_CONFIG, "- Max gNBs .............................: %u\n", config_pP->max_enbs);
   OAILOG_INFO (LOG_CONFIG, "- Max UEs ..............................: %u\n", config_pP->max_ues);
   OAILOG_INFO (LOG_CONFIG, "- IMS voice over PS session in NG ......: %s\n", config_pP->_5gs_network_feature_support.ims_voice_over_ps_session_in_ng == 0 ? "false" : "true");
   OAILOG_INFO (LOG_CONFIG, "- Emergency bearer services in NG mode .: %s\n", config_pP->_5gs_network_feature_support.emergency_bearer_services_in_ng_mode == 0 ? "false" : "true");
-  OAILOG_INFO (LOG_CONFIG, "- Location services via epc ............: %s\n", config_pP->_5gs_network_feature_support.location_services_via_5gc == 0 ? "false" : "true");
+  OAILOG_INFO (LOG_CONFIG, "- Location services via 5gc ............: %s\n", config_pP->_5gs_network_feature_support.location_services_via_5gc == 0 ? "false" : "true");
   OAILOG_INFO (LOG_CONFIG, "- Extended service request .............: %s\n", config_pP->_5gs_network_feature_support.extended_service_request == 0 ? "false" : "true");
   OAILOG_INFO (LOG_CONFIG, "- Unauth IMSI support ..................: %s\n", config_pP->unauthenticated_imsi_supported == 0 ? "false" : "true");
   OAILOG_INFO (LOG_CONFIG, "- Relative capa ........................: %u\n", config_pP->relative_capacity);
