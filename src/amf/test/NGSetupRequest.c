@@ -350,8 +350,8 @@ sctp_data_t * ngap_connect_sctp_server( )
 {
     int sd = 0;
     sctp_data_t * sctp_data_p = NULL;
-	char *local_ip_addr[] = {"10.112.169.5"};
-	char  remote_ip_addr[] = "10.112.43.231";
+	char *local_ip_addr[] = {"192.168.2.122"};
+	char  remote_ip_addr[] = "192.168.2.122";
 	
     sctp_data_p = (sctp_data_t *) calloc (1, sizeof(sctp_data_t));
   	if (sctp_data_p == NULL)  exit(1);
@@ -413,7 +413,7 @@ void ngap_sctp_read_server_data(int fd)
         //==0 sctp mechanism ?
         return NULL;
     }
-	OAILOG_DEBUG(LOG_SCTP,"recv size:%d\n", recvSize);
+	//OAILOG_DEBUG(LOG_SCTP,"recv size:%d\n", recvSize);
     if (flags & MSG_NOTIFICATION)
     {  		    
         union sctp_notification  *snp = (union sctp_notification *)recvBuffer;
@@ -566,7 +566,7 @@ static  handler(int signo)
 
      
        // debug
-       asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
+       //asn_fprint(stdout, &asn_DEF_Ngap_NGAP_PDU, pdu);
 	   
        check_NGAP_pdu_constraints(pdu);
        
