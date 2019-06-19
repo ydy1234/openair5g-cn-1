@@ -10,11 +10,13 @@ exit()
 {
 #ps -ef | grep amf-comm | cut -c 9-15| xargs kill -s 9
 #ps -ef | grep amf-mt | cut -c 9-15| xargs kill -s 9
-ps -ef | grep amf | cut -c 9-15| xargs kill -s 9
+ps -ef | grep fake_gNB | cut -c 9-15| xargs kill -s 9
 #ps -ef | grep amf-evet | cut -c 9-15| xargs kill -s 9
 }
 
-/usr/local/bin/amf
+/home/core5g-dev/fake_gNB/openair5g-cn/build/amf/build/fake_gNB &
+sudo /home/core5g-dev/fake_gNB/openair5g-cn/scripts/file.sh request
+#/usr/local/bin/amf
 #/usr/local/bin/amf-mt &
 #/usr/local/bin/amf-loc 
 #/usr/local/bin/amf-evet
