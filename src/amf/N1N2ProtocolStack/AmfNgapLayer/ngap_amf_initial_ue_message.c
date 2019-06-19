@@ -40,6 +40,8 @@
 
 void reg_request(uint8_t *data, uint32_t  bufLen)
 {
+    OAILOG_FUNC_IN(LOG_NAS);
+	
 	int size = NAS_MESSAGE_SECURITY_HEADER_SIZE; 
 	int bytes = 0;
 	  
@@ -161,7 +163,7 @@ void reg_request(uint8_t *data, uint32_t  bufLen)
 	  
 	//bstring  info = bfromcstralloc(length, "\0");//info the nas_message_encode result
 	
-	
+	#if  0
 	OAILOG_DEBUG(LOG_NAS,"encode regisration request  dump ------");
 	OAILOG_DEBUG(LOG_NAS,"nas header encode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	nas_msg.header.extended_protocol_discriminator,
@@ -238,9 +240,12 @@ void reg_request(uint8_t *data, uint32_t  bufLen)
 	
 	 
 	OAILOG_DEBUG(LOG_NAS,"nasmessagecontainer:0x%x",*(unsigned char *)((mm_msg->specific_msg.registration_request.nasmessagecontainer)->data));
+
+	#endif
+
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, bufLen/*don't know the size*/, security);
-   
+    OAILOG_FUNC_RETURN(LOG_NAS,0);
 }
 
 //RAN_UE_NGAP_ID

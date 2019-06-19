@@ -126,6 +126,7 @@ void uplink_nas_transport_with_auth_response(uint8_t *data)
 	printf("info %p\n",info);
 	#endif
 
+    #if 0
 	OAILOG_DEBUG(LOG_NAS,"encode  autentication response dump-------");
 	OAILOG_DEBUG(LOG_NAS,"nas header encode extended_protocol_discriminator:0x%x,security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	nas_msg.header.extended_protocol_discriminator,
@@ -137,7 +138,7 @@ void uplink_nas_transport_with_auth_response(uint8_t *data)
 	OAILOG_DEBUG(LOG_NAS,"presence:0x%x",mm_msg->specific_msg.authentication_response.presence);
 	OAILOG_DEBUG(LOG_NAS,"param:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_response.authenticationresponseparameter)->data));
 	OAILOG_DEBUG(LOG_NAS,"eap message buffer:0x%x",*(unsigned char *)((mm_msg->specific_msg.authentication_response.eapmessage)->data));
-
+    #endif
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, UPLINK_BUFF_LEN/*don't know the size*/, security);
 }
@@ -206,7 +207,8 @@ void uplink_nas_transport_with_security_mode_complete(uint8_t *data)
 		printf("security %p\n",security);
 		printf("info %p\n",info);
 	#endif
-	
+
+	#if 0
 	OAILOG_DEBUG(LOG_NAS,"nas header encode extended_protocol_discriminator:0x%x, security_header_type:0x%x,sequence_number:0x%x,message_authentication_code:0x%x",
 	nas_msg.header.extended_protocol_discriminator,
 	nas_msg.header.security_header_type,
@@ -216,7 +218,7 @@ void uplink_nas_transport_with_security_mode_complete(uint8_t *data)
 	OAILOG_DEBUG(LOG_NAS,"message type:0x%x",mm_msg->header.message_type);
 	OAILOG_DEBUG(LOG_NAS,"presence:0x%x",mm_msg->specific_msg.security_mode_complete.presence);
 	OAILOG_DEBUG(LOG_NAS,"nasmessagecontainer:0x%x",*(unsigned char *)((mm_msg->specific_msg.security_mode_complete.nasmessagecontainer)->data));
-	
+	#endif
 	//bytes = nas_message_encode (data, &nas_msg, 60/*don't know the size*/, security);
 	bytes = nas_message_encode (data, &nas_msg, UPLINK_BUFF_LEN /*don't know the size*/, security);
 }
