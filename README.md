@@ -54,3 +54,8 @@ You can launch it with the following command:
 ## Compile the amf
 
     ./scripts/build_amf -c
+## Compile Issue
+    struct redifination in json.hpp (/usr/local/**/json.hpp && /src/amf/AmfGern/**/json.hpp) 
+                ======> mv /usr/local/**/json.hpp to json_bak.hpp ; recompile
+## Run amf
+   ./scripts/run_amf  ===> ./build/***/amf directly
