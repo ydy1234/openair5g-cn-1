@@ -8,6 +8,11 @@ Tool to create a large number of persistent SCTP associations
 ==========
 
 Build :
+        Build All: 
+		make all
+
+	Clean All:
+		make clean
 
 	gcc -o sctp_server sctp_server.c
 	
