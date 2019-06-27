@@ -41,6 +41,9 @@ int debug_on = 0;
 #define debug_print(...) \
             do { if (debug_on) fprintf(stdout, ##__VA_ARGS__); } while (0)
 
+int usage(char *c);
+int data_tx(struct sockaddr_in *client, int bufsize);
+
 int main(int argc, char **argv) 
 {
 	
@@ -191,7 +194,7 @@ int data_tx(struct sockaddr_in *client, int bufsize)
 }
 	
 
-usage(char *c)
+int usage(char *c)
 {
 
     fprintf(stderr,"usage: %s -p port -n num_conn -r remote_host \n",c);
@@ -201,6 +204,6 @@ usage(char *c)
     fprintf(stderr,"      -b                  : bufsize in bytes\n");
     fprintf(stderr,"      -r                  : remote_host\n");
     fprintf(stderr,"      -d                  : debug 1 or nodebug 0\n");
-
+    return 0;
 }
 	

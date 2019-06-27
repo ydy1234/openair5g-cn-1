@@ -41,6 +41,8 @@ int debug_on = 0;
 #define debug_print(...) \
             do { if (debug_on) fprintf(stdout, ##__VA_ARGS__); } while (0)
 
+int data_tx(int newsockfd, int bufsize, char *buf);
+int usage(char *c);
 int main(int argc, char **argv) 
 {
 	
@@ -190,7 +192,7 @@ int data_tx(int newsockfd, int bufsize, char *buf)
 }
 	
 
-usage(char *c)
+int usage(char *c)
 {
 
     fprintf(stderr,"usage: %s -p port \n",c);
@@ -199,6 +201,6 @@ usage(char *c)
     fprintf(stderr,"      -b                  : bufsize in bytes\n");
     fprintf(stderr,"      -n                  : number of packets\n");
     fprintf(stderr,"      -d                  : debug 1 or nodebug 0\n");
-
+    return 0;
 }
 	
